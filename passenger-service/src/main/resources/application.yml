@@ -8,12 +8,19 @@ spring:
     name: passenger-service
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
+    show-sql: true
   datasource:
-    driver-class-name: org.postgresql.Driver
+    driver-class-name: ${DB_DRIVER}
 
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+
+springdoc:
+  api-docs:
+    path: /api/v1/passenger
+  swagger-ui:
+    path: /api/v1/passenger/swagger-ui.html

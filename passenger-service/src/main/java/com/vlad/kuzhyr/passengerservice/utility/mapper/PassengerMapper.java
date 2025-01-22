@@ -1,4 +1,4 @@
-package com.vlad.kuzhyr.passengerservice.utility;
+package com.vlad.kuzhyr.passengerservice.utility.mapper;
 
 import com.vlad.kuzhyr.passengerservice.persistence.entity.Passenger;
 import com.vlad.kuzhyr.passengerservice.web.request.PassengerRequest;

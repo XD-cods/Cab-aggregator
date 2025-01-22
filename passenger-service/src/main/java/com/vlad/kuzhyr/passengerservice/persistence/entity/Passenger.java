@@ -1,5 +1,6 @@
 package com.vlad.kuzhyr.passengerservice.persistence.entity;
 
+import com.vlad.kuzhyr.passengerservice.utility.constant.PassengerConstant;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,6 +10,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,8 +22,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class Passenger {
 
   @Id
@@ -30,19 +32,20 @@ public class Passenger {
   private Long id;
 
   @NotNull
-  @NotEmpty
+  @NotEmpty(message = "Last name can't be empty")
   private String lastName;
 
   @NotNull
-  @NotEmpty
+  @NotEmpty(message = "First name can't be empty")
   private String firstName;
 
   @Email
-  @NotEmpty
+  @NotEmpty(message = "Phone can't be empty")
   private String email;
 
   @NotNull
-  @NotEmpty
+  @NotEmpty(message = "Phone can't be empty")
+  @Pattern(regexp = PassengerConstant.PHONE_REG_XP, message = "Phone not a valid")
   private String phone;
 
   @Builder.Default
