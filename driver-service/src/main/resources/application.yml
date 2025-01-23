@@ -2,6 +2,8 @@ server:
   port: 5003
 
 spring:
+  profiles:
+    active: dev
   application:
     name: driver-service
 
