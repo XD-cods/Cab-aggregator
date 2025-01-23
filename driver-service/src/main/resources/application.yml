@@ -1,0 +1,16 @@
+server:
+  port: 5003
+
+spring:
+  application:
+    name: driver-service
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
