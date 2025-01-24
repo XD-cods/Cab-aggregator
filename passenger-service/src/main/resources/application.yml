@@ -10,8 +10,6 @@ spring:
     hibernate:
       ddl-auto: none
     show-sql: true
-  datasource:
-    driver-class-name: ${DB_DRIVER}
 
 management:
   endpoints:

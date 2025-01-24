@@ -3,29 +3,26 @@ package com.vlad.kuzhyr.passengerservice.web.response;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class PassengerResponse {
-  @Schema(description = "Id of passenger", example = "1")
-  private Long id;
+public record PassengerResponse(
 
-  @Schema(description = "Passenger first name", example = "Victor")
-  private String firstName;
+        @Schema(description = "Id of passenger", example = "1")
+        Long id,
 
-  @Schema(description = "Passenger last name", example = "Don")
-  private String lastName;
+        @Schema(description = "Passenger first name", example = "Victor")
+        String firstName,
 
-  @Schema(description = "Passenger email", example = "example@gmail.com")
-  private String email;
+        @Schema(description = "Passenger last name", example = "Don")
+        String lastName,
 
-  @Schema(description = "Passenger phone", example = "7849232")
-  private String phone;
+        @Schema(description = "Passenger email", example = "example@gmail.com")
+        String email,
+
+        @Schema(description = "Passenger phone", example = "7849232")
+        String phone
+
+) {
 }

@@ -1,6 +1,5 @@
 package com.vlad.kuzhyr.passengerservice.service;
 
-import com.vlad.kuzhyr.passengerservice.exception.BadRequestException;
 import com.vlad.kuzhyr.passengerservice.exception.ConflictException;
 import com.vlad.kuzhyr.passengerservice.exception.NotFoundException;
 import com.vlad.kuzhyr.passengerservice.persistence.entity.Passenger;
@@ -13,68 +12,50 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class PassengerService {
+
   private final PassengerRepository passengerRepository;
   private final PassengerMapper passengerMapper;
 
-
   public PassengerResponse getPassengerById(Long id) {
-    Passenger existPassenger = passengerRepository.findById(id)
+    Passenger existPassenger = passengerRepository.findPassengerByIdAndIsEnabledTrue(id)
             .orElseThrow(() -> new NotFoundException(String.format(PassengerServiceConstant.NOT_FOUND_MESSAGE, id)));
 
-    if (!existPassenger.getIsEnabled()) {
-      throw new BadRequestException(String.format(PassengerServiceConstant.BAD_REQUEST_MESSAGE, id));
-    }
-
-    return passengerMapper.mapPassengerToPassengerResponse(existPassenger);
+    return passengerMapper.toResponse(existPassenger);
   }
 
   @Transactional
   public PassengerResponse createPassenger(PassengerRequest passengerRequest) {
-    Optional<Passenger> existPassenger = passengerRepository.findPassengerByEmail(((passengerRequest.getEmail())));
-    if (existPassenger.isPresent() && existPassenger.get().getIsEnabled()) {
-      throw new ConflictException(String.format(PassengerServiceConstant.CONFLICT_BY_ID_MESSAGE, passengerRequest.getEmail()));
+    if (passengerRepository.existsPassengersByEmailOrPhone(passengerRequest.email(), passengerRequest.phone())) {
+      throw new ConflictException(
+              String.format(PassengerServiceConstant.CONFLICT_BY_ID_MESSAGE, passengerRequest.email()));
     }
 
-    Passenger newPassenger = Passenger.builder()
-            .email(passengerRequest.getEmail())
-            .phone(passengerRequest.getPhone())
-            .firstName(passengerRequest.getFirstName())
-            .lastName(passengerRequest.getLastName())
-            .build();
-
-    return passengerMapper.mapPassengerToPassengerResponse(passengerRepository.save(newPassenger));
+    Passenger newPassenger = passengerMapper.toEntity(passengerRequest);
+    Passenger savedPassenger = passengerRepository.save(newPassenger);
+    return passengerMapper.toResponse(savedPassenger);
   }
 
   @Transactional
   public PassengerResponse updatePassenger(Long id, PassengerRequest passengerRequest) {
-    Passenger existPassenger = passengerRepository.findById(id)
+    Passenger existPassenger = passengerRepository.findPassengerByIdAndIsEnabledTrue(id)
             .orElseThrow(() -> new NotFoundException(String.format(PassengerServiceConstant.NOT_FOUND_MESSAGE, id)));
 
-    if (!existPassenger.getIsEnabled()) {
-      throw new BadRequestException(String.format(PassengerServiceConstant.BAD_REQUEST_MESSAGE, id));
-    }
-
-    passengerMapper.updateExistPassengerFromPassengerRequest(existPassenger, passengerRequest);
+    passengerMapper.updateFromRequest(passengerRequest, existPassenger);
     passengerRepository.save(existPassenger);
-    return passengerMapper.mapPassengerToPassengerResponse(existPassenger);
+    return passengerMapper.toResponse(existPassenger);
   }
 
   @Transactional
   public Boolean deletePassengerById(Long id) {
-    Passenger existPassenger = passengerRepository.findById(id)
+    Passenger existPassenger = passengerRepository.findPassengerByIdAndIsEnabledTrue(id)
             .orElseThrow(() -> new NotFoundException(String.format(PassengerServiceConstant.NOT_FOUND_MESSAGE, id)));
-
-    if (!existPassenger.getIsEnabled()) {
-      throw new BadRequestException(String.format(PassengerServiceConstant.BAD_REQUEST_MESSAGE, id));
-    }
 
     existPassenger.setIsEnabled(Boolean.FALSE);
     passengerRepository.save(existPassenger);
     return Boolean.TRUE;
   }
+
 }

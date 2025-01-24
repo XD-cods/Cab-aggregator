@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/passenger")
+@RequestMapping("/api/v1/passengers")
 @RequiredArgsConstructor
 @Tag(name = "Passenger API", description = "API for managing passenger data")
 public class PassengerController {
@@ -76,4 +76,5 @@ public class PassengerController {
   public ResponseEntity<Boolean> deletePassenger(@PathVariable Long id) {
     return ResponseEntity.ok(passengerService.deletePassengerById(id));
   }
+
 }
