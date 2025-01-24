@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Tag(name = "Passenger API", description = "API for managing passenger data")
 public class PassengerController {
-  private final PassengerService passengerService;
+  private final PassengerService passengerServiceImpl;
 
   @GetMapping("/{id}")
   @Operation(summary = "Get passenger by id")
@@ -36,7 +36,7 @@ public class PassengerController {
           @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   public ResponseEntity<PassengerResponse> getPassengerById(@PathVariable Long id) {
-    return ResponseEntity.ok(passengerService.getPassengerById(id));
+    return ResponseEntity.ok(passengerServiceImpl.getPassengerById(id));
   }
 
   @PostMapping
@@ -49,7 +49,7 @@ public class PassengerController {
           @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   public ResponseEntity<PassengerResponse> createPassenger(@ParameterObject @RequestBody PassengerRequest passengerRequest) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(passengerService.createPassenger(passengerRequest));
+    return ResponseEntity.status(HttpStatus.CREATED).body(passengerServiceImpl.createPassenger(passengerRequest));
   }
 
   @PutMapping("/{id}")
@@ -62,7 +62,7 @@ public class PassengerController {
   })
   public ResponseEntity<PassengerResponse> updatePassenger(@PathVariable Long id,
                                                            @RequestBody PassengerRequest passengerRequest) {
-    return ResponseEntity.ok(passengerService.updatePassenger(id, passengerRequest));
+    return ResponseEntity.ok(passengerServiceImpl.updatePassenger(id, passengerRequest));
   }
 
   @DeleteMapping("/{id}")
@@ -74,7 +74,7 @@ public class PassengerController {
           @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   public ResponseEntity<Boolean> deletePassenger(@PathVariable Long id) {
-    return ResponseEntity.ok(passengerService.deletePassengerById(id));
+    return ResponseEntity.ok(passengerServiceImpl.deletePassengerById(id));
   }
 
 }
