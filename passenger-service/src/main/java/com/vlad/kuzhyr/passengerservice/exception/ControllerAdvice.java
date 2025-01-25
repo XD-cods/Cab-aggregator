@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class ControllerAdvice {
 
-  @ExceptionHandler(NotFoundException.class)
+  @ExceptionHandler(PassengerNotFoundException.class)
   @ApiResponses(value = {
           @ApiResponse(
                   responseCode = "404",
@@ -22,7 +22,7 @@ public class ControllerAdvice {
                   content = @Content(schema = @Schema(implementation = ErrorResponse.class))
           )
   })
-  public ResponseEntity<ErrorResponse> notFoundException(NotFoundException exception) {
+  public ResponseEntity<ErrorResponse> notFoundException(PassengerNotFoundException exception) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse.builder()
             .error(String.valueOf(HttpStatus.NOT_FOUND))
             .errorDescription(exception.getMessage())
@@ -30,7 +30,7 @@ public class ControllerAdvice {
             .build());
   }
 
-  @ExceptionHandler(ConflictException.class)
+  @ExceptionHandler(AlreadyExistsPassengerException.class)
   @ApiResponses(value = {
           @ApiResponse(
                   responseCode = "409",
@@ -38,25 +38,9 @@ public class ControllerAdvice {
                   content = @Content(schema = @Schema(implementation = ErrorResponse.class))
           )
   })
-  public ResponseEntity<ErrorResponse> conflictException(ConflictException exception) {
+  public ResponseEntity<ErrorResponse> conflictException(AlreadyExistsPassengerException exception) {
     return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse.builder()
             .error(String.valueOf(HttpStatus.CONFLICT))
-            .errorDescription(exception.getMessage())
-            .timestamp(LocalDateTime.now())
-            .build());
-  }
-
-  @ExceptionHandler(BadRequestException.class)
-  @ApiResponses(value = {
-          @ApiResponse(
-                  responseCode = "400",
-                  description = "Bad request",
-                  content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-          )
-  })
-  public ResponseEntity<ErrorResponse> badRequestException(BadRequestException exception) {
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.builder()
-            .error(String.valueOf(HttpStatus.BAD_REQUEST))
             .errorDescription(exception.getMessage())
             .timestamp(LocalDateTime.now())
             .build());

@@ -8,12 +8,11 @@ import java.util.Optional;
 
 @Repository
 public interface PassengerRepository extends JpaRepository<Passenger, Long> {
-  Boolean existsPassengerByEmail(String email);
 
-  Optional<Passenger> findPassengerByEmail(String email);
+  Boolean existsPassengerByEmailAndIsEnabledTrue(String email);
+
+  Boolean existsPassengerByPhoneAndIsEnabledTrue(String phone);
 
   Optional<Passenger> findPassengerByIdAndIsEnabledTrue(Long id);
-
-  Boolean existsPassengersByEmailOrPhone(String email, String phone);
 
 }

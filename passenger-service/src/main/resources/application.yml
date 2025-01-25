@@ -8,7 +8,7 @@ spring:
     name: passenger-service
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
     show-sql: true
 
 management:
@@ -19,6 +19,6 @@ management:
 
 springdoc:
   api-docs:
-    path: /api/v1/passenger
+    path: /api/v1/api-docs
   swagger-ui:
-    path: /api/v1/passenger/swagger-ui.html
+    path: /api/v1/api-docs/swagger-ui.html
