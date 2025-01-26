@@ -2,24 +2,19 @@ package com.vlad.kuzhyr.driverservice.web.response;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class CarResponse {
+public record CarResponse(
 
-  private Long id;
+        Long id,
 
-  private String color;
+        String color,
 
-  private String brand;
+        String carBrand,
 
-  private String number;
+        String carNumber
 
+) {
 }

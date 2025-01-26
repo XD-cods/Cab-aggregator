@@ -2,21 +2,21 @@ package com.vlad.kuzhyr.driverservice.web.request;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class CarRequest {
+public record CarRequest(
 
-  private String color;
+        @NotBlank(message = "Color can't be empty")
+        String color,
 
-  private String brand;
+        @NotBlank(message = "Car brand can't be empty")
+        String carBrand,
 
-  private String number;
+        @NotBlank(message = "Car number can't be empty")
+        String carNumber
+
+) {
 }

@@ -2,27 +2,35 @@ package com.vlad.kuzhyr.driverservice.web.request;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.AllArgsConstructor;
+import com.vlad.kuzhyr.driverservice.utility.constant.RegularPatternConstant;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class DriverRequest {
+public record DriverRequest(
 
-  private String firstName;
+        @NotBlank(message = "First name can't be empty")
+        String firstName,
 
-  private String lastName;
+        @NotBlank(message = "Last name can't be empty")
+        String lastName,
 
-  private String email;
+        @Email(message = "email not a valid")
+        @NotBlank(message = "Email can't be empty")
+        String email,
 
-  private String gender;
+        @NotBlank(message = "Gender can't be empty")
+        String gender,
 
-  private String phone;
+        @NotBlank(message = "Phone can't be empty")
+        @Pattern(regexp = RegularPatternConstant.PASSENGER_PHONE_REGEX, message = "Phone not a valid")
+        String phone,
 
-  private Long carId;
+        Long carId
+
+) {
 }

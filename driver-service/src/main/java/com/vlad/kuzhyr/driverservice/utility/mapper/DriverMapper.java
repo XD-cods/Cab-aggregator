@@ -1,17 +1,24 @@
 package com.vlad.kuzhyr.driverservice.utility.mapper;
 
 import com.vlad.kuzhyr.driverservice.persistence.entity.Driver;
+import com.vlad.kuzhyr.driverservice.web.request.DriverRequest;
 import com.vlad.kuzhyr.driverservice.web.response.DriverResponse;
-import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
-@Component
-@RequiredArgsConstructor
-public class DriverMapper {
-  private final ModelMapper modelMapper;
+@Mapper(componentModel = "spring",
+        injectionStrategy = InjectionStrategy.CONSTRUCTOR
+)
+public interface DriverMapper {
 
-  public DriverResponse mapDriverToDriverResponse(Driver existDriver) {
-    return modelMapper.map(existDriver, DriverResponse.class);
-  }
+  DriverResponse toResponse(Driver driver);
+
+  @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+  void updateFromRequest(DriverRequest driverRequest, @MappingTarget Driver existingDriver);
+
+  Driver toEntity(DriverRequest driverRequest);
+
 }

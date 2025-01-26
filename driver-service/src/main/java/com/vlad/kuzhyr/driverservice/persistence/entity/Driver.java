@@ -1,13 +1,12 @@
 package com.vlad.kuzhyr.driverservice.persistence.entity;
 
-import com.vlad.kuzhyr.driverservice.utility.constant.DriverConstant;
+import com.vlad.kuzhyr.driverservice.utility.constant.RegularPatternConstant;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,30 +25,30 @@ public class Driver {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id", nullable = false)
+  @Column(name = "driver_id", nullable = false)
   private Long id;
 
-  @NotEmpty(message = "A first name can't be empty")
-  @Column(nullable = false)
+  @Column(name = "first_name", nullable = false)
   private String firstName;
 
-  @NotEmpty(message = "A last name can't be empty")
-  @Column(nullable = false)
+  @Column(name = "last_name", nullable = false)
   private String lastName;
 
-  @NotEmpty(message = "A email can't be empty")
-  @Column(unique = true, nullable = false)
+  @Column(name = "email", unique = true, nullable = false)
   private String email;
 
-  @NotEmpty(message = "A gender can't be empty")
-  @Column(nullable = false)
+  @Column(name = "gender", nullable = false)
   private String gender;
 
-  @NotEmpty(message = "A phone can't be empty")
-  @Pattern(regexp = DriverConstant.PASSENGER_PHONE_REGEX)
-  @Column(unique = true, nullable = false)
+  @Pattern(regexp = RegularPatternConstant.PASSENGER_PHONE_REGEX)
+  @Column(name = "phone", unique = true, nullable = false)
   private String phone;
 
-  @Column(nullable = false)
+  @Column(name = "car_id", unique = true)
   private Long carId;
+
+  @Builder.Default
+  @Column(name = "is_enabled", nullable = false)
+  private Boolean isEnabled = Boolean.TRUE;
+
 }
