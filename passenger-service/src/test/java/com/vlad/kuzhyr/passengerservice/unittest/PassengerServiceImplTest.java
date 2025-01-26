@@ -1,11 +1,11 @@
 package com.vlad.kuzhyr.passengerservice.unittest;
 
-import com.vlad.kuzhyr.passengerservice.exception.AlreadyExistsPassengerException;
-import com.vlad.kuzhyr.passengerservice.exception.PassengerNotFoundException;
+import com.vlad.kuzhyr.passengerservice.exception.AlreadyExistsResourceException;
+import com.vlad.kuzhyr.passengerservice.exception.ResourceNotFoundException;
 import com.vlad.kuzhyr.passengerservice.persistence.entity.Passenger;
 import com.vlad.kuzhyr.passengerservice.persistence.repository.PassengerRepository;
 import com.vlad.kuzhyr.passengerservice.service.impl.PassengerServiceImpl;
-import com.vlad.kuzhyr.passengerservice.utility.constant.PassengerServiceConstant;
+import com.vlad.kuzhyr.passengerservice.utility.constant.ExceptionMessageConstant;
 import com.vlad.kuzhyr.passengerservice.utility.mapper.PassengerMapper;
 import com.vlad.kuzhyr.passengerservice.web.request.PassengerRequest;
 import com.vlad.kuzhyr.passengerservice.web.response.PassengerResponse;
@@ -76,13 +76,13 @@ public class PassengerServiceImplTest {
     when(passengerRepository.findPassengerByIdAndIsEnabledTrue(nonExistingPassengerId))
             .thenReturn(Optional.empty());
 
-    PassengerNotFoundException exception = assertThrows(
-            PassengerNotFoundException.class,
+    ResourceNotFoundException exception = assertThrows(
+            ResourceNotFoundException.class,
             () -> passengerServiceImpl.getPassengerById(nonExistingPassengerId)
     );
 
     assertEquals(
-            PassengerServiceConstant.PASSENGER_NOT_FOUND_MESSAGE.formatted(nonExistingPassengerId),
+            ExceptionMessageConstant.PASSENGER_NOT_FOUND_MESSAGE.formatted(nonExistingPassengerId),
             exception.getMessage()
     );
 
@@ -125,13 +125,13 @@ public class PassengerServiceImplTest {
     when(passengerRepository.existsPassengerByEmailAndIsEnabledTrue(passengerRequestEmail))
             .thenReturn(true);
 
-    AlreadyExistsPassengerException exception = assertThrows(
-            AlreadyExistsPassengerException.class,
+    AlreadyExistsResourceException exception = assertThrows(
+            AlreadyExistsResourceException.class,
             () -> passengerServiceImpl.createPassenger(passengerRequest)
     );
 
     assertEquals(
-            PassengerServiceConstant.PASSENGER_ALREADY_EXISTS_BY_EMAIL_MESSAGE.formatted(passengerRequestEmail),
+            ExceptionMessageConstant.PASSENGER_ALREADY_EXISTS_BY_EMAIL_MESSAGE.formatted(passengerRequestEmail),
             exception.getMessage()
     );
 
@@ -148,13 +148,13 @@ public class PassengerServiceImplTest {
     when(passengerRepository.existsPassengerByPhoneAndIsEnabledTrue(passengerRequestPhone))
             .thenReturn(true);
 
-    AlreadyExistsPassengerException exception = assertThrows(
-            AlreadyExistsPassengerException.class,
+    AlreadyExistsResourceException exception = assertThrows(
+            AlreadyExistsResourceException.class,
             () -> passengerServiceImpl.createPassenger(passengerRequest)
     );
 
     assertEquals(
-            PassengerServiceConstant.PASSENGER_ALREADY_EXISTS_BY_PHONE_MESSAGE.formatted(passengerRequestPhone),
+            ExceptionMessageConstant.PASSENGER_ALREADY_EXISTS_BY_PHONE_MESSAGE.formatted(passengerRequestPhone),
             exception.getMessage()
     );
 
@@ -193,13 +193,13 @@ public class PassengerServiceImplTest {
     when(passengerRepository.findPassengerByIdAndIsEnabledTrue(nonExistingPassengerId))
             .thenReturn(Optional.empty());
 
-    PassengerNotFoundException exception = assertThrows(
-            PassengerNotFoundException.class,
+    ResourceNotFoundException exception = assertThrows(
+            ResourceNotFoundException.class,
             () -> passengerServiceImpl.updatePassenger(nonExistingPassengerId, passengerRequest)
     );
 
     assertEquals(
-            PassengerServiceConstant.PASSENGER_NOT_FOUND_MESSAGE.formatted(nonExistingPassengerId),
+            ExceptionMessageConstant.PASSENGER_NOT_FOUND_MESSAGE.formatted(nonExistingPassengerId),
             exception.getMessage()
     );
 
@@ -232,13 +232,13 @@ public class PassengerServiceImplTest {
     when(passengerRepository.findPassengerByIdAndIsEnabledTrue(nonExistingPassengerId))
             .thenReturn(Optional.empty());
 
-    PassengerNotFoundException exception = assertThrows(
-            PassengerNotFoundException.class,
+    ResourceNotFoundException exception = assertThrows(
+            ResourceNotFoundException.class,
             () -> passengerServiceImpl.deletePassengerById(nonExistingPassengerId)
     );
 
     assertEquals(
-            PassengerServiceConstant.PASSENGER_NOT_FOUND_MESSAGE.formatted(nonExistingPassengerId),
+            ExceptionMessageConstant.PASSENGER_NOT_FOUND_MESSAGE.formatted(nonExistingPassengerId),
             exception.getMessage()
     );
 

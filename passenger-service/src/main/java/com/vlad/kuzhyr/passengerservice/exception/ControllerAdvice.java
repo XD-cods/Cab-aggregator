@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class ControllerAdvice {
 
-  @ExceptionHandler(PassengerNotFoundException.class)
+  @ExceptionHandler(ResourceNotFoundException.class)
   @ApiResponses(value = {
           @ApiResponse(
                   responseCode = "404",
@@ -22,7 +22,7 @@ public class ControllerAdvice {
                   content = @Content(schema = @Schema(implementation = ErrorResponse.class))
           )
   })
-  public ResponseEntity<ErrorResponse> notFoundException(PassengerNotFoundException exception) {
+  public ResponseEntity<ErrorResponse> notFoundException(ResourceNotFoundException exception) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse.builder()
             .error(String.valueOf(HttpStatus.NOT_FOUND))
             .errorDescription(exception.getMessage())
@@ -30,7 +30,7 @@ public class ControllerAdvice {
             .build());
   }
 
-  @ExceptionHandler(AlreadyExistsPassengerException.class)
+  @ExceptionHandler(AlreadyExistsResourceException.class)
   @ApiResponses(value = {
           @ApiResponse(
                   responseCode = "409",
@@ -38,7 +38,7 @@ public class ControllerAdvice {
                   content = @Content(schema = @Schema(implementation = ErrorResponse.class))
           )
   })
-  public ResponseEntity<ErrorResponse> conflictException(AlreadyExistsPassengerException exception) {
+  public ResponseEntity<ErrorResponse> conflictException(AlreadyExistsResourceException exception) {
     return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse.builder()
             .error(String.valueOf(HttpStatus.CONFLICT))
             .errorDescription(exception.getMessage())
