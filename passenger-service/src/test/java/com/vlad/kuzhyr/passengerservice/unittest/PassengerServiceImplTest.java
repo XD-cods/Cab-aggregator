@@ -64,9 +64,9 @@ public class PassengerServiceImplTest {
     assertNotNull(result);
     assertEquals(passengerResponse, result);
 
-    verify(passengerRepository, times(1))
+    verify(passengerRepository)
             .findPassengerByIdAndIsEnabledTrue(existingPassengerId);
-    verify(passengerMapper, times(1)).toResponse(passenger);
+    verify(passengerMapper).toResponse(passenger);
   }
 
   @Test
@@ -86,7 +86,7 @@ public class PassengerServiceImplTest {
             exception.getMessage()
     );
 
-    verify(passengerRepository, times(1))
+    verify(passengerRepository)
             .findPassengerByIdAndIsEnabledTrue(nonExistingPassengerId);
     verifyNoInteractions(passengerMapper);
   }
@@ -109,13 +109,13 @@ public class PassengerServiceImplTest {
     assertNotNull(result);
     assertEquals(passengerResponse, result);
 
-    verify(passengerRepository, times(1))
+    verify(passengerRepository)
             .existsPassengerByEmailAndIsEnabledTrue(passengerRequestEmail);
-    verify(passengerRepository, times(1))
+    verify(passengerRepository)
             .existsPassengerByPhoneAndIsEnabledTrue(passengerRequestPhone);
-    verify(passengerMapper, times(1)).toEntity(passengerRequest);
-    verify(passengerRepository, times(1)).save(passenger);
-    verify(passengerMapper, times(1)).toResponse(passenger);
+    verify(passengerMapper).toEntity(passengerRequest);
+    verify(passengerRepository).save(passenger);
+    verify(passengerMapper).toResponse(passenger);
   }
 
   @Test
@@ -135,7 +135,7 @@ public class PassengerServiceImplTest {
             exception.getMessage()
     );
 
-    verify(passengerRepository, times(1))
+    verify(passengerRepository)
             .existsPassengerByEmailAndIsEnabledTrue(passengerRequestEmail);
     verifyNoInteractions(passengerMapper);
     verify(passengerRepository, times(0)).save(passenger);
@@ -158,9 +158,9 @@ public class PassengerServiceImplTest {
             exception.getMessage()
     );
 
-    verify(passengerRepository, times(1))
+    verify(passengerRepository)
             .existsPassengerByEmailAndIsEnabledTrue(passengerRequest.email());
-    verify(passengerRepository, times(1))
+    verify(passengerRepository)
             .existsPassengerByPhoneAndIsEnabledTrue(passengerRequestPhone);
     verifyNoInteractions(passengerMapper);
     verify(passengerRepository, times(0)).save(passenger);
@@ -179,11 +179,11 @@ public class PassengerServiceImplTest {
     assertNotNull(result);
     assertEquals(passengerResponse, result);
 
-    verify(passengerRepository, times(1))
+    verify(passengerRepository)
             .findPassengerByIdAndIsEnabledTrue(existingPassengerId);
-    verify(passengerMapper, times(1)).updateFromRequest(passengerRequest, passenger);
-    verify(passengerRepository, times(1)).save(passenger);
-    verify(passengerMapper, times(1)).toResponse(passenger);
+    verify(passengerMapper).updateFromRequest(passengerRequest, passenger);
+    verify(passengerRepository).save(passenger);
+    verify(passengerMapper).toResponse(passenger);
   }
 
   @Test
@@ -203,7 +203,7 @@ public class PassengerServiceImplTest {
             exception.getMessage()
     );
 
-    verify(passengerRepository, times(1))
+    verify(passengerRepository)
             .findPassengerByIdAndIsEnabledTrue(nonExistingPassengerId);
     verifyNoInteractions(passengerMapper);
     verify(passengerRepository, times(0)).save(passenger);
@@ -220,9 +220,9 @@ public class PassengerServiceImplTest {
 
     assertTrue(result);
 
-    verify(passengerRepository, times(1))
+    verify(passengerRepository)
             .findPassengerByIdAndIsEnabledTrue(existingPassengerId);
-    verify(passengerRepository, times(1)).save(passenger);
+    verify(passengerRepository).save(passenger);
   }
 
   @Test
@@ -242,7 +242,7 @@ public class PassengerServiceImplTest {
             exception.getMessage()
     );
 
-    verify(passengerRepository, times(1))
+    verify(passengerRepository)
             .findPassengerByIdAndIsEnabledTrue(nonExistingPassengerId);
     verifyNoInteractions(passengerMapper);
     verify(passengerRepository, times(0)).save(passenger);
