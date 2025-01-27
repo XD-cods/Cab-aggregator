@@ -32,7 +32,7 @@ public class Car {
   @Column(name = "car_brand", nullable = false)
   private String carBrand;
 
-  @Column(name = "car_number", unique = true, nullable = false)
+  @Column(name = "car_number", nullable = false)
   private String carNumber;
 
   @Builder.Default

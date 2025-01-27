@@ -2,7 +2,7 @@ package com.vlad.kuzhyr.driverservice.web.request;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.vlad.kuzhyr.driverservice.utility.constant.RegularPatternConstant;
+import com.vlad.kuzhyr.driverservice.utility.constant.RegularExpressionConstant;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -27,7 +27,7 @@ public record DriverRequest(
         String gender,
 
         @NotBlank(message = "Phone can't be empty")
-        @Pattern(regexp = RegularPatternConstant.PASSENGER_PHONE_REGEX, message = "Phone not a valid")
+        @Pattern(regexp = RegularExpressionConstant.PASSENGER_PHONE_REGEX, message = "Phone not a valid")
         String phone,
 
         Long carId

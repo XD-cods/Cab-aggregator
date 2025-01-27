@@ -1,6 +1,6 @@
 package com.vlad.kuzhyr.driverservice.persistence.entity;
 
-import com.vlad.kuzhyr.driverservice.utility.constant.RegularPatternConstant;
+import com.vlad.kuzhyr.driverservice.utility.constant.RegularExpressionConstant;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,17 +34,17 @@ public class Driver {
   @Column(name = "last_name", nullable = false)
   private String lastName;
 
-  @Column(name = "email", unique = true, nullable = false)
+  @Column(name = "email", nullable = false)
   private String email;
 
   @Column(name = "gender", nullable = false)
   private String gender;
 
-  @Pattern(regexp = RegularPatternConstant.PASSENGER_PHONE_REGEX)
-  @Column(name = "phone", unique = true, nullable = false)
+  @Pattern(regexp = RegularExpressionConstant.PASSENGER_PHONE_REGEX)
+  @Column(name = "phone", nullable = false)
   private String phone;
 
-  @Column(name = "car_id", unique = true)
+  @Column(name = "car_id")
   private Long carId;
 
   @Builder.Default
