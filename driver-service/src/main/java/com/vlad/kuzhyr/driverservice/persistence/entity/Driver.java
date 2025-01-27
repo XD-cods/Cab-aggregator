@@ -48,7 +48,7 @@ public class Driver {
   @Column(name = "gender", nullable = false)
   @Enumerated(EnumType.STRING)
   @Builder.Default
-  private Gender gender = Gender.Unknown;
+  private Gender gender = Gender.UNKNOWN;
 
   @Pattern(regexp = RegularExpressionConstant.DRIVER_PHONE_REGEX)
   @Column(name = "phone", nullable = false)

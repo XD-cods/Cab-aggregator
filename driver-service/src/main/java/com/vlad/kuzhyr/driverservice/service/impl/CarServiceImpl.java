@@ -22,7 +22,7 @@ public class CarServiceImpl implements CarService {
   public CarResponse getCarById(Long id) {
     Car existCar = carRepository.findCarByIdAndIsEnabledTrue(id)
             .orElseThrow(() -> new CarNotFoundException(
-                    ExceptionMessageConstant.DRIVER_NOT_FOUND_MESSAGE.formatted(id)
+                    ExceptionMessageConstant.CAR_NOT_FOUND_MESSAGE.formatted(id)
             ));
 
     return carMapper.toResponse(existCar);
@@ -47,7 +47,7 @@ public class CarServiceImpl implements CarService {
   public CarResponse updateCar(Long id, CarRequest carRequest) {
     Car existCar = carRepository.findCarByIdAndIsEnabledTrue(id)
             .orElseThrow(() -> new CarNotFoundException(
-                    ExceptionMessageConstant.DRIVER_NOT_FOUND_MESSAGE.formatted(id)
+                    ExceptionMessageConstant.CAR_NOT_FOUND_MESSAGE.formatted(id)
             ));
 
     carMapper.updateFromRequest(carRequest, existCar);
@@ -59,7 +59,7 @@ public class CarServiceImpl implements CarService {
   public Boolean deleteCarById(Long id) {
     Car existCar = carRepository.findCarByIdAndIsEnabledTrue(id)
             .orElseThrow(() -> new CarNotFoundException(
-                    ExceptionMessageConstant.DRIVER_NOT_FOUND_MESSAGE.formatted(id))
+                    ExceptionMessageConstant.CAR_NOT_FOUND_MESSAGE.formatted(id))
             );
 
     existCar.setDriver(null);
