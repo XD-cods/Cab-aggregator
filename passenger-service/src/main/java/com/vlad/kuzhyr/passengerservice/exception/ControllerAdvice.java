@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -62,4 +63,22 @@ public class ControllerAdvice {
             .timestamp(LocalDateTime.now())
             .build());
   }
+
+  @ApiResponses(value = {
+          @ApiResponse(
+                  responseCode = "400",
+                  description = "Request arguments not valid exception",
+                  content = @Content(schema = @Schema(implementation = ErrorResponse.class)
+                  )
+          )
+  })
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<ErrorResponse> requestValidationException(MethodArgumentNotValidException exception) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.builder()
+            .error(String.valueOf(HttpStatus.BAD_REQUEST))
+            .errorDescription(exception.getMessage())
+            .timestamp(LocalDateTime.now())
+            .build());
+  }
+
 }

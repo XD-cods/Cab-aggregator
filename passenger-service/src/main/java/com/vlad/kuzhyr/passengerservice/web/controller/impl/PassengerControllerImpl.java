@@ -4,6 +4,7 @@ import com.vlad.kuzhyr.passengerservice.service.PassengerService;
 import com.vlad.kuzhyr.passengerservice.web.controller.PassengerController;
 import com.vlad.kuzhyr.passengerservice.web.request.PassengerRequest;
 import com.vlad.kuzhyr.passengerservice.web.response.PassengerResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,14 +31,14 @@ public class PassengerControllerImpl implements PassengerController {
 
   @PostMapping
   @Override
-  public ResponseEntity<PassengerResponse> createPassenger(@RequestBody PassengerRequest passengerRequest) {
+  public ResponseEntity<PassengerResponse> createPassenger(@Valid @RequestBody PassengerRequest passengerRequest) {
     return ResponseEntity.status(HttpStatus.CREATED).body(passengerService.createPassenger(passengerRequest));
   }
 
   @PutMapping("/{id}")
   @Override
   public ResponseEntity<PassengerResponse> updatePassenger(@PathVariable Long id,
-                                                           @RequestBody PassengerRequest passengerRequest) {
+                                                           @Valid @RequestBody PassengerRequest passengerRequest) {
     return ResponseEntity.ok(passengerService.updatePassenger(id, passengerRequest));
   }
 
