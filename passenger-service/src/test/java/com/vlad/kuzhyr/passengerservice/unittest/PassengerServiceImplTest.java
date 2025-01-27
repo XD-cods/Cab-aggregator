@@ -1,7 +1,7 @@
 package com.vlad.kuzhyr.passengerservice.unittest;
 
-import com.vlad.kuzhyr.passengerservice.exception.AlreadyExistsResourceException;
-import com.vlad.kuzhyr.passengerservice.exception.ResourceNotFoundException;
+import com.vlad.kuzhyr.passengerservice.exception.PassengerAlreadyExistsException;
+import com.vlad.kuzhyr.passengerservice.exception.PassengerNotFoundException;
 import com.vlad.kuzhyr.passengerservice.persistence.entity.Passenger;
 import com.vlad.kuzhyr.passengerservice.persistence.repository.PassengerRepository;
 import com.vlad.kuzhyr.passengerservice.service.impl.PassengerServiceImpl;
@@ -76,8 +76,8 @@ public class PassengerServiceImplTest {
     when(passengerRepository.findPassengerByIdAndIsEnabledTrue(nonExistingPassengerId))
             .thenReturn(Optional.empty());
 
-    ResourceNotFoundException exception = assertThrows(
-            ResourceNotFoundException.class,
+    PassengerNotFoundException exception = assertThrows(
+            PassengerNotFoundException.class,
             () -> passengerServiceImpl.getPassengerById(nonExistingPassengerId)
     );
 
@@ -125,8 +125,8 @@ public class PassengerServiceImplTest {
     when(passengerRepository.existsPassengerByEmailAndIsEnabledTrue(passengerRequestEmail))
             .thenReturn(true);
 
-    AlreadyExistsResourceException exception = assertThrows(
-            AlreadyExistsResourceException.class,
+    PassengerAlreadyExistsException exception = assertThrows(
+            PassengerAlreadyExistsException.class,
             () -> passengerServiceImpl.createPassenger(passengerRequest)
     );
 
@@ -148,8 +148,8 @@ public class PassengerServiceImplTest {
     when(passengerRepository.existsPassengerByPhoneAndIsEnabledTrue(passengerRequestPhone))
             .thenReturn(true);
 
-    AlreadyExistsResourceException exception = assertThrows(
-            AlreadyExistsResourceException.class,
+    PassengerAlreadyExistsException exception = assertThrows(
+            PassengerAlreadyExistsException.class,
             () -> passengerServiceImpl.createPassenger(passengerRequest)
     );
 
@@ -193,8 +193,8 @@ public class PassengerServiceImplTest {
     when(passengerRepository.findPassengerByIdAndIsEnabledTrue(nonExistingPassengerId))
             .thenReturn(Optional.empty());
 
-    ResourceNotFoundException exception = assertThrows(
-            ResourceNotFoundException.class,
+    PassengerNotFoundException exception = assertThrows(
+            PassengerNotFoundException.class,
             () -> passengerServiceImpl.updatePassenger(nonExistingPassengerId, passengerRequest)
     );
 
@@ -232,8 +232,8 @@ public class PassengerServiceImplTest {
     when(passengerRepository.findPassengerByIdAndIsEnabledTrue(nonExistingPassengerId))
             .thenReturn(Optional.empty());
 
-    ResourceNotFoundException exception = assertThrows(
-            ResourceNotFoundException.class,
+    PassengerNotFoundException exception = assertThrows(
+            PassengerNotFoundException.class,
             () -> passengerServiceImpl.deletePassengerById(nonExistingPassengerId)
     );
 

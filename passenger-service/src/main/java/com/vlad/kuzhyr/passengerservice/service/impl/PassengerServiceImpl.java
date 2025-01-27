@@ -1,7 +1,7 @@
 package com.vlad.kuzhyr.passengerservice.service.impl;
 
-import com.vlad.kuzhyr.passengerservice.exception.AlreadyExistsResourceException;
-import com.vlad.kuzhyr.passengerservice.exception.ResourceNotFoundException;
+import com.vlad.kuzhyr.passengerservice.exception.PassengerAlreadyExistsException;
+import com.vlad.kuzhyr.passengerservice.exception.PassengerNotFoundException;
 import com.vlad.kuzhyr.passengerservice.persistence.entity.Passenger;
 import com.vlad.kuzhyr.passengerservice.persistence.repository.PassengerRepository;
 import com.vlad.kuzhyr.passengerservice.service.PassengerService;
@@ -23,7 +23,7 @@ public class PassengerServiceImpl implements PassengerService {
   @Override
   public PassengerResponse getPassengerById(Long id) {
     Passenger existPassenger = passengerRepository.findPassengerByIdAndIsEnabledTrue(id)
-            .orElseThrow(() -> new ResourceNotFoundException(
+            .orElseThrow(() -> new PassengerNotFoundException(
                     ExceptionMessageConstant.PASSENGER_NOT_FOUND_MESSAGE.formatted(id)
             ));
 
@@ -37,13 +37,13 @@ public class PassengerServiceImpl implements PassengerService {
     String passengerRequestPhone = passengerRequest.phone();
 
     if (passengerRepository.existsPassengerByEmailAndIsEnabledTrue(passengerRequestEmail)) {
-      throw new AlreadyExistsResourceException(
+      throw new PassengerAlreadyExistsException(
               ExceptionMessageConstant.PASSENGER_ALREADY_EXISTS_BY_EMAIL_MESSAGE.formatted(passengerRequestEmail)
       );
     }
 
     if (passengerRepository.existsPassengerByPhoneAndIsEnabledTrue(passengerRequestPhone)) {
-      throw new AlreadyExistsResourceException(
+      throw new PassengerAlreadyExistsException(
               ExceptionMessageConstant.PASSENGER_ALREADY_EXISTS_BY_PHONE_MESSAGE.formatted(passengerRequestPhone)
       );
     }
@@ -57,7 +57,7 @@ public class PassengerServiceImpl implements PassengerService {
   @Override
   public PassengerResponse updatePassenger(Long id, PassengerRequest passengerRequest) {
     Passenger existPassenger = passengerRepository.findPassengerByIdAndIsEnabledTrue(id)
-            .orElseThrow(() -> new ResourceNotFoundException(
+            .orElseThrow(() -> new PassengerNotFoundException(
                     ExceptionMessageConstant.PASSENGER_NOT_FOUND_MESSAGE.formatted(id)
             ));
 
@@ -70,7 +70,7 @@ public class PassengerServiceImpl implements PassengerService {
   @Override
   public Boolean deletePassengerById(Long id) {
     Passenger existPassenger = passengerRepository.findPassengerByIdAndIsEnabledTrue(id)
-            .orElseThrow(() -> new ResourceNotFoundException(
+            .orElseThrow(() -> new PassengerNotFoundException(
                     ExceptionMessageConstant.PASSENGER_NOT_FOUND_MESSAGE.formatted(id))
             );
 
