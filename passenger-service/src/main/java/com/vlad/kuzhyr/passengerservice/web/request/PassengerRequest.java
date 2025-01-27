@@ -14,21 +14,21 @@ import lombok.Builder;
 public record PassengerRequest(
 
         @Schema(description = "Passenger first name", example = "Victor")
-        @NotBlank(message = "First name can't be empty")
+        @NotBlank(message = "{validation.firstname.empty}")
         String firstName,
 
         @Schema(description = "Passenger last name", example = "Don")
-        @NotBlank(message = "Last name can't be empty")
+        @NotBlank(message = "{validation.lastname.empty}")
         String lastName,
 
-        @Email
+        @Email(message = "{validation.email.invalid}")
         @Schema(description = "Passenger email", example = "example@gmail.com")
-        @NotBlank(message = "email can't be empty")
+        @NotBlank(message = "{validation.email.empty}")
         String email,
 
         @Schema(description = "Passenger phone", example = "7849232")
-        @NotBlank(message = "Phone can't be empty")
-        @Pattern(regexp = RegularExpressionConstant.PHONE_REG_XP, message = "Phone not a valid")
+        @NotBlank(message = "{validation.phone.empty}")
+        @Pattern(regexp = RegularExpressionConstant.PHONE_REG_XP, message = "{validation.phone.invalid}")
         String phone
 
 ) {
