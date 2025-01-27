@@ -13,5 +13,4 @@ public interface DriverRepository extends JpaRepository<Driver, Long> {
 
   Boolean existsDriverByPhoneAndIsEnabledTrue(String driverRequestPhone);
 
-  Boolean existsDriverByCarIdAndIsEnabledTrue(Long carId);
 }

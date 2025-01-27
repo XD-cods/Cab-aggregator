@@ -7,9 +7,9 @@ public interface CarService {
 
   CarResponse getCarById(Long id);
 
-  CarResponse createCar(CarRequest passengerRequest);
+  CarResponse createCar(CarRequest carRequest);
 
-  CarResponse updateCar(Long id, CarRequest passengerRequest);
+  CarResponse updateCar(Long id, CarRequest carRequest);
 
   Boolean deleteCarById(Long id);
 

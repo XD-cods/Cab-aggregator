@@ -17,6 +17,5 @@ public record CarRequest(
 
         @NotBlank(message = "Car number can't be empty")
         String carNumber
-
 ) {
 }

@@ -1,10 +1,11 @@
 package com.vlad.kuzhyr.driverservice.utility.constant;
 
-import lombok.experimental.UtilityClass;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-@UtilityClass
-public class RegularExpressionConstant {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class RegularExpressionConstant {
 
-  public final String PASSENGER_PHONE_REGEX = "/^(\\s*)?(\\+)?([- _():=+]?\\d[- _():=+]?){10,14}(\\s*)?$/";
+  public static final String DRIVER_PHONE_REGEX = "^(\\s*)?(\\+)?([- _():=+]?\\d[- _():=+]?){10,14}(\\s*)?$";
 
 }

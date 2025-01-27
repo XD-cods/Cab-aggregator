@@ -2,9 +2,12 @@ package com.vlad.kuzhyr.driverservice.persistence.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,5 +41,9 @@ public class Car {
   @Builder.Default
   @Column(name = "is_enabled", nullable = false)
   private Boolean isEnabled = Boolean.TRUE;
+
+  @JoinColumn(name = "driver_id")
+  @ManyToOne(fetch = FetchType.LAZY)
+  private Driver driver;
 
 }

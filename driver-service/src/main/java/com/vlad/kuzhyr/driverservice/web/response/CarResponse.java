@@ -14,7 +14,9 @@ public record CarResponse(
 
         String carBrand,
 
-        String carNumber
+        String carNumber,
+
+        Long driverId
 
 ) {
 }

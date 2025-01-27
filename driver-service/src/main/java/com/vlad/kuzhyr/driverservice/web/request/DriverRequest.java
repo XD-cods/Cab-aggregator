@@ -8,6 +8,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 
+import java.util.List;
+
 @Builder
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -27,10 +29,10 @@ public record DriverRequest(
         String gender,
 
         @NotBlank(message = "Phone can't be empty")
-        @Pattern(regexp = RegularExpressionConstant.PASSENGER_PHONE_REGEX, message = "Phone not a valid")
+        @Pattern(regexp = RegularExpressionConstant.DRIVER_PHONE_REGEX, message = "Phone not a valid")
         String phone,
 
-        Long carId
+        List<Long> carIds
 
 ) {
 }
