@@ -13,25 +13,13 @@
     <version>0.0.1</version>
     <name>Cab-aggregator</name>
     <description>Cab-aggregator</description>
-    <url/>
-    <licenses>
-        <license/>
-    </licenses>
-    <developers>
-        <developer/>
-    </developers>
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
-    </scm>
+
     <properties>
         <java.version>17</java.version>
     </properties>
     <modules>
-
         <module>driver-service</module>
+
     </modules>
 
 </project>
