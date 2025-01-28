@@ -15,7 +15,11 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class ControllerAdvice {
 
-  @ExceptionHandler(PassengerNotFoundException.class)
+  @ExceptionHandler(value = {
+          RideNotFoundException.class,
+          RidesNotFoundByPassengerIdException.class,
+          RidesNotFoundByDriverIdException.class
+  })
   @ApiResponses(value = {
           @ApiResponse(
                   responseCode = "404",
@@ -23,7 +27,7 @@ public class ControllerAdvice {
                   content = @Content(schema = @Schema(implementation = ErrorResponse.class))
           )
   })
-  public ResponseEntity<ErrorResponse> notFoundException(PassengerNotFoundException exception) {
+  public ResponseEntity<ErrorResponse> notFoundException(Exception exception) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse.builder()
             .error(String.valueOf(HttpStatus.NOT_FOUND))
             .errorDescription(exception.getMessage())

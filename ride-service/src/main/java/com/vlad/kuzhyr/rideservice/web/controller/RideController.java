@@ -1,0 +1,65 @@
+package com.vlad.kuzhyr.rideservice.web.controller;
+
+import com.vlad.kuzhyr.rideservice.web.request.RideRequest;
+import com.vlad.kuzhyr.rideservice.web.request.UpdateRideStatusRequest;
+import com.vlad.kuzhyr.rideservice.web.response.RideResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
+
+import java.util.List;
+
+
+@Tag(name = "Ride API", description = "API for managing rides data")
+public interface RideController {
+
+  @Operation(summary = "Get ride by id")
+  @ApiResponses(value = {
+          @ApiResponse(responseCode = "200", description = "Ride found"),
+          @ApiResponse(responseCode = "404", description = "Ride not found"),
+          @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
+  ResponseEntity<RideResponse> getRideById(Long id);
+
+  @Operation(summary = "Get rides by driver id")
+  @ApiResponses(value = {
+          @ApiResponse(responseCode = "200", description = "Rides found"),
+          @ApiResponse(responseCode = "404", description = "Rides not found by driver id"),
+          @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
+  ResponseEntity<List<RideResponse>> getAllRidesByDriverId(Long driverId, Integer offset, Integer limit);
+
+  @Operation(summary = "Get rides by passenger id")
+  @ApiResponses(value = {
+          @ApiResponse(responseCode = "200", description = "Rides found"),
+          @ApiResponse(responseCode = "404", description = "Rides not found by passenger id"),
+          @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
+  ResponseEntity<List<RideResponse>> getAllRidesByPassengerId(Long passengerId, Integer offset, Integer limit);
+
+  @Operation(summary = "Create new ride")
+  @ApiResponses(value = {
+          @ApiResponse(responseCode = "201", description = "Ride created"),
+          @ApiResponse(responseCode = "404", description = "Ride not found"),
+          @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
+  ResponseEntity<RideResponse> createRide(RideRequest rideRequest);
+
+  @Operation(summary = "Update ride by id and ride request")
+  @ApiResponses(value = {
+          @ApiResponse(responseCode = "200", description = "Ride updated"),
+          @ApiResponse(responseCode = "404", description = "Ride not found"),
+          @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
+  ResponseEntity<RideResponse> updateRide(Long id, RideRequest rideRequest);
+
+  @Operation(summary = "Update ride status by id and ride status update request")
+  @ApiResponses(value = {
+          @ApiResponse(responseCode = "200", description = "Ride status updated"),
+          @ApiResponse(responseCode = "404", description = "Ride not found"),
+          @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
+  ResponseEntity<RideResponse> updateRideStatus(Long id, UpdateRideStatusRequest rideRequest);
+}

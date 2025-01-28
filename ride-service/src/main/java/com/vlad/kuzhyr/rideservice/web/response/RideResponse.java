@@ -2,10 +2,12 @@ package com.vlad.kuzhyr.rideservice.web.response;
 
 import com.vlad.kuzhyr.rideservice.persistence.entity.RideStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Builder
 public record RideResponse(
 
         @Schema(description = "Ride id", example = "1")
