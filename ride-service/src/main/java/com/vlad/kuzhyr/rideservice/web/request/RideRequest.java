@@ -1,5 +1,7 @@
 package com.vlad.kuzhyr.rideservice.web.request;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.vlad.kuzhyr.rideservice.persistence.entity.RideStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -10,6 +12,7 @@ import lombok.Builder;
 import java.math.BigDecimal;
 
 @Builder
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record RideRequest(
 
         @NotBlank(message = "{validation.address.start.empty}")
