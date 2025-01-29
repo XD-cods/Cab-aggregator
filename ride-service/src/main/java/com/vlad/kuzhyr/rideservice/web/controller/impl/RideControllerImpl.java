@@ -13,9 +13,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,7 +38,8 @@ public class RideControllerImpl implements RideController {
   @Override
   @GetMapping
   public ResponseEntity<PageResponse<RideResponse>> getAllRides(
-          Integer offset, Integer limit
+          @RequestParam(required = false, defaultValue = "0") @Min(0) Integer offset,
+          @RequestParam(required = false, defaultValue = "10") @Min(1) @Max(100) Integer limit
   ) {
     return ResponseEntity.ok(rideService.getAllRides(offset, limit));
   }
@@ -63,21 +66,24 @@ public class RideControllerImpl implements RideController {
 
   @Override
   @PostMapping
-  public ResponseEntity<RideResponse> createRide(@Valid RideRequest rideRequest) {
+  public ResponseEntity<RideResponse> createRide(@Valid @RequestBody RideRequest rideRequest) {
     return ResponseEntity.status(HttpStatus.CREATED).body(rideService.createRide(rideRequest));
   }
 
   @Override
   @PutMapping("/{id}")
-  public ResponseEntity<RideResponse> updateRide(@PathVariable Long id, @Valid RideRequest rideRequest) {
+  public ResponseEntity<RideResponse> updateRide(
+          @PathVariable Long id,
+          @Valid @RequestBody RideRequest rideRequest
+  ) {
     return ResponseEntity.ok(rideService.updateRide(id, rideRequest));
   }
 
   @Override
-  @PutMapping("/{id}")
+  @PatchMapping("/{id}")
   public ResponseEntity<RideResponse> updateRideStatus(
           @PathVariable Long id,
-          @Valid UpdateRideStatusRequest rideRequest
+          @Valid @RequestBody UpdateRideStatusRequest rideRequest
   ) {
     return ResponseEntity.ok(rideService.updateRideStatus(id, rideRequest));
   }
