@@ -1,9 +1,9 @@
 package com.vlad.kuzhyr.rideservice.persistence.entity;
 
+import com.vlad.kuzhyr.rideservice.utility.mapper.RideStatusConverter;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -44,7 +44,7 @@ public class Ride {
   private Long passengerId;
 
   @Builder.Default
-  @Enumerated(EnumType.STRING)
+  @Convert(converter = RideStatusConverter.class)
   @Column(name = "ride_status", nullable = false)
   private RideStatus rideStatus = RideStatus.CREATED;
 

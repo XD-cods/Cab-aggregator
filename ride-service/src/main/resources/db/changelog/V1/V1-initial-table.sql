@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS ride (
     finish_address VARCHAR(255) NOT NULL,
     driver_id BIGINT NOT NULL,
     passenger_id BIGINT NOT NULL,
-    ride_status VARCHAR(50) NOT NULL,
+    ride_status INTEGER NOT NULL,
     ride_price DECIMAL NOT NULL,
     start_time TIMESTAMP WITHOUT TIME ZONE,
     finish_time TIMESTAMP WITHOUT TIME ZONE,

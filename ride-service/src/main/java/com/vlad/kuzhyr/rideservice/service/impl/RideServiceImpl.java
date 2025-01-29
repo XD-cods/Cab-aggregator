@@ -122,7 +122,7 @@ public class RideServiceImpl implements RideService {
 
     RideStatus rideStatus = rideRequest.rideStatus();
     switch (rideStatus) {
-      case ON_THE_WAY -> existingRide.setStartTime(LocalDateTime.now());
+      case ACCEPTED -> existingRide.setStartTime(LocalDateTime.now());
       case COMPLETED -> existingRide.setFinishTime(LocalDateTime.now());
     }
 
