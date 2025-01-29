@@ -2,14 +2,17 @@ package com.vlad.kuzhyr.rideservice.web.controller;
 
 import com.vlad.kuzhyr.rideservice.web.request.RideRequest;
 import com.vlad.kuzhyr.rideservice.web.request.UpdateRideStatusRequest;
+import com.vlad.kuzhyr.rideservice.web.response.PageResponse;
 import com.vlad.kuzhyr.rideservice.web.response.RideResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Tag(name = "Ride API", description = "API for managing rides data")
@@ -23,13 +26,27 @@ public interface RideController {
   })
   ResponseEntity<RideResponse> getRideById(Long id);
 
+  @Operation(summary = "Get rides")
+  @ApiResponses(value = {
+          @ApiResponse(responseCode = "200", description = "Rides found"),
+          @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
+  ResponseEntity<PageResponse<RideResponse>> getAllRides(
+          @RequestParam(required = false, defaultValue = "0") @Min(0) Integer offset,
+          @RequestParam(required = false, defaultValue = "10") @Min(1) @Max(100) Integer limit
+  );
+
   @Operation(summary = "Get rides by driver id")
   @ApiResponses(value = {
           @ApiResponse(responseCode = "200", description = "Rides found"),
           @ApiResponse(responseCode = "404", description = "Rides not found by driver id"),
           @ApiResponse(responseCode = "500", description = "Internal server error")
   })
-  ResponseEntity<List<RideResponse>> getAllRidesByDriverId(Long driverId, Integer offset, Integer limit);
+  ResponseEntity<PageResponse<RideResponse>> getAllRidesByDriverId(
+          @PathVariable Long driverId,
+          @RequestParam(required = false, defaultValue = "0") @Min(0) Integer offset,
+          @RequestParam(required = false, defaultValue = "10") @Min(1) @Max(100) Integer limit
+  );
 
   @Operation(summary = "Get rides by passenger id")
   @ApiResponses(value = {
@@ -37,7 +54,11 @@ public interface RideController {
           @ApiResponse(responseCode = "404", description = "Rides not found by passenger id"),
           @ApiResponse(responseCode = "500", description = "Internal server error")
   })
-  ResponseEntity<List<RideResponse>> getAllRidesByPassengerId(Long passengerId, Integer offset, Integer limit);
+  ResponseEntity<PageResponse<RideResponse>> getAllRidesByPassengerId(
+          @PathVariable Long passengerId,
+          @RequestParam(required = false, defaultValue = "0") @Min(0) Integer offset,
+          @RequestParam(required = false, defaultValue = "10") @Min(1) @Max(100) Integer limit
+  );
 
   @Operation(summary = "Create new ride")
   @ApiResponses(value = {
