@@ -2,14 +2,13 @@ package com.vlad.kuzhyr.driverservice.service;
 
 import com.vlad.kuzhyr.driverservice.web.request.CarRequest;
 import com.vlad.kuzhyr.driverservice.web.response.CarResponse;
-
-import java.util.List;
+import com.vlad.kuzhyr.driverservice.web.response.PageResponse;
 
 public interface CarService {
 
   CarResponse getCarById(Long id);
 
-  List<CarResponse> getAllCar(Integer offset, Integer limit);
+  PageResponse<CarResponse> getAllCar(Integer offset, Integer limit);
 
   CarResponse createCar(CarRequest carRequest);
 

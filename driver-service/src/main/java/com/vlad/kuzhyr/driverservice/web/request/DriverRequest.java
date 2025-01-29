@@ -14,7 +14,6 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record DriverRequest(
 

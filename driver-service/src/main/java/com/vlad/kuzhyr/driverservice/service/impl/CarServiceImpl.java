@@ -9,14 +9,15 @@ import com.vlad.kuzhyr.driverservice.utility.constant.ExceptionMessageConstant;
 import com.vlad.kuzhyr.driverservice.utility.mapper.CarMapper;
 import com.vlad.kuzhyr.driverservice.web.request.CarRequest;
 import com.vlad.kuzhyr.driverservice.web.response.CarResponse;
+import com.vlad.kuzhyr.driverservice.web.response.PageResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,12 +36,20 @@ public class CarServiceImpl implements CarService {
   }
 
   @Override
-  public List<CarResponse> getAllCar(Integer offset, Integer limit) {
+  public PageResponse<CarResponse> getAllCar(Integer offset, Integer limit) {
     Pageable pageable = PageRequest.of(offset, limit);
-    List<Car> cars = carRepository.findAll(pageable).getContent();
-    return cars.stream()
+    Page<Car> carsPage = carRepository.findByIsEnabledTrue(pageable);
+    List<CarResponse> carResponse = carsPage.getContent()
+            .stream()
             .map(carMapper::toResponse)
-            .collect(Collectors.toList());
+            .toList();
+
+    return PageResponse.<CarResponse>builder()
+            .content(carResponse)
+            .currentOffset(offset)
+            .totalElements(carsPage.getTotalElements())
+            .totalPages(carsPage.getTotalPages())
+            .build();
   }
 
   @Override

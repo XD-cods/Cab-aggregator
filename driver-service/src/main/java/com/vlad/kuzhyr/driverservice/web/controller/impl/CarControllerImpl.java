@@ -4,6 +4,7 @@ import com.vlad.kuzhyr.driverservice.service.CarService;
 import com.vlad.kuzhyr.driverservice.web.controller.CarController;
 import com.vlad.kuzhyr.driverservice.web.request.CarRequest;
 import com.vlad.kuzhyr.driverservice.web.response.CarResponse;
+import com.vlad.kuzhyr.driverservice.web.response.PageResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -19,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/cars")
@@ -35,9 +34,9 @@ public class CarControllerImpl implements CarController {
 
   @Override
   @GetMapping
-  public ResponseEntity<List<CarResponse>> getAllCar(
-          @RequestParam(defaultValue = "0") @Min(0) Integer offset,
-          @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit
+  public ResponseEntity<PageResponse<CarResponse>> getAllCar(
+          @RequestParam(required = false, defaultValue = "0") @Min(0) Integer offset,
+          @RequestParam(required = false, defaultValue = "10") @Min(1) @Max(100) Integer limit
   ) {
     return ResponseEntity.ok(carService.getAllCar(offset, limit));
   }
