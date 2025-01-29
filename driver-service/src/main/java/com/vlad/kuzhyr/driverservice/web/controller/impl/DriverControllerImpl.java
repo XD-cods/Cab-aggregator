@@ -5,6 +5,8 @@ import com.vlad.kuzhyr.driverservice.web.controller.DriverController;
 import com.vlad.kuzhyr.driverservice.web.request.DriverRequest;
 import com.vlad.kuzhyr.driverservice.web.response.DriverResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +16,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,6 +31,15 @@ public class DriverControllerImpl implements DriverController {
   @GetMapping("/{id}")
   public ResponseEntity<DriverResponse> getDriverById(@PathVariable Long id) {
     return ResponseEntity.ok(driverService.getDriverById(id));
+  }
+
+  @Override
+  @GetMapping
+  public ResponseEntity<List<DriverResponse>> getAllDriver(
+          @RequestParam(defaultValue = "0") @Min(0) Integer offset,
+          @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit
+  ) {
+    return ResponseEntity.ok(driverService.getAllDriver(offset, limit));
   }
 
   @Override

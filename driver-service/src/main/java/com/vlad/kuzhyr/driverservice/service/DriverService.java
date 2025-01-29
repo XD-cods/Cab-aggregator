@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import java.util.List;
+
 @Tag(name = "Driver API", description = "CRUD Api for managing drivers")
 public interface DriverService {
 
@@ -47,4 +49,5 @@ public interface DriverService {
   })
   Boolean deleteDriverById(Long id);
 
+  List<DriverResponse> getAllDriver(Integer offset, Integer limit);
 }

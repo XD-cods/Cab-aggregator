@@ -13,9 +13,12 @@ import com.vlad.kuzhyr.driverservice.web.request.DriverRequest;
 import com.vlad.kuzhyr.driverservice.web.response.DriverResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -90,6 +93,15 @@ public class DriverServiceImpl implements DriverService {
     existDriver.setIsEnabled(Boolean.FALSE);
     driverRepository.save(existDriver);
     return Boolean.TRUE;
+  }
+
+  @Override
+  public List<DriverResponse> getAllDriver(Integer offset, Integer limit) {
+    Pageable pageable = PageRequest.of(offset, limit);
+    List<Driver> drivers = driverRepository.findAll(pageable).getContent();
+    return drivers.stream()
+            .map(driverMapper::toResponse)
+            .collect(Collectors.toList());
   }
 
 }

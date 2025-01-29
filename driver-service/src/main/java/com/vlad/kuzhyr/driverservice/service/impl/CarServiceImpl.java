@@ -10,7 +10,12 @@ import com.vlad.kuzhyr.driverservice.utility.mapper.CarMapper;
 import com.vlad.kuzhyr.driverservice.web.request.CarRequest;
 import com.vlad.kuzhyr.driverservice.web.response.CarResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -66,6 +71,15 @@ public class CarServiceImpl implements CarService {
     existCar.setIsEnabled(Boolean.FALSE);
     carRepository.save(existCar);
     return Boolean.TRUE;
+  }
+
+  @Override
+  public List<CarResponse> getAllCar(Integer offset, Integer limit) {
+    Pageable pageable = PageRequest.of(offset, limit);
+    List<Car> cars = carRepository.findAll(pageable).getContent();
+    return cars.stream()
+            .map(carMapper::toResponse)
+            .collect(Collectors.toList());
   }
 
 }

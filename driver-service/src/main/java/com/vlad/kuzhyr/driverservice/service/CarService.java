@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import java.util.List;
+
 @Tag(name = "Car API", description = "CRUD Api for managing cars")
 public interface CarService {
 
@@ -47,4 +49,5 @@ public interface CarService {
   })
   Boolean deleteCarById(Long id);
 
+  List<CarResponse> getAllCar(Integer offset, Integer limit);
 }
