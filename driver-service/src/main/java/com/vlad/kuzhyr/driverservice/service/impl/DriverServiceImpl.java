@@ -38,6 +38,15 @@ public class DriverServiceImpl implements DriverService {
   }
 
   @Override
+  public List<DriverResponse> getAllDriver(Integer offset, Integer limit) {
+    Pageable pageable = PageRequest.of(offset, limit);
+    List<Driver> drivers = driverRepository.findAll(pageable).getContent();
+    return drivers.stream()
+            .map(driverMapper::toResponse)
+            .collect(Collectors.toList());
+  }
+
+  @Override
   @Transactional
   public DriverResponse createDriver(DriverRequest driverRequest) {
     String driverRequestEmail = driverRequest.email();
@@ -93,15 +102,6 @@ public class DriverServiceImpl implements DriverService {
     existDriver.setIsEnabled(Boolean.FALSE);
     driverRepository.save(existDriver);
     return Boolean.TRUE;
-  }
-
-  @Override
-  public List<DriverResponse> getAllDriver(Integer offset, Integer limit) {
-    Pageable pageable = PageRequest.of(offset, limit);
-    List<Driver> drivers = driverRepository.findAll(pageable).getContent();
-    return drivers.stream()
-            .map(driverMapper::toResponse)
-            .collect(Collectors.toList());
   }
 
 }

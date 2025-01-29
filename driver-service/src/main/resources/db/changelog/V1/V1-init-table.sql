@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS driver (
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     email VARCHAR(255) NOT NULL,
-    gender VARCHAR(10) NOT NULL,
+    gender INTEGER NOT NULL,
     phone VARCHAR(20) NOT NULL,
     is_enabled BOOLEAN NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_driver PRIMARY KEY (driver_id)

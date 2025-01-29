@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +35,16 @@ public class CarServiceImpl implements CarService {
   }
 
   @Override
+  public List<CarResponse> getAllCar(Integer offset, Integer limit) {
+    Pageable pageable = PageRequest.of(offset, limit);
+    List<Car> cars = carRepository.findAll(pageable).getContent();
+    return cars.stream()
+            .map(carMapper::toResponse)
+            .collect(Collectors.toList());
+  }
+
+  @Override
+  @Transactional
   public CarResponse createCar(CarRequest carRequest) {
     String carRequestNumber = carRequest.carNumber();
 
@@ -49,6 +60,7 @@ public class CarServiceImpl implements CarService {
   }
 
   @Override
+  @Transactional
   public CarResponse updateCar(Long id, CarRequest carRequest) {
     Car existCar = carRepository.findCarByIdAndIsEnabledTrue(id)
             .orElseThrow(() -> new CarNotFoundException(
@@ -61,6 +73,7 @@ public class CarServiceImpl implements CarService {
   }
 
   @Override
+  @Transactional
   public Boolean deleteCarById(Long id) {
     Car existCar = carRepository.findCarByIdAndIsEnabledTrue(id)
             .orElseThrow(() -> new CarNotFoundException(
@@ -71,15 +84,6 @@ public class CarServiceImpl implements CarService {
     existCar.setIsEnabled(Boolean.FALSE);
     carRepository.save(existCar);
     return Boolean.TRUE;
-  }
-
-  @Override
-  public List<CarResponse> getAllCar(Integer offset, Integer limit) {
-    Pageable pageable = PageRequest.of(offset, limit);
-    List<Car> cars = carRepository.findAll(pageable).getContent();
-    return cars.stream()
-            .map(carMapper::toResponse)
-            .collect(Collectors.toList());
   }
 
 }

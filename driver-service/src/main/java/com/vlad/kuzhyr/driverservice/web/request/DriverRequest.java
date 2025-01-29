@@ -2,10 +2,12 @@ package com.vlad.kuzhyr.driverservice.web.request;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.vlad.kuzhyr.driverservice.persistence.entity.Gender;
 import com.vlad.kuzhyr.driverservice.utility.constant.RegularExpressionConstant;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 
@@ -29,9 +31,9 @@ public record DriverRequest(
         @Schema(description = "Driver email", example = "example@mail.ru")
         String email,
 
-        @NotBlank(message = "{validation.gender.empty}")
+        @NotNull(message = "{validation.gender.empty}")
         @Schema(description = "Driver gender", example = "MALE")
-        String gender,
+        Gender gender,
 
         @NotBlank(message = "{validation.phone.empty}")
         @Pattern(regexp = RegularExpressionConstant.DRIVER_PHONE_REGEX, message = "{validation.phone.invalid}")

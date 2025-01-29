@@ -1,11 +1,11 @@
 package com.vlad.kuzhyr.driverservice.persistence.entity;
 
 import com.vlad.kuzhyr.driverservice.utility.constant.RegularExpressionConstant;
+import com.vlad.kuzhyr.driverservice.utility.mapper.GenderConverter;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -46,7 +46,7 @@ public class Driver {
   private String email;
 
   @Column(name = "gender", nullable = false)
-  @Enumerated(EnumType.STRING)
+  @Convert(converter = GenderConverter.class)
   @Builder.Default
   private Gender gender = Gender.UNKNOWN;
 
