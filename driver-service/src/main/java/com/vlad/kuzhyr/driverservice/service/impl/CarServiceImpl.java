@@ -7,6 +7,7 @@ import com.vlad.kuzhyr.driverservice.persistence.repository.CarRepository;
 import com.vlad.kuzhyr.driverservice.service.CarService;
 import com.vlad.kuzhyr.driverservice.utility.constant.ExceptionMessageConstant;
 import com.vlad.kuzhyr.driverservice.utility.mapper.CarMapper;
+import com.vlad.kuzhyr.driverservice.utility.mapper.PageResponseMapper;
 import com.vlad.kuzhyr.driverservice.web.request.CarRequest;
 import com.vlad.kuzhyr.driverservice.web.response.CarResponse;
 import com.vlad.kuzhyr.driverservice.web.response.PageResponse;
@@ -17,21 +18,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class CarServiceImpl implements CarService {
+
   private final CarRepository carRepository;
   private final CarMapper carMapper;
+  private final PageResponseMapper pageResponseMapper;
 
   @Override
   public CarResponse getCarById(Long id) {
-    Car existCar = carRepository.findCarByIdAndIsEnabledTrue(id)
-            .orElseThrow(() -> new CarNotFoundException(
-                    ExceptionMessageConstant.CAR_NOT_FOUND_MESSAGE.formatted(id)
-            ));
-
+    Car existCar = getExistCarById(id);
     return carMapper.toResponse(existCar);
   }
 
@@ -39,17 +36,12 @@ public class CarServiceImpl implements CarService {
   public PageResponse<CarResponse> getAllCar(Integer offset, Integer limit) {
     Pageable pageable = PageRequest.of(offset, limit);
     Page<Car> carsPage = carRepository.findByIsEnabledTrue(pageable);
-    List<CarResponse> carResponse = carsPage.getContent()
-            .stream()
-            .map(carMapper::toResponse)
-            .toList();
 
-    return PageResponse.<CarResponse>builder()
-            .content(carResponse)
-            .currentOffset(offset)
-            .totalElements(carsPage.getTotalElements())
-            .totalPages(carsPage.getTotalPages())
-            .build();
+    return pageResponseMapper.toPageResponse(
+            carsPage,
+            offset,
+            carMapper::toResponse
+    );
   }
 
   @Override
@@ -71,11 +63,7 @@ public class CarServiceImpl implements CarService {
   @Override
   @Transactional
   public CarResponse updateCar(Long id, CarRequest carRequest) {
-    Car existCar = carRepository.findCarByIdAndIsEnabledTrue(id)
-            .orElseThrow(() -> new CarNotFoundException(
-                    ExceptionMessageConstant.CAR_NOT_FOUND_MESSAGE.formatted(id)
-            ));
-
+    Car existCar = getExistCarById(id);
     carMapper.updateFromRequest(carRequest, existCar);
     carRepository.save(existCar);
     return carMapper.toResponse(existCar);
@@ -84,15 +72,20 @@ public class CarServiceImpl implements CarService {
   @Override
   @Transactional
   public Boolean deleteCarById(Long id) {
-    Car existCar = carRepository.findCarByIdAndIsEnabledTrue(id)
-            .orElseThrow(() -> new CarNotFoundException(
-                    ExceptionMessageConstant.CAR_NOT_FOUND_MESSAGE.formatted(id))
-            );
+    Car existCar = getExistCarById(id);
 
     existCar.setDriver(null);
     existCar.setIsEnabled(Boolean.FALSE);
+
     carRepository.save(existCar);
     return Boolean.TRUE;
+  }
+
+  private Car getExistCarById(Long id) {
+    return carRepository.findCarByIdAndIsEnabledTrue(id)
+            .orElseThrow(() -> new CarNotFoundException(
+                    ExceptionMessageConstant.CAR_NOT_FOUND_MESSAGE.formatted(id)
+            ));
   }
 
 }
