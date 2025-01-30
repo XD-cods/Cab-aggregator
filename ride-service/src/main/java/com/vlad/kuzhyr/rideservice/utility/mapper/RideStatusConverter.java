@@ -6,12 +6,9 @@ import jakarta.persistence.Converter;
 
 @Converter
 public class RideStatusConverter implements AttributeConverter<RideStatus, Integer> {
+
   @Override
   public Integer convertToDatabaseColumn(RideStatus rideStatus) {
-    if (rideStatus == null) {
-      return null;
-    }
-
     return rideStatus.getCode();
   }
 
@@ -23,4 +20,5 @@ public class RideStatusConverter implements AttributeConverter<RideStatus, Integ
 
     return RideStatus.fromCode(code);
   }
+
 }

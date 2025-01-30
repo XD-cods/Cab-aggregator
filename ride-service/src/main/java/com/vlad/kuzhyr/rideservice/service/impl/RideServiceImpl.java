@@ -8,6 +8,7 @@ import com.vlad.kuzhyr.rideservice.persistence.entity.RideStatus;
 import com.vlad.kuzhyr.rideservice.persistence.repository.RideRepository;
 import com.vlad.kuzhyr.rideservice.service.RideService;
 import com.vlad.kuzhyr.rideservice.utility.constant.ExceptionMessageConstant;
+import com.vlad.kuzhyr.rideservice.utility.mapper.PageResponseMapper;
 import com.vlad.kuzhyr.rideservice.utility.mapper.RideMapper;
 import com.vlad.kuzhyr.rideservice.web.request.RideRequest;
 import com.vlad.kuzhyr.rideservice.web.request.UpdateRideStatusRequest;
@@ -17,24 +18,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class RideServiceImpl implements RideService {
+
   private final RideRepository rideRepository;
   private final RideMapper rideMapper;
+  private final PageResponseMapper pageResponseMapper;
 
   @Override
   public RideResponse getRideById(Long id) {
-    Ride existingRide = rideRepository.findById(id)
-            .orElseThrow(() -> new RideNotFoundException(
-                    ExceptionMessageConstant.RIDE_NOT_FOUND_MESSAGE.formatted(id)
-            ));
-
+    Ride existingRide = getExistingRideById(id);
     return rideMapper.toResponse(existingRide);
   }
 
@@ -49,64 +47,51 @@ public class RideServiceImpl implements RideService {
     Page<Ride> existingRidesByDriverId = rideRepository
             .findByDriverId(driverId, PageRequest.of(offset, limit));
 
-    List<RideResponse> rideResponses = existingRidesByDriverId.stream()
-            .map(rideMapper::toResponse)
-            .collect(Collectors.toList());
-
-    return PageResponse.<RideResponse>builder()
-            .content(rideResponses)
-            .currentOffset(offset)
-            .totalElements(existingRidesByDriverId.getTotalElements())
-            .totalPages(existingRidesByDriverId.getTotalPages())
-            .build();
+    return pageResponseMapper.toPageResponse(
+            existingRidesByDriverId,
+            offset,
+            rideMapper::toResponse
+    );
   }
 
   @Override
-  public PageResponse<RideResponse> getAllRidesByPassengerId(Long passengerId, Integer offset, Integer limit) {
+  public PageResponse<RideResponse> getAllRidesByPassengerId(
+          Long passengerId,
+          Integer offset,
+          Integer limit
+  ) {
     if (!rideRepository.existsRidesByPassengerId(passengerId)) {
       throw new RidesNotFoundByPassengerIdException(
               ExceptionMessageConstant.RIDES_NOT_FOUND_BY_PASSENGER_ID_MESSAGE.formatted(passengerId)
       );
     }
 
-    Page<Ride> existingRidesByDriverId = rideRepository
+    Page<Ride> existingRidesByPassengerId = rideRepository
             .findByPassengerId(passengerId, PageRequest.of(offset, limit));
 
-    List<RideResponse> rideResponses = existingRidesByDriverId.stream()
-            .map(rideMapper::toResponse)
-            .collect(Collectors.toList());
-
-    return PageResponse.<RideResponse>builder()
-            .content(rideResponses)
-            .currentOffset(offset)
-            .totalElements(existingRidesByDriverId.getTotalElements())
-            .totalPages(existingRidesByDriverId.getTotalPages())
-            .build();
+    return pageResponseMapper.toPageResponse(
+            existingRidesByPassengerId,
+            offset,
+            rideMapper::toResponse
+    );
   }
 
   @Override
   public PageResponse<RideResponse> getAllRides(Integer offset, Integer limit) {
-    Page<Ride> existingRidesByDriverId = rideRepository
+    Page<Ride> existingRidesId = rideRepository
             .findAll(PageRequest.of(offset, limit));
 
-    List<RideResponse> rideResponses = existingRidesByDriverId.stream()
-            .map(rideMapper::toResponse)
-            .collect(Collectors.toList());
-
-    return PageResponse.<RideResponse>builder()
-            .content(rideResponses)
-            .currentOffset(offset)
-            .totalElements(existingRidesByDriverId.getTotalElements())
-            .totalPages(existingRidesByDriverId.getTotalPages())
-            .build();
+    return pageResponseMapper.toPageResponse(
+            existingRidesId,
+            offset,
+            rideMapper::toResponse
+    );
   }
 
   @Override
+  @Transactional
   public RideResponse updateRide(Long id, RideRequest rideRequest) {
-    Ride existingRide = rideRepository.findById(id)
-            .orElseThrow(() -> new RideNotFoundException(
-                    ExceptionMessageConstant.RIDE_NOT_FOUND_MESSAGE.formatted(id)
-            ));
+    Ride existingRide = getExistingRideById(id);
 
     rideMapper.updateFromRequest(rideRequest, existingRide);
     Ride savedRide = rideRepository.save(existingRide);
@@ -114,11 +99,9 @@ public class RideServiceImpl implements RideService {
   }
 
   @Override
+  @Transactional
   public RideResponse updateRideStatus(Long id, UpdateRideStatusRequest rideRequest) {
-    Ride existingRide = rideRepository.findById(id)
-            .orElseThrow(() -> new RideNotFoundException(
-                    ExceptionMessageConstant.RIDE_NOT_FOUND_MESSAGE.formatted(id)
-            ));
+    Ride existingRide = getExistingRideById(id);
 
     RideStatus rideStatus = rideRequest.rideStatus();
     switch (rideStatus) {
@@ -132,10 +115,18 @@ public class RideServiceImpl implements RideService {
   }
 
   @Override
+  @Transactional
   public RideResponse createRide(RideRequest rideRequest) {
     Ride ride = rideMapper.toEntity(rideRequest);
     Ride savedRide = rideRepository.save(ride);
     return rideMapper.toResponse(savedRide);
+  }
+
+  private Ride getExistingRideById(Long id) {
+    return rideRepository.findById(id)
+            .orElseThrow(() -> new RideNotFoundException(
+                    ExceptionMessageConstant.RIDE_NOT_FOUND_MESSAGE.formatted(id)
+            ));
   }
 
 }

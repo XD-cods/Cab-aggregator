@@ -4,7 +4,6 @@ import com.vlad.kuzhyr.rideservice.web.request.RideRequest;
 import com.vlad.kuzhyr.rideservice.web.request.UpdateRideStatusRequest;
 import com.vlad.kuzhyr.rideservice.web.response.PageResponse;
 import com.vlad.kuzhyr.rideservice.web.response.RideResponse;
-import jakarta.validation.Valid;
 
 public interface RideService {
 
@@ -16,9 +15,9 @@ public interface RideService {
 
   PageResponse<RideResponse> getAllRides(Integer offset, Integer limit);
 
-  RideResponse updateRide(Long id, @Valid RideRequest rideRequest);
+  RideResponse updateRide(Long id, RideRequest rideRequest);
 
-  RideResponse updateRideStatus(Long id, @Valid UpdateRideStatusRequest rideRequest);
+  RideResponse updateRideStatus(Long id, UpdateRideStatusRequest rideRequest);
 
-  RideResponse createRide(@Valid RideRequest rideRequest);
+  RideResponse createRide(RideRequest rideRequest);
 }
