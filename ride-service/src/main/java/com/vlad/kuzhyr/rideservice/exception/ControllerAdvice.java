@@ -62,8 +62,11 @@ public class ControllerAdvice {
   })
   @ExceptionHandler(value = {
           MethodArgumentNotValidException.class,
-          AddressNotValid.class,
-          DistanceExtractionException.class
+          AddressNotValidException.class,
+          DistanceExtractionException.class,
+          NotValidStatusTransitionException.class,
+          RideCanNotUpdatableException.class,
+          DepartureAndDestinationAddressesSameException.class
   })
   public ResponseEntity<ErrorResponse> requestValidationException(Exception exception) {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.builder()

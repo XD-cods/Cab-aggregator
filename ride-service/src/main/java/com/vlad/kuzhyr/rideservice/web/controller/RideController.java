@@ -1,6 +1,7 @@
 package com.vlad.kuzhyr.rideservice.web.controller;
 
 import com.vlad.kuzhyr.rideservice.web.request.RideRequest;
+import com.vlad.kuzhyr.rideservice.web.request.UpdateRideRequest;
 import com.vlad.kuzhyr.rideservice.web.request.UpdateRideStatusRequest;
 import com.vlad.kuzhyr.rideservice.web.response.PageResponse;
 import com.vlad.kuzhyr.rideservice.web.response.RideResponse;
@@ -76,7 +77,7 @@ public interface RideController {
           @ApiResponse(responseCode = "404", description = "Ride not found"),
           @ApiResponse(responseCode = "500", description = "Internal server error")
   })
-  ResponseEntity<RideResponse> updateRide(@PathVariable Long id, @Valid @RequestBody RideRequest rideRequest);
+  ResponseEntity<RideResponse> updateRide(@PathVariable Long id, @Valid @RequestBody UpdateRideRequest rideRequest);
 
   @Operation(summary = "Update ride status by id and ride status update request")
   @ApiResponses(value = {
@@ -85,4 +86,5 @@ public interface RideController {
           @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   ResponseEntity<RideResponse> updateRideStatus(@PathVariable Long id, @Valid @RequestBody UpdateRideStatusRequest rideRequest);
+
 }

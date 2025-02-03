@@ -3,6 +3,7 @@ package com.vlad.kuzhyr.rideservice.web.controller.impl;
 import com.vlad.kuzhyr.rideservice.service.RideService;
 import com.vlad.kuzhyr.rideservice.web.controller.RideController;
 import com.vlad.kuzhyr.rideservice.web.request.RideRequest;
+import com.vlad.kuzhyr.rideservice.web.request.UpdateRideRequest;
 import com.vlad.kuzhyr.rideservice.web.request.UpdateRideStatusRequest;
 import com.vlad.kuzhyr.rideservice.web.response.PageResponse;
 import com.vlad.kuzhyr.rideservice.web.response.RideResponse;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/rides")
 public class RideControllerImpl implements RideController {
+
   private final RideService rideService;
 
   @Override
@@ -74,7 +76,7 @@ public class RideControllerImpl implements RideController {
   @PutMapping("/{id}")
   public ResponseEntity<RideResponse> updateRide(
           @PathVariable Long id,
-          @Valid @RequestBody RideRequest rideRequest
+          @Valid @RequestBody UpdateRideRequest rideRequest
   ) {
     return ResponseEntity.ok(rideService.updateRide(id, rideRequest));
   }

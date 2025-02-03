@@ -28,6 +28,9 @@ public record RideResponse(
         @Schema(description = "Ride passenger id", example = "1")
         Long passengerId,
 
+        @Schema(description = "Ride distance", example = "1000")
+        Double rideDistance,
+
         @Schema(description = "Ride status", example = "CREATED")
         RideStatus rideStatus,
 
@@ -41,4 +44,5 @@ public record RideResponse(
         LocalDateTime finishTime
 
 ) {
+
 }

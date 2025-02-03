@@ -16,4 +16,5 @@ public record PageResponse<T>(
         Integer totalPages
 
 ) {
+
 }

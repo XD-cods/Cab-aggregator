@@ -22,4 +22,5 @@ public record ErrorResponse(
         LocalDateTime timestamp
 
 ) {
+
 }

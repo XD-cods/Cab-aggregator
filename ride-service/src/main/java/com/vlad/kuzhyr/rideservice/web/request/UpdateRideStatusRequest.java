@@ -14,4 +14,5 @@ public record UpdateRideStatusRequest(
         RideStatus rideStatus
 
 ) {
+
 }

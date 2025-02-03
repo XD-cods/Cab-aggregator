@@ -49,4 +49,5 @@ public class AppConfig {
     bean.setValidationMessageSource(messageSource());
     return bean;
   }
+
 }

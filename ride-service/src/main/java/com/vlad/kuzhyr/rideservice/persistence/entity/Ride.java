@@ -4,9 +4,12 @@ import com.vlad.kuzhyr.rideservice.utility.mapper.RideStatusConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,11 +34,16 @@ public class Ride {
   @Column(name = "ride_id", nullable = false)
   private Long id;
 
-  @Column(name = "start_address", nullable = false)
-  private String startAddress;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "departure_address", nullable = false)
+  private Address departureAddress;
 
-  @Column(name = "finish_address", nullable = false)
-  private String finishAddress;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "destination_address", nullable = false)
+  private Address destinationAddress;
+
+  @Column(name = "distance", nullable = false)
+  private Double rideDistance;
 
   @Column(name = "driver_id", nullable = false)
   private Long driverId;
@@ -51,10 +59,10 @@ public class Ride {
   @Column(name = "ride_price", nullable = false)
   private BigDecimal ridePrice;
 
-  @Column(name = "start_time")
-  private LocalDateTime startTime;
+  @Column(name = "pickup_time")
+  private LocalDateTime pickupTime;
 
-  @Column(name = "finish_time")
-  private LocalDateTime finishTime;
+  @Column(name = "complete_time")
+  private LocalDateTime completeTime;
 
 }
