@@ -10,8 +10,8 @@ import lombok.Builder;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record UpdateRideStatusRequest(
 
-        @NotNull(message = "{validation.status.empty}")
-        RideStatus rideStatus
+    @NotNull(message = "{validation.status.empty}")
+    RideStatus rideStatus
 
 ) {
 

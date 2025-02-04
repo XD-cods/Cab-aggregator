@@ -29,65 +29,65 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/rides")
 public class RideControllerImpl implements RideController {
 
-  private final RideService rideService;
+    private final RideService rideService;
 
-  @Override
-  @GetMapping("/{id}")
-  public ResponseEntity<RideResponse> getRideById(@PathVariable Long id) {
-    return ResponseEntity.ok(rideService.getRideById(id));
-  }
+    @Override
+    @GetMapping("/{id}")
+    public ResponseEntity<RideResponse> getRideById(@PathVariable Long id) {
+        return ResponseEntity.ok(rideService.getRideById(id));
+    }
 
-  @Override
-  @GetMapping
-  public ResponseEntity<PageResponse<RideResponse>> getAllRides(
-          @RequestParam(required = false, defaultValue = "0") @Min(0) Integer offset,
-          @RequestParam(required = false, defaultValue = "10") @Min(1) @Max(100) Integer limit
-  ) {
-    return ResponseEntity.ok(rideService.getAllRides(offset, limit));
-  }
+    @Override
+    @GetMapping
+    public ResponseEntity<PageResponse<RideResponse>> getAllRides(
+        @RequestParam(required = false, defaultValue = "0") @Min(0) Integer offset,
+        @RequestParam(required = false, defaultValue = "10") @Min(1) @Max(100) Integer limit
+    ) {
+        return ResponseEntity.ok(rideService.getAllRides(offset, limit));
+    }
 
-  @Override
-  @GetMapping("/driver/{driverId}")
-  public ResponseEntity<PageResponse<RideResponse>> getAllRidesByDriverId(
-          @PathVariable Long driverId,
-          @RequestParam(required = false, defaultValue = "0") @Min(0) Integer offset,
-          @RequestParam(required = false, defaultValue = "10") @Min(1) @Max(100) Integer limit
-  ) {
-    return ResponseEntity.ok(rideService.getAllRidesByDriverId(driverId, offset, limit));
-  }
+    @Override
+    @GetMapping("/driver/{driverId}")
+    public ResponseEntity<PageResponse<RideResponse>> getAllRidesByDriverId(
+        @PathVariable Long driverId,
+        @RequestParam(required = false, defaultValue = "0") @Min(0) Integer offset,
+        @RequestParam(required = false, defaultValue = "10") @Min(1) @Max(100) Integer limit
+    ) {
+        return ResponseEntity.ok(rideService.getAllRidesByDriverId(driverId, offset, limit));
+    }
 
-  @Override
-  @GetMapping("/passenger/{passengerId}")
-  public ResponseEntity<PageResponse<RideResponse>> getAllRidesByPassengerId(
-          @PathVariable Long passengerId,
-          @RequestParam(required = false, defaultValue = "0") @Min(0) Integer offset,
-          @RequestParam(required = false, defaultValue = "10") @Min(1) @Max(100) Integer limit
-  ) {
-    return ResponseEntity.ok(rideService.getAllRidesByPassengerId(passengerId, offset, limit));
-  }
+    @Override
+    @GetMapping("/passenger/{passengerId}")
+    public ResponseEntity<PageResponse<RideResponse>> getAllRidesByPassengerId(
+        @PathVariable Long passengerId,
+        @RequestParam(required = false, defaultValue = "0") @Min(0) Integer offset,
+        @RequestParam(required = false, defaultValue = "10") @Min(1) @Max(100) Integer limit
+    ) {
+        return ResponseEntity.ok(rideService.getAllRidesByPassengerId(passengerId, offset, limit));
+    }
 
-  @Override
-  @PostMapping
-  public ResponseEntity<RideResponse> createRide(@Valid @RequestBody RideRequest rideRequest) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(rideService.createRide(rideRequest));
-  }
+    @Override
+    @PostMapping
+    public ResponseEntity<RideResponse> createRide(@Valid @RequestBody RideRequest rideRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(rideService.createRide(rideRequest));
+    }
 
-  @Override
-  @PutMapping("/{id}")
-  public ResponseEntity<RideResponse> updateRide(
-          @PathVariable Long id,
-          @Valid @RequestBody UpdateRideRequest rideRequest
-  ) {
-    return ResponseEntity.ok(rideService.updateRide(id, rideRequest));
-  }
+    @Override
+    @PutMapping("/{id}")
+    public ResponseEntity<RideResponse> updateRide(
+        @PathVariable Long id,
+        @Valid @RequestBody UpdateRideRequest rideRequest
+    ) {
+        return ResponseEntity.ok(rideService.updateRide(id, rideRequest));
+    }
 
-  @Override
-  @PatchMapping("/{id}")
-  public ResponseEntity<RideResponse> updateRideStatus(
-          @PathVariable Long id,
-          @Valid @RequestBody UpdateRideStatusRequest rideRequest
-  ) {
-    return ResponseEntity.ok(rideService.updateRideStatus(id, rideRequest));
-  }
+    @Override
+    @PatchMapping("/{id}")
+    public ResponseEntity<RideResponse> updateRideStatus(
+        @PathVariable Long id,
+        @Valid @RequestBody UpdateRideStatusRequest rideRequest
+    ) {
+        return ResponseEntity.ok(rideService.updateRideStatus(id, rideRequest));
+    }
 
 }

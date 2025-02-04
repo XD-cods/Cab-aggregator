@@ -13,30 +13,30 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RideValidation {
 
-  private final RideRepository rideRepository;
+    private final RideRepository rideRepository;
 
-  public void validateRidesExistByDriverId(Long driverId) {
-    if (!rideRepository.existsRidesByDriverId(driverId)) {
-      throw new RidesNotFoundByDriverIdException(
-              ExceptionMessageConstant.RIDES_NOT_FOUND_BY_DRIVER_ID_MESSAGE.formatted(driverId)
-      );
+    public void validateRidesExistByDriverId(Long driverId) {
+        if (!rideRepository.existsRidesByDriverId(driverId)) {
+            throw new RidesNotFoundByDriverIdException(
+                ExceptionMessageConstant.RIDES_NOT_FOUND_BY_DRIVER_ID_MESSAGE.formatted(driverId)
+            );
+        }
     }
-  }
 
-  public void validateRidesExistByPassengerId(Long passengerId) {
-    if (!rideRepository.existsRidesByPassengerId(passengerId)) {
-      throw new RidesNotFoundByPassengerIdException(
-              ExceptionMessageConstant.RIDES_NOT_FOUND_BY_PASSENGER_ID_MESSAGE.formatted(passengerId)
-      );
+    public void validateRidesExistByPassengerId(Long passengerId) {
+        if (!rideRepository.existsRidesByPassengerId(passengerId)) {
+            throw new RidesNotFoundByPassengerIdException(
+                ExceptionMessageConstant.RIDES_NOT_FOUND_BY_PASSENGER_ID_MESSAGE.formatted(passengerId)
+            );
+        }
     }
-  }
 
-  public void validateRideIsUpdatable(Ride ride) {
-    if (!ride.getRideStatus().isUpdatable()) {
-      throw new RideCanNotUpdatableException(
-              ExceptionMessageConstant.RIDE_CAN_NOT_UPDATABLE_MESSAGE.formatted(ride.getRideStatus())
-      );
+    public void validateRideIsUpdatable(Ride ride) {
+        if (!ride.getRideStatus().isUpdatable()) {
+            throw new RideCanNotUpdatableException(
+                ExceptionMessageConstant.RIDE_CAN_NOT_UPDATABLE_MESSAGE.formatted(ride.getRideStatus())
+            );
+        }
     }
-  }
 
 }

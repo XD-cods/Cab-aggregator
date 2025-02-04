@@ -7,18 +7,18 @@ import jakarta.persistence.Converter;
 @Converter
 public class RideStatusConverter implements AttributeConverter<RideStatus, Integer> {
 
-  @Override
-  public Integer convertToDatabaseColumn(RideStatus rideStatus) {
-    return rideStatus.getCode();
-  }
-
-  @Override
-  public RideStatus convertToEntityAttribute(Integer code) {
-    if (code == null) {
-      return null;
+    @Override
+    public Integer convertToDatabaseColumn(RideStatus rideStatus) {
+        return rideStatus.getCode();
     }
 
-    return RideStatus.fromCode(code);
-  }
+    @Override
+    public RideStatus convertToEntityAttribute(Integer code) {
+        if (code == null) {
+            return null;
+        }
+
+        return RideStatus.fromCode(code);
+    }
 
 }

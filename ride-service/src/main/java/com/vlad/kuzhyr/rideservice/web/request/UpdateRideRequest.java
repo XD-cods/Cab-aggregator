@@ -9,11 +9,11 @@ import lombok.Builder;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record UpdateRideRequest(
 
-        @NotBlank(message = "{validation.address.departure.empty}")
-        String departureAddress,
+    @NotBlank(message = "{validation.address.departure.empty}")
+    String departureAddress,
 
-        @NotBlank(message = "{validation.address.destination.empty}")
-        String destinationAddress
+    @NotBlank(message = "{validation.address.destination.empty}")
+    String destinationAddress
 
 ) {
 

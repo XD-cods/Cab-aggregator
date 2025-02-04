@@ -9,12 +9,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RideRepository extends JpaRepository<Ride, Long> {
 
-  Page<Ride> findByPassengerId(Long passengerId, Pageable pageable);
+    Page<Ride> findByPassengerId(Long passengerId, Pageable pageable);
 
-  Page<Ride> findByDriverId(Long driverId, Pageable pageable);
+    Page<Ride> findByDriverId(Long driverId, Pageable pageable);
 
-  boolean existsRidesByDriverId(Long driverId);
+    boolean existsRidesByDriverId(Long driverId);
 
-  boolean existsRidesByPassengerId(Long passengerId);
+    boolean existsRidesByPassengerId(Long passengerId);
 
 }

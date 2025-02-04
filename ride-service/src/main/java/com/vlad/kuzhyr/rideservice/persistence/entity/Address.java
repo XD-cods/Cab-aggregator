@@ -21,18 +21,18 @@ import lombok.Setter;
 @Table(name = "address")
 public class Address {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "address_id", nullable = false)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "address_id", nullable = false)
+    private Long id;
 
-  @Column(name = "address_name", nullable = false)
-  private String addressName;
+    @Column(name = "address_name", nullable = false)
+    private String addressName;
 
-  @Column(name = "address_latitude", nullable = false)
-  private Double latitude;
+    @Column(name = "address_latitude", nullable = false)
+    private Double latitude;
 
-  @Column(name = "address_longitude", nullable = false)
-  private Double longitude;
+    @Column(name = "address_longitude", nullable = false)
+    private Double longitude;
 
 }
