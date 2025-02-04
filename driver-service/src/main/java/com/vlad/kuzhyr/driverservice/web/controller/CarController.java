@@ -54,8 +54,10 @@ public interface CarController {
         @ApiResponse(responseCode = "400", description = "Car request not a valid"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    ResponseEntity<CarResponse> updateCar(@PathVariable Long id,
-                                          @Valid @RequestBody CarRequest carRequest);
+    ResponseEntity<CarResponse> updateCar(
+        @PathVariable Long id,
+        @Valid @RequestBody CarRequest carRequest
+    );
 
     @Operation(summary = "Delete car by id")
     @ApiResponses(value = {

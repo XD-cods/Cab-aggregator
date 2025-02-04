@@ -54,8 +54,10 @@ public interface DriverController {
         @ApiResponse(responseCode = "400", description = "Driver request not a valid"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    ResponseEntity<DriverResponse> updateDriver(@PathVariable Long id,
-                                                @Valid @RequestBody DriverRequest driverRequest);
+    ResponseEntity<DriverResponse> updateDriver(
+        @PathVariable Long id,
+        @Valid @RequestBody DriverRequest driverRequest
+    );
 
     @Operation(summary = "Update driver's cars by driver id and cars id")
     @ApiResponses(value = {
@@ -65,7 +67,8 @@ public interface DriverController {
     })
     ResponseEntity<DriverResponse> updateDriverCarsById(
         @PathVariable Long id,
-        @Valid @RequestBody DriverUpdateCarsRequest driverUpdateCarsRequest);
+        @Valid @RequestBody DriverUpdateCarsRequest driverUpdateCarsRequest
+    );
 
     @Operation(summary = "Delete driver by id")
     @ApiResponses(value = {
