@@ -22,71 +22,73 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CarServiceImpl implements CarService {
 
-  private final CarRepository carRepository;
-  private final CarMapper carMapper;
-  private final PageResponseMapper pageResponseMapper;
+    private final CarRepository carRepository;
 
-  @Override
-  public CarResponse getCarById(Long id) {
-    Car existCar = getExistCarById(id);
-    return carMapper.toResponse(existCar);
-  }
+    private final CarMapper carMapper;
 
-  @Override
-  public PageResponse<CarResponse> getAllCar(Integer offset, Integer limit) {
-    Pageable pageable = PageRequest.of(offset, limit);
-    Page<Car> carsPage = carRepository.findByIsEnabledTrue(pageable);
+    private final PageResponseMapper pageResponseMapper;
 
-    return pageResponseMapper.toPageResponse(
+    @Override
+    public CarResponse getCarById(Long id) {
+        Car existCar = getExistingCarById(id);
+        return carMapper.toResponse(existCar);
+    }
+
+    @Override
+    public PageResponse<CarResponse> getAllCar(Integer offset, Integer limit) {
+        Pageable pageable = PageRequest.of(offset, limit);
+        Page<Car> carsPage = carRepository.findByIsEnabledTrue(pageable);
+
+        return pageResponseMapper.toPageResponse(
             carsPage,
             offset,
             carMapper::toResponse
-    );
-  }
-
-  @Override
-  @Transactional
-  public CarResponse createCar(CarRequest carRequest) {
-    String carRequestNumber = carRequest.carNumber();
-
-    if (carRepository.existsCarByCarNumberAndIsEnabledTrue(carRequestNumber)) {
-      throw new CarAlreadyExistException(
-              ExceptionMessageConstant.CAR_ALREADY_EXISTS_BY_CAR_NUMBER_MESSAGE.formatted(carRequestNumber)
-      );
+        );
     }
 
-    Car newCar = carMapper.toEntity(carRequest);
-    Car savedCar = carRepository.save(newCar);
-    return carMapper.toResponse(savedCar);
-  }
+    @Override
+    @Transactional
+    public CarResponse createCar(CarRequest carRequest) {
+        String carRequestNumber = carRequest.carNumber();
 
-  @Override
-  @Transactional
-  public CarResponse updateCar(Long id, CarRequest carRequest) {
-    Car existCar = getExistCarById(id);
-    carMapper.updateFromRequest(carRequest, existCar);
-    carRepository.save(existCar);
-    return carMapper.toResponse(existCar);
-  }
+        if (carRepository.existsCarByCarNumberAndIsEnabledTrue(carRequestNumber)) {
+            throw new CarAlreadyExistException(
+                ExceptionMessageConstant.CAR_ALREADY_EXISTS_BY_CAR_NUMBER_MESSAGE.formatted(carRequestNumber)
+            );
+        }
 
-  @Override
-  @Transactional
-  public Boolean deleteCarById(Long id) {
-    Car existCar = getExistCarById(id);
+        Car newCar = carMapper.toEntity(carRequest);
+        Car savedCar = carRepository.save(newCar);
+        return carMapper.toResponse(savedCar);
+    }
 
-    existCar.setDriver(null);
-    existCar.setIsEnabled(Boolean.FALSE);
+    @Override
+    @Transactional
+    public CarResponse updateCar(Long id, CarRequest carRequest) {
+        Car existCar = getExistingCarById(id);
+        carMapper.updateFromRequest(carRequest, existCar);
+        carRepository.save(existCar);
+        return carMapper.toResponse(existCar);
+    }
 
-    carRepository.save(existCar);
-    return Boolean.TRUE;
-  }
+    @Override
+    @Transactional
+    public Boolean deleteCarById(Long id) {
+        Car existCar = getExistingCarById(id);
 
-  private Car getExistCarById(Long id) {
-    return carRepository.findCarByIdAndIsEnabledTrue(id)
+        existCar.setDriver(null);
+        existCar.setIsEnabled(Boolean.FALSE);
+
+        carRepository.save(existCar);
+        return Boolean.TRUE;
+    }
+
+    private Car getExistingCarById(Long id) {
+        return carRepository.findCarByIdAndIsEnabledTrue(id)
             .orElseThrow(() -> new CarNotFoundException(
-                    ExceptionMessageConstant.CAR_NOT_FOUND_MESSAGE.formatted(id)
+                ExceptionMessageConstant.CAR_NOT_FOUND_MESSAGE.formatted(id)
             ));
-  }
+    }
 
 }
 

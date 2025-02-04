@@ -6,13 +6,14 @@ import com.vlad.kuzhyr.driverservice.web.response.PageResponse;
 
 public interface CarService {
 
-  CarResponse getCarById(Long id);
+    CarResponse getCarById(Long id);
 
-  PageResponse<CarResponse> getAllCar(Integer offset, Integer limit);
+    PageResponse<CarResponse> getAllCar(Integer offset, Integer limit);
 
-  CarResponse createCar(CarRequest carRequest);
+    CarResponse createCar(CarRequest carRequest);
 
-  CarResponse updateCar(Long id, CarRequest carRequest);
+    CarResponse updateCar(Long id, CarRequest carRequest);
 
-  Boolean deleteCarById(Long id);
+    Boolean deleteCarById(Long id);
+
 }

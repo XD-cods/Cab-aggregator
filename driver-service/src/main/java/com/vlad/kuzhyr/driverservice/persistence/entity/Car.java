@@ -24,26 +24,26 @@ import lombok.Setter;
 @Table(name = "car")
 public class Car {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "car_id", nullable = false)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "car_id", nullable = false)
+    private Long id;
 
-  @Column(name = "color", nullable = false)
-  private String color;
+    @Column(name = "color", nullable = false)
+    private String color;
 
-  @Column(name = "car_brand", nullable = false)
-  private String carBrand;
+    @Column(name = "car_brand", nullable = false)
+    private String carBrand;
 
-  @Column(name = "car_number", nullable = false)
-  private String carNumber;
+    @Column(name = "car_number", nullable = false)
+    private String carNumber;
 
-  @Builder.Default
-  @Column(name = "is_enabled", nullable = false)
-  private Boolean isEnabled = Boolean.TRUE;
+    @Builder.Default
+    @Column(name = "is_enabled", nullable = false)
+    private Boolean isEnabled = Boolean.TRUE;
 
-  @JoinColumn(name = "driver_id")
-  @ManyToOne(fetch = FetchType.LAZY)
-  private Driver driver;
+    @JoinColumn(name = "driver_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Driver driver;
 
 }

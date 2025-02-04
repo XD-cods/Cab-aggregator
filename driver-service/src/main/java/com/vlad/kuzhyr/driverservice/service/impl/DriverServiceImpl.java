@@ -14,119 +14,121 @@ import com.vlad.kuzhyr.driverservice.web.request.DriverUpdateCarsRequest;
 import com.vlad.kuzhyr.driverservice.web.response.DriverResponse;
 import com.vlad.kuzhyr.driverservice.web.response.PageResponse;
 import jakarta.transaction.Transactional;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class DriverServiceImpl implements DriverService {
-  private final DriverRepository driverRepository;
-  private final DriverMapper driverMapper;
-  private final CarRepository carRepository;
 
-  @Override
-  public DriverResponse getDriverById(Long id) {
-    Driver existDriver = driverRepository.findDriverByIdAndIsEnabledTrue(id)
+    private final DriverRepository driverRepository;
+
+    private final DriverMapper driverMapper;
+
+    private final CarRepository carRepository;
+
+    @Override
+    public DriverResponse getDriverById(Long id) {
+        Driver existDriver = driverRepository.findDriverByIdAndIsEnabledTrue(id)
             .orElseThrow(() -> new CarNotFoundException(
-                    ExceptionMessageConstant.DRIVER_NOT_FOUND_MESSAGE.formatted(id)
+                ExceptionMessageConstant.DRIVER_NOT_FOUND_MESSAGE.formatted(id)
             ));
 
-    return driverMapper.toResponse(existDriver);
-  }
+        return driverMapper.toResponse(existDriver);
+    }
 
-  @Override
-  public PageResponse<DriverResponse> getAllDriver(Integer offset, Integer limit) {
-    Pageable pageable = PageRequest.of(offset, limit);
-    Page<Driver> driversPage = driverRepository.findByIsEnabledTrue(pageable);
-    List<DriverResponse> driversResponse = driversPage.getContent()
+    @Override
+    public PageResponse<DriverResponse> getAllDriver(Integer offset, Integer limit) {
+        Pageable pageable = PageRequest.of(offset, limit);
+        Page<Driver> driversPage = driverRepository.findByIsEnabledTrue(pageable);
+        List<DriverResponse> driversResponse = driversPage.getContent()
             .stream()
             .map(driverMapper::toResponse)
             .toList();
 
-    return PageResponse.<DriverResponse>builder()
+        return PageResponse.<DriverResponse>builder()
             .content(driversResponse)
             .currentOffset(offset)
             .totalElements(driversPage.getTotalElements())
             .totalPages(driversPage.getTotalPages())
             .build();
-  }
-
-  @Override
-  @Transactional
-  public DriverResponse createDriver(DriverRequest driverRequest) {
-    String driverRequestEmail = driverRequest.email();
-    String driverRequestPhone = driverRequest.phone();
-
-    if (driverRepository.existsDriverByEmailAndIsEnabledTrue(driverRequestEmail)) {
-      throw new CarAlreadyExistException(
-              ExceptionMessageConstant.DRIVER_ALREADY_EXISTS_BY_EMAIL_MESSAGE.formatted(driverRequestEmail)
-      );
     }
 
-    if (driverRepository.existsDriverByPhoneAndIsEnabledTrue(driverRequestPhone)) {
-      throw new CarAlreadyExistException(
-              ExceptionMessageConstant.DRIVER_ALREADY_EXISTS_BY_PHONE_MESSAGE.formatted(driverRequestPhone)
-      );
+    @Override
+    @Transactional
+    public DriverResponse createDriver(DriverRequest driverRequest) {
+        String driverRequestEmail = driverRequest.email();
+        String driverRequestPhone = driverRequest.phone();
+
+        if (driverRepository.existsDriverByEmailAndIsEnabledTrue(driverRequestEmail)) {
+            throw new CarAlreadyExistException(
+                ExceptionMessageConstant.DRIVER_ALREADY_EXISTS_BY_EMAIL_MESSAGE.formatted(driverRequestEmail)
+            );
+        }
+
+        if (driverRepository.existsDriverByPhoneAndIsEnabledTrue(driverRequestPhone)) {
+            throw new CarAlreadyExistException(
+                ExceptionMessageConstant.DRIVER_ALREADY_EXISTS_BY_PHONE_MESSAGE.formatted(driverRequestPhone)
+            );
+        }
+
+        List<Car> cars = carRepository.findAllById(driverRequest.carIds());
+        Driver newDriver = driverMapper.toEntity(driverRequest);
+        cars.forEach(car -> car.setDriver(newDriver));
+        newDriver.setCars(cars);
+        Driver savedDriver = driverRepository.save(newDriver);
+        return driverMapper.toResponse(savedDriver);
     }
 
-    List<Car> cars = carRepository.findAllById(driverRequest.carIds());
-    Driver newDriver = driverMapper.toEntity(driverRequest);
-    cars.forEach(car -> car.setDriver(newDriver));
-    newDriver.setCars(cars);
-    Driver savedDriver = driverRepository.save(newDriver);
-    return driverMapper.toResponse(savedDriver);
-  }
-
-  @Override
-  @Transactional
-  public DriverResponse updateDriver(Long id, DriverRequest driverRequest) {
-    Driver existDriver = driverRepository.findDriverByIdAndIsEnabledTrue(id)
+    @Override
+    @Transactional
+    public DriverResponse updateDriver(Long id, DriverRequest driverRequest) {
+        Driver existDriver = driverRepository.findDriverByIdAndIsEnabledTrue(id)
             .orElseThrow(() -> new CarNotFoundException(
-                    ExceptionMessageConstant.DRIVER_NOT_FOUND_MESSAGE.formatted(id)
+                ExceptionMessageConstant.DRIVER_NOT_FOUND_MESSAGE.formatted(id)
             ));
 
-    List<Car> cars = carRepository.findAllById(driverRequest.carIds());
-    driverMapper.updateFromRequest(driverRequest, existDriver);
-    existDriver.setCars(cars);
-    cars.forEach(car -> car.setDriver(existDriver));
-    driverRepository.save(existDriver);
-    return driverMapper.toResponse(existDriver);
-  }
+        List<Car> cars = carRepository.findAllById(driverRequest.carIds());
+        driverMapper.updateFromRequest(driverRequest, existDriver);
+        existDriver.setCars(cars);
+        cars.forEach(car -> car.setDriver(existDriver));
+        driverRepository.save(existDriver);
+        return driverMapper.toResponse(existDriver);
+    }
 
-  @Override
-  @Transactional
-  public DriverResponse updateDriverCarsById(Long id, DriverUpdateCarsRequest driverUpdateCarsRequest) {
-    Driver existDriver = driverRepository.findDriverByIdAndIsEnabledTrue(id)
+    @Override
+    @Transactional
+    public DriverResponse updateDriverCarsById(Long id, DriverUpdateCarsRequest driverUpdateCarsRequest) {
+        Driver existDriver = driverRepository.findDriverByIdAndIsEnabledTrue(id)
             .orElseThrow(() -> new CarNotFoundException(
-                    ExceptionMessageConstant.DRIVER_NOT_FOUND_MESSAGE.formatted(id)
+                ExceptionMessageConstant.DRIVER_NOT_FOUND_MESSAGE.formatted(id)
             ));
 
-    List<Car> cars = carRepository.findAllById(driverUpdateCarsRequest.carIds());
-    existDriver.setCars(cars);
-    cars.forEach(car -> car.setDriver(existDriver));
-    driverRepository.save(existDriver);
-    return driverMapper.toResponse(existDriver);
-  }
+        List<Car> cars = carRepository.findAllById(driverUpdateCarsRequest.carIds());
+        existDriver.setCars(cars);
+        cars.forEach(car -> car.setDriver(existDriver));
+        driverRepository.save(existDriver);
+        return driverMapper.toResponse(existDriver);
+    }
 
-  @Override
-  @Transactional
-  public Boolean deleteDriverById(Long id) {
-    Driver existDriver = driverRepository.findDriverByIdAndIsEnabledTrue(id)
+    @Override
+    @Transactional
+    public Boolean deleteDriverById(Long id) {
+        Driver existDriver = driverRepository.findDriverByIdAndIsEnabledTrue(id)
             .orElseThrow(() -> new CarNotFoundException(
-                    ExceptionMessageConstant.DRIVER_NOT_FOUND_MESSAGE.formatted(id))
+                ExceptionMessageConstant.DRIVER_NOT_FOUND_MESSAGE.formatted(id))
             );
 
-    List<Car> cars = existDriver.getCars();
-    cars.forEach(car -> car.setDriver(null));
-    existDriver.setCars(null);
-    existDriver.setIsEnabled(Boolean.FALSE);
-    driverRepository.save(existDriver);
-    return Boolean.TRUE;
-  }
+        List<Car> cars = existDriver.getCars();
+        cars.forEach(car -> car.setDriver(null));
+        existDriver.setCars(null);
+        existDriver.setIsEnabled(Boolean.FALSE);
+        driverRepository.save(existDriver);
+        return Boolean.TRUE;
+    }
 
 }

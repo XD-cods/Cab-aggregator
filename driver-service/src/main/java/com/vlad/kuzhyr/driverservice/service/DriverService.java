@@ -7,15 +7,16 @@ import com.vlad.kuzhyr.driverservice.web.response.PageResponse;
 
 public interface DriverService {
 
-  DriverResponse getDriverById(Long id);
+    DriverResponse getDriverById(Long id);
 
-  PageResponse<DriverResponse> getAllDriver(Integer offset, Integer limit);
+    PageResponse<DriverResponse> getAllDriver(Integer offset, Integer limit);
 
-  DriverResponse createDriver(DriverRequest driverRequest);
+    DriverResponse createDriver(DriverRequest driverRequest);
 
-  DriverResponse updateDriver(Long id, DriverRequest driverRequest);
+    DriverResponse updateDriver(Long id, DriverRequest driverRequest);
 
-  DriverResponse updateDriverCarsById(Long id, DriverUpdateCarsRequest driverUpdateCarsRequest);
+    DriverResponse updateDriverCarsById(Long id, DriverUpdateCarsRequest driverUpdateCarsRequest);
 
-  Boolean deleteDriverById(Long id);
+    Boolean deleteDriverById(Long id);
+
 }

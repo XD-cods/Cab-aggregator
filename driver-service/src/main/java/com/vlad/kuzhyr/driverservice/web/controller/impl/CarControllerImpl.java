@@ -24,38 +24,40 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/cars")
 public class CarControllerImpl implements CarController {
-  private final CarService carService;
 
-  @Override
-  @GetMapping("/{id}")
-  public ResponseEntity<CarResponse> getCarById(@PathVariable Long id) {
-    return ResponseEntity.ok(carService.getCarById(id));
-  }
+    private final CarService carService;
 
-  @Override
-  @GetMapping
-  public ResponseEntity<PageResponse<CarResponse>> getAllCar(
-          @RequestParam(required = false, defaultValue = "0") @Min(0) Integer offset,
-          @RequestParam(required = false, defaultValue = "10") @Min(1) @Max(100) Integer limit
-  ) {
-    return ResponseEntity.ok(carService.getAllCar(offset, limit));
-  }
+    @Override
+    @GetMapping("/{id}")
+    public ResponseEntity<CarResponse> getCarById(@PathVariable Long id) {
+        return ResponseEntity.ok(carService.getCarById(id));
+    }
 
-  @Override
-  @PostMapping
-  public ResponseEntity<CarResponse> createCar(@Valid CarRequest carRequest) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(carService.createCar(carRequest));
-  }
+    @Override
+    @GetMapping
+    public ResponseEntity<PageResponse<CarResponse>> getAllCar(
+        @RequestParam(required = false, defaultValue = "0") @Min(0) Integer offset,
+        @RequestParam(required = false, defaultValue = "10") @Min(1) @Max(100) Integer limit
+    ) {
+        return ResponseEntity.ok(carService.getAllCar(offset, limit));
+    }
 
-  @Override
-  @PutMapping("/{id}")
-  public ResponseEntity<CarResponse> updateCar(@PathVariable Long id, @Valid CarRequest carRequest) {
-    return ResponseEntity.ok(carService.updateCar(id, carRequest));
-  }
+    @Override
+    @PostMapping
+    public ResponseEntity<CarResponse> createCar(@Valid CarRequest carRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(carService.createCar(carRequest));
+    }
 
-  @Override
-  @DeleteMapping("/{id}")
-  public ResponseEntity<Boolean> deleteCar(@PathVariable Long id) {
-    return ResponseEntity.ok(carService.deleteCarById(id));
-  }
+    @Override
+    @PutMapping("/{id}")
+    public ResponseEntity<CarResponse> updateCar(@PathVariable Long id, @Valid CarRequest carRequest) {
+        return ResponseEntity.ok(carService.updateCar(id, carRequest));
+    }
+
+    @Override
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Boolean> deleteCar(@PathVariable Long id) {
+        return ResponseEntity.ok(carService.deleteCarById(id));
+    }
+
 }

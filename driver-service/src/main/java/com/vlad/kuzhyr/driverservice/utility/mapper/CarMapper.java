@@ -13,23 +13,23 @@ import org.mapstruct.Named;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring",
-        injectionStrategy = InjectionStrategy.CONSTRUCTOR
+    injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
 public interface CarMapper {
 
-  @Mapping(target = "driverId", source = "driver", qualifiedByName = "mapDriverId")
-  CarResponse toResponse(Car car);
+    @Mapping(target = "driverId", source = "driver", qualifiedByName = "mapDriverId")
+    CarResponse toResponse(Car car);
 
-  @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-  @Mapping(target = "driver", ignore = true)
-  void updateFromRequest(CarRequest carRequest, @MappingTarget Car existCar);
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "driver", ignore = true)
+    void updateFromRequest(CarRequest carRequest, @MappingTarget Car existCar);
 
-  @Mapping(target = "driver", ignore = true)
-  Car toEntity(CarRequest carRequest);
+    @Mapping(target = "driver", ignore = true)
+    Car toEntity(CarRequest carRequest);
 
-  @Named("mapDriverId")
-  default Long mapDriverId(Driver driver) {
-    return driver != null ? driver.getId() : null;
-  }
+    @Named("mapDriverId")
+    default Long mapDriverId(Driver driver) {
+        return driver != null ? driver.getId() : null;
+    }
 
 }

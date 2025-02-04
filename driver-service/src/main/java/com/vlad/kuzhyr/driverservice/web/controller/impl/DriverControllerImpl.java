@@ -27,47 +27,49 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/drivers")
 public class DriverControllerImpl implements DriverController {
-  private final DriverService driverService;
 
-  @Override
-  @GetMapping("/{id}")
-  public ResponseEntity<DriverResponse> getDriverById(@PathVariable Long id) {
-    return ResponseEntity.ok(driverService.getDriverById(id));
-  }
+    private final DriverService driverService;
 
-  @Override
-  @GetMapping
-  public ResponseEntity<PageResponse<DriverResponse>> getAllDriver(
-          @RequestParam(required = false, defaultValue = "0") @Min(0) Integer offset,
-          @RequestParam(required = false, defaultValue = "10") @Min(1) @Max(100) Integer limit
-  ) {
-    return ResponseEntity.ok(driverService.getAllDriver(offset, limit));
-  }
+    @Override
+    @GetMapping("/{id}")
+    public ResponseEntity<DriverResponse> getDriverById(@PathVariable Long id) {
+        return ResponseEntity.ok(driverService.getDriverById(id));
+    }
 
-  @Override
-  @PostMapping
-  public ResponseEntity<DriverResponse> createDriver(@Valid DriverRequest driverRequest) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(driverService.createDriver(driverRequest));
-  }
+    @Override
+    @GetMapping
+    public ResponseEntity<PageResponse<DriverResponse>> getAllDriver(
+        @RequestParam(required = false, defaultValue = "0") @Min(0) Integer offset,
+        @RequestParam(required = false, defaultValue = "10") @Min(1) @Max(100) Integer limit
+    ) {
+        return ResponseEntity.ok(driverService.getAllDriver(offset, limit));
+    }
 
-  @Override
-  @PutMapping("/{id}")
-  public ResponseEntity<DriverResponse> updateDriver(@PathVariable Long id, @Valid DriverRequest driverRequest) {
-    return ResponseEntity.ok(driverService.updateDriver(id, driverRequest));
-  }
+    @Override
+    @PostMapping
+    public ResponseEntity<DriverResponse> createDriver(@Valid DriverRequest driverRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(driverService.createDriver(driverRequest));
+    }
 
-  @Override
-  @PatchMapping("/{id}")
-  public ResponseEntity<DriverResponse> updateDriverCarsById(
-          @PathVariable Long id,
-          @Valid @RequestBody DriverUpdateCarsRequest driverUpdateCarsRequest
-  ) {
-    return ResponseEntity.ok(driverService.updateDriverCarsById(id, driverUpdateCarsRequest));
-  }
+    @Override
+    @PutMapping("/{id}")
+    public ResponseEntity<DriverResponse> updateDriver(@PathVariable Long id, @Valid DriverRequest driverRequest) {
+        return ResponseEntity.ok(driverService.updateDriver(id, driverRequest));
+    }
 
-  @Override
-  @DeleteMapping("/{id}")
-  public ResponseEntity<Boolean> deleteDriver(@PathVariable Long id) {
-    return ResponseEntity.ok(driverService.deleteDriverById(id));
-  }
+    @Override
+    @PatchMapping("/{id}")
+    public ResponseEntity<DriverResponse> updateDriverCarsById(
+        @PathVariable Long id,
+        @Valid @RequestBody DriverUpdateCarsRequest driverUpdateCarsRequest
+    ) {
+        return ResponseEntity.ok(driverService.updateDriverCarsById(id, driverUpdateCarsRequest));
+    }
+
+    @Override
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Boolean> deleteDriver(@PathVariable Long id) {
+        return ResponseEntity.ok(driverService.deleteDriverById(id));
+    }
+
 }
