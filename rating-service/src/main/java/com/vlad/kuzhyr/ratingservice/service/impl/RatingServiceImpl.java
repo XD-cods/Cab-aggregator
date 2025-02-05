@@ -4,13 +4,15 @@ import com.vlad.kuzhyr.ratingservice.exception.RatingAlreadyExistsException;
 import com.vlad.kuzhyr.ratingservice.exception.RatingNotFoundException;
 import com.vlad.kuzhyr.ratingservice.exception.RatingsNotFoundedByDriverId;
 import com.vlad.kuzhyr.ratingservice.exception.RatingsNotFoundedByPassengerId;
+import com.vlad.kuzhyr.ratingservice.persistence.entity.RatedBy;
 import com.vlad.kuzhyr.ratingservice.persistence.entity.Rating;
 import com.vlad.kuzhyr.ratingservice.persistence.repository.RatingRepository;
 import com.vlad.kuzhyr.ratingservice.service.RatingService;
 import com.vlad.kuzhyr.ratingservice.utility.constant.ExceptionMessageConstant;
 import com.vlad.kuzhyr.ratingservice.utility.mapper.PageResponseMapper;
 import com.vlad.kuzhyr.ratingservice.utility.mapper.RatingMapper;
-import com.vlad.kuzhyr.ratingservice.web.request.RatingRequest;
+import com.vlad.kuzhyr.ratingservice.web.request.CreateRatingRequest;
+import com.vlad.kuzhyr.ratingservice.web.request.UpdateRatingRequest;
 import com.vlad.kuzhyr.ratingservice.web.response.PageResponse;
 import com.vlad.kuzhyr.ratingservice.web.response.RatingResponse;
 import java.util.List;
@@ -45,7 +47,7 @@ public class RatingServiceImpl implements RatingService {
     @Override
     public PageResponse<RatingResponse> getRatings(int offset, int limit) {
         Pageable pageable = PageRequest.of(offset, limit);
-        Page<Rating> ratingsPage = ratingRepository.findAllRatings(pageable);
+        Page<Rating> ratingsPage = ratingRepository.findAll(pageable);
 
         return pageResponseMapper.toPageResponse(
             ratingsPage,
@@ -55,12 +57,12 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public Float getAverageRatingByPassengerId(Long passengerId) {
-        Sort sort = Sort.by(Sort.Order.desc("ratingId"));
+    public Double getAverageRatingByPassengerId(Long passengerId) {
+        Sort sort = Sort.by(Sort.Order.desc("id"));
         Pageable pageRequest = PageRequest.of(0, lastRidesLimit, sort);
 
         List<Rating> lastRatings =
-            ratingRepository.findAllByPassengerId(passengerId, pageRequest);
+            ratingRepository.findByPassengerIdAndRatedBy(passengerId, pageRequest, RatedBy.DRIVER);
 
         if (lastRatings.isEmpty()) {
             throw new RatingsNotFoundedByPassengerId(
@@ -68,19 +70,18 @@ public class RatingServiceImpl implements RatingService {
             );
         }
 
-        float totalRating = (float) lastRatings.stream()
+        return lastRatings.stream()
             .mapToDouble(Rating::getRating)
-            .sum();
-
-        return totalRating / lastRatings.size();
+            .average()
+            .orElse(0.0);
     }
 
     @Override
-    public Float getAverageRatingByDriverId(Long driverId) {
-        Sort sort = Sort.by(Sort.Order.desc("ratingId"));
+    public Double getAverageRatingByDriverId(Long driverId) {
+        Sort sort = Sort.by(Sort.Order.desc("id"));
         Pageable pageRequest = PageRequest.of(0, lastRidesLimit, sort);
 
-        List<Rating> lastRatings = ratingRepository.findAllByDriverId(driverId, pageRequest);
+        List<Rating> lastRatings = ratingRepository.findByDriverIdAndRatedBy(driverId, pageRequest, RatedBy.PASSENGER);
 
         if (lastRatings.isEmpty()) {
             throw new RatingsNotFoundedByDriverId(
@@ -88,37 +89,40 @@ public class RatingServiceImpl implements RatingService {
             );
         }
 
-        float totalRating = (float) lastRatings.stream()
+        return lastRatings.stream()
             .mapToDouble(Rating::getRating)
-            .sum();
+            .average()
+            .orElse(0.0);
 
-        return totalRating / lastRatings.size();
     }
 
     @Override
-    public RatingResponse createRating(RatingRequest ratingRequest) {
-        Optional<Rating> existingRating = ratingRepository.findByRideIdAndRatedBy(
-            ratingRequest.rideId(), ratingRequest.ratedBy()
+    public RatingResponse createRating(CreateRatingRequest createRatingRequest) {
+        Optional<Rating> existingRatings = ratingRepository.findByRideIdAndRatedBy(
+            createRatingRequest.rideId(), createRatingRequest.ratedBy()
         );
 
-        if (existingRating.isPresent()) {
+        if (existingRatings.isPresent()) {
             throw new RatingAlreadyExistsException(
                 ExceptionMessageConstant.RATING_ALREADY_EXISTS_MESSAGE.formatted(
-                    ratingRequest.ratedBy(),
-                    ratingRequest.rideId()
+                    createRatingRequest.ratedBy(),
+                    createRatingRequest.rideId()
                 )
             );
         }
 
-        Rating rating = ratingMapper.toEntity(ratingRequest);
-        rating = ratingRepository.save(rating);
+        Rating rating = ratingMapper.toEntity(createRatingRequest);
+        Rating savedRating = ratingRepository.save(rating);
 
-        return ratingMapper.toResponse(rating);
+        return ratingMapper.toResponse(savedRating);
     }
 
     @Override
-    public RatingResponse updateRating(Long id, RatingRequest ratingRequest) {
-        return null;
+    public RatingResponse updateRating(Long id, UpdateRatingRequest updateRatingRequest) {
+        Rating existingRating = getExistingRating(id);
+        ratingMapper.updateFromRequest(updateRatingRequest, existingRating);
+        Rating savedRating = ratingRepository.save(existingRating);
+        return ratingMapper.toResponse(savedRating);
     }
 
     private Rating getExistingRating(Long id) {

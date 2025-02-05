@@ -4,7 +4,6 @@ import com.vlad.kuzhyr.ratingservice.persistence.entity.RatedBy;
 import com.vlad.kuzhyr.ratingservice.persistence.entity.Rating;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -12,11 +11,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RatingRepository extends JpaRepository<Rating, Long> {
 
-    Page<Rating> findAllRatings(Pageable pageable);
+    List<Rating> findByPassengerIdAndRatedBy(Long passengerId, Pageable pageable, RatedBy ratedBy);
 
-    List<Rating> findAllByPassengerId(Long passengerId, Pageable pageable);
-
-    List<Rating> findAllByDriverId(Long driverId, Pageable pageable);
+    List<Rating> findByDriverIdAndRatedBy(Long driverId, Pageable pageable, RatedBy ratedBy);
 
     Optional<Rating> findByRideIdAndRatedBy(Long rideId, RatedBy ratedBy);
 

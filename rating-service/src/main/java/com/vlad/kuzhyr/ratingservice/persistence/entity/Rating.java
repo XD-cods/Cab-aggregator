@@ -38,7 +38,8 @@ public class Rating {
     private Long passengerId;
 
     @Column(name = "rating", nullable = false)
-    private Float rating = 5.0F;
+    @Builder.Default
+    private Double rating = 5.0;
 
     @Column(name = "comment", nullable = false)
     private String comment;

@@ -2,7 +2,8 @@ package com.vlad.kuzhyr.ratingservice.web.controller.ipml;
 
 import com.vlad.kuzhyr.ratingservice.service.RatingService;
 import com.vlad.kuzhyr.ratingservice.web.controller.RatingController;
-import com.vlad.kuzhyr.ratingservice.web.request.RatingRequest;
+import com.vlad.kuzhyr.ratingservice.web.request.CreateRatingRequest;
+import com.vlad.kuzhyr.ratingservice.web.request.UpdateRatingRequest;
 import com.vlad.kuzhyr.ratingservice.web.response.PageResponse;
 import com.vlad.kuzhyr.ratingservice.web.response.RatingResponse;
 import jakarta.validation.Valid;
@@ -36,7 +37,7 @@ public class RatingControllerImpl implements RatingController {
     @Override
     @GetMapping
     public ResponseEntity<PageResponse<RatingResponse>> getRatings(
-        @RequestParam(required = false, defaultValue = "0") @Min(0) int offset,
+        @RequestParam(required = false, defaultValue = "0")  @Min(0) int offset,
         @RequestParam(required = false, defaultValue = "10") @Min(0) @Max(100) int limit
     ) {
         return ResponseEntity.ok(ratingService.getRatings(offset, limit));
@@ -44,30 +45,30 @@ public class RatingControllerImpl implements RatingController {
 
     @Override
     @GetMapping("/passenger/{passengerId}")
-    public ResponseEntity<Float> getAverageRatingByPassengerId(@PathVariable Long passengerId) {
+    public ResponseEntity<Double> getAverageRatingByPassengerId(@PathVariable Long passengerId) {
         return ResponseEntity.ok(
             ratingService.getAverageRatingByPassengerId(passengerId));
     }
 
     @Override
     @GetMapping("/driver/{driverId}")
-    public ResponseEntity<Float> getAverageRatingByDriverId(@PathVariable Long driverId) {
+    public ResponseEntity<Double> getAverageRatingByDriverId(@PathVariable Long driverId) {
         return ResponseEntity.ok(ratingService.getAverageRatingByDriverId(driverId));
     }
 
     @Override
     @PostMapping
-    public ResponseEntity<RatingResponse> createRating(@Valid RatingRequest ratingRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(ratingService.createRating(ratingRequest));
+    public ResponseEntity<RatingResponse> createRating(@Valid @RequestBody CreateRatingRequest createRatingRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(ratingService.createRating(createRatingRequest));
     }
 
     @Override
     @PutMapping("/{id}")
     public ResponseEntity<RatingResponse> updateRating(
         @PathVariable Long id,
-        @Valid @RequestBody RatingRequest ratingRequest
+        @Valid @RequestBody UpdateRatingRequest updateRatingRequest
     ) {
-        return ResponseEntity.ok(ratingService.updateRating(id, ratingRequest));
+        return ResponseEntity.ok(ratingService.updateRating(id, updateRatingRequest));
     }
 
 }

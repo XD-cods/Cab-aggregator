@@ -1,6 +1,7 @@
 package com.vlad.kuzhyr.ratingservice.service;
 
-import com.vlad.kuzhyr.ratingservice.web.request.RatingRequest;
+import com.vlad.kuzhyr.ratingservice.web.request.CreateRatingRequest;
+import com.vlad.kuzhyr.ratingservice.web.request.UpdateRatingRequest;
 import com.vlad.kuzhyr.ratingservice.web.response.PageResponse;
 import com.vlad.kuzhyr.ratingservice.web.response.RatingResponse;
 
@@ -10,12 +11,12 @@ public interface RatingService {
 
     PageResponse<RatingResponse> getRatings(int offset, int limit);
 
-    Float getAverageRatingByPassengerId(Long passengerId);
+    Double getAverageRatingByPassengerId(Long passengerId);
 
-    Float getAverageRatingByDriverId(Long driverId);
+    Double getAverageRatingByDriverId(Long driverId);
 
-    RatingResponse createRating(RatingRequest ratingRequest);
+    RatingResponse createRating(CreateRatingRequest createRatingRequest);
 
-    RatingResponse updateRating(Long id, RatingRequest ratingRequest);
+    RatingResponse updateRating(Long id, UpdateRatingRequest updateRatingRequest);
 
 }

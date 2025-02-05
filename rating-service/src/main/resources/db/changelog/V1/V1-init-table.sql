@@ -6,9 +6,11 @@ CREATE TABLE rating (
     driver_id BIGINT NOT NULL,
     ride_id BIGINT NOT NULL,
     passenger_id BIGINT NOT NULL,
-    rating FLOAT NOT NULL DEFAULT 5,
+    rating DOUBLE PRECISION NOT NULL DEFAULT 5,
+    rated_by INTEGER NOT NULL,
     comment TEXT,
     CONSTRAINT pk_rating PRIMARY KEY (rating_id),
-    CONSTRAINT chk_rating_range CHECK (rating >= 0 AND rating <= 5)
+    CONSTRAINT chk_rating_range CHECK (rating >= 0 AND rating <= 5),
+    CONSTRAINT chk_rating_precision CHECK (rating = ROUND(rating::numeric, 2))
 );
 

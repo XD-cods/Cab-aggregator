@@ -1,7 +1,8 @@
 package com.vlad.kuzhyr.ratingservice.utility.mapper;
 
 import com.vlad.kuzhyr.ratingservice.persistence.entity.Rating;
-import com.vlad.kuzhyr.ratingservice.web.request.RatingRequest;
+import com.vlad.kuzhyr.ratingservice.web.request.CreateRatingRequest;
+import com.vlad.kuzhyr.ratingservice.web.request.UpdateRatingRequest;
 import com.vlad.kuzhyr.ratingservice.web.response.RatingResponse;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.InjectionStrategy;
@@ -19,8 +20,8 @@ public interface RatingMapper {
     RatingResponse toResponse(Rating rating);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateFromRequest(RatingRequest ratingRequest, @MappingTarget Rating existingRating);
+    void updateFromRequest(UpdateRatingRequest updateRatingRequest, @MappingTarget Rating existingRating);
 
-    Rating toEntity(RatingRequest carRequest);
+    Rating toEntity(CreateRatingRequest carRequest);
 
 }
