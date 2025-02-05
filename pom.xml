@@ -34,6 +34,7 @@
                     <configLocation>checkstyle.xml</configLocation>
                     <includeResources>true</includeResources>
                     <consoleOutput>true</consoleOutput>
+                    <failOnViolation>true</failOnViolation>
                 </configuration>
                 <dependencies>
                     <dependency>
