@@ -1,6 +1,8 @@
 package com.vlad.kuzhyr.ratingservice.persistence.entity;
 
+import com.vlad.kuzhyr.ratingservice.utility.mapper.RatedByConverter;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,23 +23,29 @@ import lombok.Setter;
 @Table(name = "rating")
 public class Rating {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "rating_id", nullable = false)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "rating_id", nullable = false)
+    private Long id;
 
-  @Column(name = "driver_id", nullable = false)
-  private Long driverId;
+    @Column(name = "driver_id", nullable = false)
+    private Long driverId;
 
-  @Column(name = "ride_id", nullable = false)
-  private Long rideId;
+    @Column(name = "ride_id", nullable = false)
+    private Long rideId;
 
-  @Column(name = "passenger_id", nullable = false)
-  private Long passengerId;
+    @Column(name = "passenger_id", nullable = false)
+    private Long passengerId;
 
-  @Column(name = "rating", nullable = false)
-  private Float rating = 5.0F;
+    @Column(name = "rating", nullable = false)
+    private Float rating = 5.0F;
 
-  @Column(name = "comment", nullable = false)
-  private String comment;
+    @Column(name = "comment", nullable = false)
+    private String comment;
+
+    @Column(name = "rated_by", nullable = false)
+    @Convert(converter = RatedByConverter.class)
+    private RatedBy ratedBy;
+
+
 }
