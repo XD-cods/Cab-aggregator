@@ -11,7 +11,7 @@
     <packaging>pom</packaging>
     <groupId>com.vlad.kuzhyr</groupId>
     <artifactId>Cab-aggregator</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>Cab-aggregator</name>
     <description>Cab-aggregator</description>
     <properties>
@@ -21,4 +21,33 @@
         <module>ride-service</module>
     </modules>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <includeResources>true</includeResources>
+                    <consoleOutput>true</consoleOutput>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>10.14.1</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
