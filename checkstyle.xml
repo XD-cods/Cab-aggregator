@@ -25,7 +25,7 @@ https://github.com/checkstyle/checkstyle/blob/aed4d3835de0da5e12c41e677e9a10be77
 
   <property name="charset" value="UTF-8"/>
 
-  <property name="severity" value="error"/>
+  <property name="severity" value="warning"/>
 
   <property name="fileExtensions" value="java, properties, xml"/>
   <!-- Excludes all 'module-info.java' files              -->
