@@ -1,0 +1,28 @@
+server:
+  port: 5007
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: ride-service
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+springdoc:
+  api-docs:
+    path: /api/v1/api-docs
+  swagger-ui:
+    path: /api/v1/api-docs/swagger-ui.html
+
+mapbox:
+  api:
+    secret-key: ${MAPBOX_API_KEY}
