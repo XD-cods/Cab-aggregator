@@ -18,6 +18,7 @@
         <java.version>17</java.version>
     </properties>
     <modules>
+        <module>passenger-service</module>
         <module>ride-service</module>
     </modules>
 
