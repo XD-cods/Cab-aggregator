@@ -35,7 +35,9 @@
                     <includeResources>true</includeResources>
                     <consoleOutput>true</consoleOutput>
                     <failOnViolation>true</failOnViolation>
+                    <violationSeverity>warning</violationSeverity>
                 </configuration>
+
                 <dependencies>
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
