@@ -44,21 +44,15 @@ public class RatingControllerImpl implements RatingController {
 
     @Override
     @GetMapping("/passenger/{passengerId}")
-    public ResponseEntity<RatingResponse> getAverageRatingByPassengerIdAndCountLastRides(
-        @PathVariable Long passengerId,
-        @RequestParam(required = false, defaultValue = "10") @Min(10) @Max(50) int limitLastRides
-    ) {
+    public ResponseEntity<Float> getAverageRatingByPassengerId(@PathVariable Long passengerId) {
         return ResponseEntity.ok(
-            ratingService.getAverageRatingByPassengerIdAndCountLastRides(passengerId, limitLastRides));
+            ratingService.getAverageRatingByPassengerId(passengerId));
     }
 
     @Override
     @GetMapping("/driver/{driverId}")
-    public ResponseEntity<RatingResponse> getAverageRatingByDriverIdAndCountLastRides(
-        @PathVariable Long driverId,
-        @RequestParam(required = false, defaultValue = "10") @Min(10) @Max(50) int limitLastRides
-    ) {
-        return ResponseEntity.ok(ratingService.getAverageRatingByDriverIdAndCountLastRides(driverId, limitLastRides));
+    public ResponseEntity<Float> getAverageRatingByDriverId(@PathVariable Long driverId) {
+        return ResponseEntity.ok(ratingService.getAverageRatingByDriverId(driverId));
     }
 
     @Override

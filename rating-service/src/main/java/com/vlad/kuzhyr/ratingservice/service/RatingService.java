@@ -10,9 +10,9 @@ public interface RatingService {
 
     PageResponse<RatingResponse> getRatings(int offset, int limit);
 
-    RatingResponse getAverageRatingByPassengerIdAndCountLastRides(Long passengerId, int limitLastRides);
+    Float getAverageRatingByPassengerId(Long passengerId);
 
-    RatingResponse getAverageRatingByDriverIdAndCountLastRides(Long driverId, int limitLastRides);
+    Float getAverageRatingByDriverId(Long driverId);
 
     RatingResponse createRating(RatingRequest ratingRequest);
 

@@ -32,7 +32,7 @@ public interface RatingController {
         @ApiResponse(responseCode = "404", description = "Ratings not founded"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    ResponseEntity<RatingResponse> getAverageRatingByPassengerIdAndCountLastRides(Long passengerId, int limitLastRides);
+    ResponseEntity<Float> getAverageRatingByPassengerId(Long passengerId);
 
     @Operation(summary = "Get average rating by driver id")
     @ApiResponses(value = {
@@ -40,7 +40,7 @@ public interface RatingController {
         @ApiResponse(responseCode = "404", description = "Ratings not founded"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    ResponseEntity<RatingResponse> getAverageRatingByDriverIdAndCountLastRides(Long driverId, int limitLastRides);
+    ResponseEntity<Float> getAverageRatingByDriverId(Long driverId);
 
     @Operation(summary = "Create rating")
     @ApiResponses(value = {

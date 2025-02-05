@@ -22,3 +22,8 @@ springdoc:
     path: /api/v1/api-docs
   swagger-ui:
     path: /api/v1/api-docs/swagger-ui.html
+
+rating:
+  last:
+    rides:
+      count: 20
