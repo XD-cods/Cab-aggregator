@@ -8,7 +8,7 @@ public interface CarService {
 
     CarResponse getCarById(Long id);
 
-    PageResponse<CarResponse> getAllCar(Integer offset, Integer limit);
+    PageResponse<CarResponse> getAllCar(Integer currentPage, Integer limit);
 
     CarResponse createCar(CarRequest carRequest);
 

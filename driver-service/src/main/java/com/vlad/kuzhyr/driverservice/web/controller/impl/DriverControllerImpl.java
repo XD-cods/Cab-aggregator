@@ -33,16 +33,18 @@ public class DriverControllerImpl implements DriverController {
     @Override
     @GetMapping("/{id}")
     public ResponseEntity<DriverResponse> getDriverById(@PathVariable Long id) {
-        return ResponseEntity.ok(driverService.getDriverById(id));
+        DriverResponse existingDriverResponse = driverService.getDriverById(id);
+        return ResponseEntity.ok(existingDriverResponse);
     }
 
     @Override
     @GetMapping
     public ResponseEntity<PageResponse<DriverResponse>> getAllDriver(
-        @RequestParam(required = false, defaultValue = "0") @Min(0) Integer offset,
+        @RequestParam(name = "current_page", required = false, defaultValue = "0") @Min(0) Integer currentPage,
         @RequestParam(required = false, defaultValue = "10") @Min(1) @Max(100) Integer limit
     ) {
-        return ResponseEntity.ok(driverService.getAllDriver(offset, limit));
+        PageResponse<DriverResponse> driverPageResponse = driverService.getAllDriver(currentPage, limit);
+        return ResponseEntity.ok(driverPageResponse);
     }
 
     @Override
@@ -54,7 +56,8 @@ public class DriverControllerImpl implements DriverController {
     @Override
     @PutMapping("/{id}")
     public ResponseEntity<DriverResponse> updateDriver(@PathVariable Long id, @Valid DriverRequest driverRequest) {
-        return ResponseEntity.ok(driverService.updateDriver(id, driverRequest));
+        DriverResponse updatedDriver = driverService.updateDriver(id, driverRequest);
+        return ResponseEntity.ok(updatedDriver);
     }
 
     @Override
@@ -63,13 +66,15 @@ public class DriverControllerImpl implements DriverController {
         @PathVariable Long id,
         @Valid @RequestBody DriverUpdateCarsRequest driverUpdateCarsRequest
     ) {
-        return ResponseEntity.ok(driverService.updateDriverCarsById(id, driverUpdateCarsRequest));
+        DriverResponse updatedDriverCars = driverService.updateDriverCarsById(id, driverUpdateCarsRequest);
+        return ResponseEntity.ok(updatedDriverCars);
     }
 
     @Override
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteDriver(@PathVariable Long id) {
-        return ResponseEntity.ok(driverService.deleteDriverById(id));
+        Boolean isDeleted = driverService.deleteDriverById(id);
+        return ResponseEntity.ok(isDeleted);
     }
 
 }

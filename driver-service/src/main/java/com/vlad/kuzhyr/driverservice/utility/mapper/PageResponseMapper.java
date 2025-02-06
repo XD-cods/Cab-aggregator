@@ -13,7 +13,7 @@ import org.springframework.data.domain.Page;
     injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface PageResponseMapper {
 
-    default <T, R> PageResponse<R> toPageResponse(Page<T> sourcePage, int offset, Function<T, R> mapper) {
+    default <T, R> PageResponse<R> toPageResponse(Page<T> sourcePage, int currentPage, Function<T, R> mapper) {
         List<R> content = sourcePage.getContent()
             .stream()
             .map(mapper)
@@ -21,7 +21,7 @@ public interface PageResponseMapper {
 
         return PageResponse.<R>builder()
             .content(content)
-            .currentOffset(offset)
+            .currentPage(currentPage)
             .totalElements(sourcePage.getTotalElements())
             .totalPages(sourcePage.getTotalPages())
             .build();

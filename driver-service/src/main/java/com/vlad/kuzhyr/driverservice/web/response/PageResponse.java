@@ -10,7 +10,7 @@ import lombok.Builder;
 public record PageResponse<T>(
 
     List<T> content,
-    Integer currentOffset,
+    Integer currentPage,
     Long totalElements,
     Integer totalPages
 

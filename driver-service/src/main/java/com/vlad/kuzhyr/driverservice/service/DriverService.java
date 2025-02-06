@@ -9,7 +9,7 @@ public interface DriverService {
 
     DriverResponse getDriverById(Long id);
 
-    PageResponse<DriverResponse> getAllDriver(Integer offset, Integer limit);
+    PageResponse<DriverResponse> getAllDriver(Integer currentPage, Integer limit);
 
     DriverResponse createDriver(DriverRequest driverRequest);
 

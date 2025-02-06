@@ -35,13 +35,13 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public PageResponse<CarResponse> getAllCar(Integer offset, Integer limit) {
-        Pageable pageable = PageRequest.of(offset, limit);
+    public PageResponse<CarResponse> getAllCar(Integer currentPage, Integer limit) {
+        Pageable pageable = PageRequest.of(currentPage, limit);
         Page<Car> carsPage = carRepository.findByIsEnabledTrue(pageable);
 
         return pageResponseMapper.toPageResponse(
             carsPage,
-            offset,
+            currentPage,
             carMapper::toResponse
         );
     }

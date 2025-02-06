@@ -30,34 +30,39 @@ public class CarControllerImpl implements CarController {
     @Override
     @GetMapping("/{id}")
     public ResponseEntity<CarResponse> getCarById(@PathVariable Long id) {
-        return ResponseEntity.ok(carService.getCarById(id));
+        CarResponse existingCarResponse = carService.getCarById(id);
+        return ResponseEntity.ok(existingCarResponse);
     }
 
     @Override
     @GetMapping
     public ResponseEntity<PageResponse<CarResponse>> getAllCar(
-        @RequestParam(required = false, defaultValue = "0") @Min(0) Integer offset,
+        @RequestParam(name = "current_page", required = false, defaultValue = "0") @Min(0) Integer currentPage,
         @RequestParam(required = false, defaultValue = "10") @Min(1) @Max(100) Integer limit
     ) {
-        return ResponseEntity.ok(carService.getAllCar(offset, limit));
+        PageResponse<CarResponse> carsPage = carService.getAllCar(currentPage, limit);
+        return ResponseEntity.ok(carsPage);
     }
 
     @Override
     @PostMapping
     public ResponseEntity<CarResponse> createCar(@Valid CarRequest carRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(carService.createCar(carRequest));
+        CarResponse createdCar = carService.createCar(carRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdCar);
     }
 
     @Override
     @PutMapping("/{id}")
     public ResponseEntity<CarResponse> updateCar(@PathVariable Long id, @Valid CarRequest carRequest) {
-        return ResponseEntity.ok(carService.updateCar(id, carRequest));
+        CarResponse updatedCar = carService.updateCar(id, carRequest);
+        return ResponseEntity.ok(updatedCar);
     }
 
     @Override
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteCar(@PathVariable Long id) {
-        return ResponseEntity.ok(carService.deleteCarById(id));
+        Boolean isDeleted = carService.deleteCarById(id);
+        return ResponseEntity.ok(isDeleted);
     }
 
 }

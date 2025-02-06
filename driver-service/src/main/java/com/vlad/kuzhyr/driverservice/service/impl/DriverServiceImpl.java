@@ -9,6 +9,7 @@ import com.vlad.kuzhyr.driverservice.persistence.repository.DriverRepository;
 import com.vlad.kuzhyr.driverservice.service.DriverService;
 import com.vlad.kuzhyr.driverservice.utility.constant.ExceptionMessageConstant;
 import com.vlad.kuzhyr.driverservice.utility.mapper.DriverMapper;
+import com.vlad.kuzhyr.driverservice.utility.mapper.PageResponseMapper;
 import com.vlad.kuzhyr.driverservice.web.request.DriverRequest;
 import com.vlad.kuzhyr.driverservice.web.request.DriverUpdateCarsRequest;
 import com.vlad.kuzhyr.driverservice.web.response.DriverResponse;
@@ -31,6 +32,8 @@ public class DriverServiceImpl implements DriverService {
 
     private final CarRepository carRepository;
 
+    private final PageResponseMapper pageResponseMapper;
+
     @Override
     public DriverResponse getDriverById(Long id) {
         Driver existDriver = driverRepository.findDriverByIdAndIsEnabledTrue(id)
@@ -42,20 +45,15 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public PageResponse<DriverResponse> getAllDriver(Integer offset, Integer limit) {
-        Pageable pageable = PageRequest.of(offset, limit);
+    public PageResponse<DriverResponse> getAllDriver(Integer currentPage, Integer limit) {
+        Pageable pageable = PageRequest.of(currentPage, limit);
         Page<Driver> driversPage = driverRepository.findByIsEnabledTrue(pageable);
-        List<DriverResponse> driversResponse = driversPage.getContent()
-            .stream()
-            .map(driverMapper::toResponse)
-            .toList();
 
-        return PageResponse.<DriverResponse>builder()
-            .content(driversResponse)
-            .currentOffset(offset)
-            .totalElements(driversPage.getTotalElements())
-            .totalPages(driversPage.getTotalPages())
-            .build();
+        return pageResponseMapper.toPageResponse(
+            driversPage,
+            currentPage,
+            driverMapper::toResponse
+        );
     }
 
     @Override

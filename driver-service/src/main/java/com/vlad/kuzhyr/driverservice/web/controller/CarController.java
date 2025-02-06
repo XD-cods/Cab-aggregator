@@ -33,7 +33,7 @@ public interface CarController {
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     ResponseEntity<PageResponse<CarResponse>> getAllCar(
-        @RequestParam(required = false, defaultValue = "0") @Min(0) Integer offset,
+        @RequestParam(required = false, defaultValue = "0") @Min(0) Integer currentPage,
         @RequestParam(required = false, defaultValue = "10") @Min(1) @Max(100) Integer limit
     );
 
