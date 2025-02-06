@@ -9,20 +9,21 @@ import lombok.Builder;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record PassengerResponse(
 
-        @Schema(description = "Id of passenger", example = "1")
-        Long id,
+    @Schema(description = "Id of passenger", example = "1")
+    Long id,
 
-        @Schema(description = "Passenger first name", example = "Victor")
-        String firstName,
+    @Schema(description = "Passenger first name", example = "Victor")
+    String firstName,
 
-        @Schema(description = "Passenger last name", example = "Don")
-        String lastName,
+    @Schema(description = "Passenger last name", example = "Don")
+    String lastName,
 
-        @Schema(description = "Passenger email", example = "example@gmail.com")
-        String email,
+    @Schema(description = "Passenger email", example = "example@gmail.com")
+    String email,
 
-        @Schema(description = "Passenger phone", example = "7849232")
-        String phone
+    @Schema(description = "Passenger phone", example = "7849232")
+    String phone
 
 ) {
+
 }

@@ -1,4 +1,4 @@
-package com.vlad.kuzhyr.rideservice.web.response;
+package com.vlad.kuzhyr.passengerservice.web.response;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;

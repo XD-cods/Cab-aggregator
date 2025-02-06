@@ -40,30 +40,30 @@ public class RideControllerImpl implements RideController {
     @Override
     @GetMapping
     public ResponseEntity<PageResponse<RideResponse>> getAllRides(
-        @RequestParam(required = false, defaultValue = "0") @Min(0) Integer offset,
+        @RequestParam(name = "current_page", required = false, defaultValue = "0") @Min(0) Integer currentPage,
         @RequestParam(required = false, defaultValue = "10") @Min(1) @Max(100) Integer limit
     ) {
-        return ResponseEntity.ok(rideService.getAllRides(offset, limit));
+        return ResponseEntity.ok(rideService.getAllRides(currentPage, limit));
     }
 
     @Override
     @GetMapping("/driver/{driverId}")
     public ResponseEntity<PageResponse<RideResponse>> getAllRidesByDriverId(
         @PathVariable Long driverId,
-        @RequestParam(required = false, defaultValue = "0") @Min(0) Integer offset,
+        @RequestParam(name = "current_page", required = false, defaultValue = "0") @Min(0) Integer currentPage,
         @RequestParam(required = false, defaultValue = "10") @Min(1) @Max(100) Integer limit
     ) {
-        return ResponseEntity.ok(rideService.getAllRidesByDriverId(driverId, offset, limit));
+        return ResponseEntity.ok(rideService.getAllRidesByDriverId(driverId, currentPage, limit));
     }
 
     @Override
     @GetMapping("/passenger/{passengerId}")
     public ResponseEntity<PageResponse<RideResponse>> getAllRidesByPassengerId(
         @PathVariable Long passengerId,
-        @RequestParam(required = false, defaultValue = "0") @Min(0) Integer offset,
+        @RequestParam(name = "current_page", required = false, defaultValue = "0") @Min(0) Integer currentPage,
         @RequestParam(required = false, defaultValue = "10") @Min(1) @Max(100) Integer limit
     ) {
-        return ResponseEntity.ok(rideService.getAllRidesByPassengerId(passengerId, offset, limit));
+        return ResponseEntity.ok(rideService.getAllRidesByPassengerId(passengerId, currentPage, limit));
     }
 
     @Override

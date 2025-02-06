@@ -43,23 +43,23 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public PageResponse<RideResponse> getAllRidesByDriverId(Long driverId, Integer offset, Integer limit) {
+    public PageResponse<RideResponse> getAllRidesByDriverId(Long driverId, Integer currentPage, Integer limit) {
         rideValidation.validateRidesExistByDriverId(driverId);
-        Page<Ride> ridesPage = rideRepository.findByDriverId(driverId, PageRequest.of(offset, limit));
-        return pageResponseMapper.toPageResponse(ridesPage, offset, rideMapper::toResponse);
+        Page<Ride> ridesPage = rideRepository.findByDriverId(driverId, PageRequest.of(currentPage, limit));
+        return pageResponseMapper.toPageResponse(ridesPage, currentPage, rideMapper::toResponse);
     }
 
     @Override
-    public PageResponse<RideResponse> getAllRidesByPassengerId(Long passengerId, Integer offset, Integer limit) {
+    public PageResponse<RideResponse> getAllRidesByPassengerId(Long passengerId, Integer currentPage, Integer limit) {
         rideValidation.validateRidesExistByPassengerId(passengerId);
-        Page<Ride> ridesPage = rideRepository.findByPassengerId(passengerId, PageRequest.of(offset, limit));
-        return pageResponseMapper.toPageResponse(ridesPage, offset, rideMapper::toResponse);
+        Page<Ride> ridesPage = rideRepository.findByPassengerId(passengerId, PageRequest.of(currentPage, limit));
+        return pageResponseMapper.toPageResponse(ridesPage, currentPage, rideMapper::toResponse);
     }
 
     @Override
-    public PageResponse<RideResponse> getAllRides(Integer offset, Integer limit) {
-        Page<Ride> ridesPage = rideRepository.findAll(PageRequest.of(offset, limit));
-        return pageResponseMapper.toPageResponse(ridesPage, offset, rideMapper::toResponse);
+    public PageResponse<RideResponse> getAllRides(Integer currentPage, Integer limit) {
+        Page<Ride> ridesPage = rideRepository.findAll(PageRequest.of(currentPage, limit));
+        return pageResponseMapper.toPageResponse(ridesPage, currentPage, rideMapper::toResponse);
     }
 
     @Override

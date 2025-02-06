@@ -10,16 +10,16 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(
-        componentModel = "spring",
-        injectionStrategy = InjectionStrategy.CONSTRUCTOR
+    componentModel = "spring",
+    injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
 public interface PassengerMapper {
 
-  PassengerResponse toResponse(Passenger passenger);
+    PassengerResponse toResponse(Passenger passenger);
 
-  @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-  void updateFromRequest(PassengerRequest passengerRequest, @MappingTarget Passenger existPassenger);
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateFromRequest(PassengerRequest passengerRequest, @MappingTarget Passenger existPassenger);
 
-  Passenger toEntity(PassengerRequest passengerRequest);
+    Passenger toEntity(PassengerRequest passengerRequest);
 
 }

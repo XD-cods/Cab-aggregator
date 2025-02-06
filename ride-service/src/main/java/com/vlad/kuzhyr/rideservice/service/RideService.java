@@ -10,11 +10,11 @@ public interface RideService {
 
     RideResponse getRideById(Long id);
 
-    PageResponse<RideResponse> getAllRidesByDriverId(Long driverId, Integer offset, Integer limit);
+    PageResponse<RideResponse> getAllRidesByDriverId(Long driverId, Integer currentPage, Integer limit);
 
-    PageResponse<RideResponse> getAllRidesByPassengerId(Long passengerId, Integer offset, Integer limit);
+    PageResponse<RideResponse> getAllRidesByPassengerId(Long passengerId, Integer currentPage, Integer limit);
 
-    PageResponse<RideResponse> getAllRides(Integer offset, Integer limit);
+    PageResponse<RideResponse> getAllRides(Integer currentPage, Integer limit);
 
     RideResponse updateRide(Long id, UpdateRideRequest rideRequest);
 
