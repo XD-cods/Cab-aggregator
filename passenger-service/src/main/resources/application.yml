@@ -1,0 +1,24 @@
+server:
+  port: 5008
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: passenger-service
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+springdoc:
+  api-docs:
+    path: /api/v1/api-docs
+  swagger-ui:
+    path: /api/v1/api-docs/swagger-ui.html
