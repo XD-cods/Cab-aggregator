@@ -20,6 +20,7 @@
         <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
     </properties>
     <modules>
+        <module>driver-service</module>
         <module>passenger-service</module>
         <module>ride-service</module>
     </modules>
