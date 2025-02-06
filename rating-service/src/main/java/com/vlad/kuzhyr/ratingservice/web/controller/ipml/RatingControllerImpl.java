@@ -37,7 +37,7 @@ public class RatingControllerImpl implements RatingController {
     @Override
     @GetMapping
     public ResponseEntity<PageResponse<RatingResponse>> getRatings(
-        @RequestParam(required = false, defaultValue = "0")  @Min(0) int currentPage,
+        @RequestParam(name = "current_page", required = false, defaultValue = "0")  @Min(0) int currentPage,
         @RequestParam(required = false, defaultValue = "10") @Min(0) @Max(100) int limit
     ) {
         return ResponseEntity.ok(ratingService.getRatings(currentPage, limit));
