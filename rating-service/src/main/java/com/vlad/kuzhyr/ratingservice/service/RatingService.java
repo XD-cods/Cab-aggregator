@@ -9,7 +9,7 @@ public interface RatingService {
 
     RatingResponse getRatingByRatingId(Long id);
 
-    PageResponse<RatingResponse> getRatings(int offset, int limit);
+    PageResponse<RatingResponse> getRatings(int currentPage, int limit);
 
     Double getAverageRatingByPassengerId(Long passengerId);
 

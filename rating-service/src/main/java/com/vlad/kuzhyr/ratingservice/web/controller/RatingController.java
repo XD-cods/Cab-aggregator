@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +29,7 @@ public interface RatingController {
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     ResponseEntity<PageResponse<RatingResponse>> getRatings(
-        @RequestParam(required = false, defaultValue = "0") @Min(0) int offset,
+        @RequestParam(required = false, defaultValue = "0") @Min(0) int currentPage,
         @RequestParam(required = false, defaultValue = "10") @Min(0) @Max(100) int limit
     );
 

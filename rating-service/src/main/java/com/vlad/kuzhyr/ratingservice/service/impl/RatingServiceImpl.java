@@ -45,13 +45,13 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public PageResponse<RatingResponse> getRatings(int offset, int limit) {
-        Pageable pageable = PageRequest.of(offset, limit);
+    public PageResponse<RatingResponse> getRatings(int currentPage, int limit) {
+        Pageable pageable = PageRequest.of(currentPage, limit);
         Page<Rating> ratingsPage = ratingRepository.findAll(pageable);
 
         return pageResponseMapper.toPageResponse(
             ratingsPage,
-            offset,
+            currentPage,
             ratingMapper::toResponse
         );
     }
