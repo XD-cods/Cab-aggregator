@@ -53,7 +53,6 @@ public interface RatingController {
     @Operation(summary = "Create rating")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Rating created"),
-        @ApiResponse(responseCode = "404", description = "Rating not found"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     ResponseEntity<RatingResponse> createRating(@Valid CreateRatingRequest createRatingRequest);
