@@ -9,6 +9,10 @@ public class RatedByConverter implements AttributeConverter<RatedBy, Integer> {
 
     @Override
     public Integer convertToDatabaseColumn(RatedBy ratedBy) {
+        if (ratedBy == null) {
+            return null;
+        }
+
         return ratedBy.getCode();
     }
 

@@ -46,7 +46,8 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     public PageResponse<RatingResponse> getRatings(int currentPage, int limit) {
-        Pageable pageable = PageRequest.of(currentPage, limit);
+        Sort sort = Sort.by(Sort.Order.desc("id"));
+        Pageable pageable = PageRequest.of(currentPage, limit, sort);
         Page<Rating> ratingsPage = ratingRepository.findAll(pageable);
 
         return pageResponseMapper.toPageResponse(
