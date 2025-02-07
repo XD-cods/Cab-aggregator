@@ -78,7 +78,10 @@ public class ControllerAdvice {
             )
             )
     })
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler(value = {
+        MethodArgumentNotValidException.class,
+        RatedByNullException.class,
+    })
     public ResponseEntity<ErrorResponse> requestValidationException(MethodArgumentNotValidException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.builder()
             .error(String.valueOf(HttpStatus.BAD_REQUEST))

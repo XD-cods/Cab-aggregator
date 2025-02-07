@@ -12,16 +12,16 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(
-    componentModel = MappingConstants.ComponentModel.SPRING,
-    injectionStrategy = InjectionStrategy.CONSTRUCTOR
+        componentModel = MappingConstants.ComponentModel.SPRING,
+        injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
 public interface RatingMapper {
 
-    RatingResponse toResponse(Rating rating);
+  RatingResponse toResponse(Rating ride);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateFromRequest(UpdateRatingRequest updateRatingRequest, @MappingTarget Rating existingRating);
+  Rating toEntity(CreateRatingRequest rideRequest);
 
-    Rating toEntity(CreateRatingRequest carRequest);
+  @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+  void updateFromRequest(UpdateRatingRequest rideRequest, @MappingTarget Rating ride);
 
 }

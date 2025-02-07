@@ -67,7 +67,7 @@ public class RatingServiceImpl implements RatingService {
 
         if (lastRatings.isEmpty()) {
             throw new RatingsNotFoundedByPassengerId(
-                ExceptionMessageConstant.RATINGS_NOT_FOUNDED_BY_PASSENGER_ID_MESSAGE.formatted(passengerId)
+                ExceptionMessageConstant.RATINGS_NOT_FOUND_BY_PASSENGER_ID_MESSAGE.formatted(passengerId)
             );
         }
 
