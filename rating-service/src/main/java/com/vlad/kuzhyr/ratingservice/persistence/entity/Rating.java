@@ -48,5 +48,4 @@ public class Rating {
     @Convert(converter = RatedByConverter.class)
     private RatedBy ratedBy;
 
-
 }

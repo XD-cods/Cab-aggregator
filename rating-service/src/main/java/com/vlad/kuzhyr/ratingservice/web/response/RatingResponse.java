@@ -30,5 +30,4 @@ public record RatingResponse(
     RatedBy ratedBy
 
 ) {
-
 }

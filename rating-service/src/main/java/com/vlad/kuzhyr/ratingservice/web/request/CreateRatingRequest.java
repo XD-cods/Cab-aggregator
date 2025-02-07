@@ -37,5 +37,4 @@ public record CreateRatingRequest(
     RatedBy ratedBy
 
 ) {
-
 }

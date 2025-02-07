@@ -94,7 +94,6 @@ public class RatingServiceImpl implements RatingService {
             .mapToDouble(Rating::getRating)
             .average()
             .orElse(0.0);
-
     }
 
     @Override
