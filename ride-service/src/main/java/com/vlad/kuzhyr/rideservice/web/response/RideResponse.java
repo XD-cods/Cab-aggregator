@@ -16,10 +16,10 @@ public record RideResponse(
     Long id,
 
     @Schema(description = "Ride start address", example = "Россия, г. Орехово-Зуево, Октябрьская ул., д. 3")
-    String startAddress,
+    String departureAddress,
 
     @Schema(description = "Ride finish address", example = "Россия, г. Орехово-Зуево, Октябрьская ул., д. 35")
-    String finishAddress,
+    String destinationAddress,
 
     @Schema(description = "Ride driver id", example = "1")
     Long driverId,
@@ -37,11 +37,12 @@ public record RideResponse(
     BigDecimal ridePrice,
 
     @Schema(description = "Ride start time", example = "2024-10-15 14:30")
-    LocalDateTime startTime,
+    LocalDateTime pickupTime,
 
     @Schema(description = "Ride finish time", example = "2024-10-15 14:50")
-    LocalDateTime finishTime
+    LocalDateTime completeTime,
 
+    @Schema(description = "Order time", example = "2024-10-15 14:10")
+    LocalDateTime orderCreateTime
 ) {
-
 }

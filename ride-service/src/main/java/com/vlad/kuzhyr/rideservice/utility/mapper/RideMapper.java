@@ -11,8 +11,8 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface RideMapper {
 
-    @Mapping(source = "departureAddress.addressName", target = "startAddress")
-    @Mapping(source = "destinationAddress.addressName", target = "finishAddress")
+    @Mapping(source = "departureAddress.addressName", target = "departureAddress")
+    @Mapping(source = "destinationAddress.addressName", target = "destinationAddress")
     RideResponse toResponse(Ride ride);
 
     @Mapping(source = "destinationAddress", target = "destinationAddress", ignore = true)

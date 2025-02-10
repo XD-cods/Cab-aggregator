@@ -22,7 +22,7 @@ public class MapboxClient {
     private final MapboxMapper mapboxMapper;
 
     @Value("${mapbox.api.secret-key}")
-    private static String MAPBOX_ACCESS_TOKEN;
+    private String MAPBOX_ACCESS_TOKEN;
 
     public double[] geocodeAddress(String address) {
 

@@ -18,6 +18,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Getter
 @Setter
@@ -64,4 +65,7 @@ public class Ride {
     @Column(name = "complete_time")
     private LocalDateTime completeTime;
 
+    @Column(name = "order_create_time")
+    @CreationTimestamp
+    private LocalDateTime orderCreateTime;
 }
