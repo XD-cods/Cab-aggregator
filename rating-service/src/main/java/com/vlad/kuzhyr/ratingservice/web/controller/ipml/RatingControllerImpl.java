@@ -4,6 +4,7 @@ import com.vlad.kuzhyr.ratingservice.service.RatingService;
 import com.vlad.kuzhyr.ratingservice.web.controller.RatingController;
 import com.vlad.kuzhyr.ratingservice.web.request.CreateRatingRequest;
 import com.vlad.kuzhyr.ratingservice.web.request.UpdateRatingRequest;
+import com.vlad.kuzhyr.ratingservice.web.response.AverageRatingResponse;
 import com.vlad.kuzhyr.ratingservice.web.response.PageResponse;
 import com.vlad.kuzhyr.ratingservice.web.response.RatingResponse;
 import jakarta.validation.Valid;
@@ -37,7 +38,8 @@ public class RatingControllerImpl implements RatingController {
     @Override
     @GetMapping
     public ResponseEntity<PageResponse<RatingResponse>> getRatings(
-        @RequestParam(name = "current_page", required = false, defaultValue = "0") @Min(0) int currentPage,
+        @RequestParam(name = "current_page", required = false, defaultValue = "0")
+        @Min(0) int currentPage,
         @RequestParam(required = false, defaultValue = "10") @Min(0) @Max(100) int limit
     ) {
         return ResponseEntity.ok(ratingService.getRatings(currentPage, limit));
@@ -45,14 +47,14 @@ public class RatingControllerImpl implements RatingController {
 
     @Override
     @GetMapping("/passenger/{passengerId}")
-    public ResponseEntity<Double> getAverageRatingByPassengerId(@PathVariable Long passengerId) {
+    public ResponseEntity<AverageRatingResponse> getAverageRatingByPassengerId(@PathVariable Long passengerId) {
         return ResponseEntity.ok(
             ratingService.getAverageRatingByPassengerId(passengerId));
     }
 
     @Override
     @GetMapping("/driver/{driverId}")
-    public ResponseEntity<Double> getAverageRatingByDriverId(@PathVariable Long driverId) {
+    public ResponseEntity<AverageRatingResponse> getAverageRatingByDriverId(@PathVariable Long driverId) {
         return ResponseEntity.ok(ratingService.getAverageRatingByDriverId(driverId));
     }
 

@@ -2,6 +2,7 @@ package com.vlad.kuzhyr.ratingservice.web.controller;
 
 import com.vlad.kuzhyr.ratingservice.web.request.CreateRatingRequest;
 import com.vlad.kuzhyr.ratingservice.web.request.UpdateRatingRequest;
+import com.vlad.kuzhyr.ratingservice.web.response.AverageRatingResponse;
 import com.vlad.kuzhyr.ratingservice.web.response.PageResponse;
 import com.vlad.kuzhyr.ratingservice.web.response.RatingResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,7 +31,8 @@ public interface RatingController {
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     ResponseEntity<PageResponse<RatingResponse>> getRatings(
-        @RequestParam(name = "current_page", required = false, defaultValue = "0") @Min(0) int currentPage,
+        @RequestParam(name = "current_page", required = false, defaultValue = "0") @Min(0)
+        int currentPage,
         @RequestParam(required = false, defaultValue = "10") @Min(0) @Max(100) int limit
     );
 
@@ -40,7 +42,7 @@ public interface RatingController {
         @ApiResponse(responseCode = "404", description = "Ratings not founded"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    ResponseEntity<Double> getAverageRatingByPassengerId(Long passengerId);
+    ResponseEntity<AverageRatingResponse> getAverageRatingByPassengerId(Long passengerId);
 
     @Operation(summary = "Get average rating by driver id")
     @ApiResponses(value = {
@@ -48,7 +50,7 @@ public interface RatingController {
         @ApiResponse(responseCode = "404", description = "Ratings not founded"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    ResponseEntity<Double> getAverageRatingByDriverId(Long driverId);
+    ResponseEntity<AverageRatingResponse> getAverageRatingByDriverId(Long driverId);
 
     @Operation(summary = "Create rating")
     @ApiResponses(value = {

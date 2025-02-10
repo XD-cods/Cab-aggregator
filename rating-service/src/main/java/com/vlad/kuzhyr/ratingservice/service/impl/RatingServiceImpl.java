@@ -13,6 +13,7 @@ import com.vlad.kuzhyr.ratingservice.utility.mapper.PageResponseMapper;
 import com.vlad.kuzhyr.ratingservice.utility.mapper.RatingMapper;
 import com.vlad.kuzhyr.ratingservice.web.request.CreateRatingRequest;
 import com.vlad.kuzhyr.ratingservice.web.request.UpdateRatingRequest;
+import com.vlad.kuzhyr.ratingservice.web.response.AverageRatingResponse;
 import com.vlad.kuzhyr.ratingservice.web.response.PageResponse;
 import com.vlad.kuzhyr.ratingservice.web.response.RatingResponse;
 import java.util.List;
@@ -58,7 +59,7 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public Double getAverageRatingByPassengerId(Long passengerId) {
+    public AverageRatingResponse getAverageRatingByPassengerId(Long passengerId) {
         Sort sort = Sort.by(Sort.Order.desc("id"));
         Pageable pageRequest = PageRequest.of(0, lastRidesLimit, sort);
 
@@ -71,14 +72,18 @@ public class RatingServiceImpl implements RatingService {
             );
         }
 
-        return lastRatings.stream()
+        double averageRating = lastRatings.stream()
             .mapToDouble(Rating::getRating)
             .average()
             .orElse(0.0);
+
+        return AverageRatingResponse.builder()
+            .averageRating(averageRating)
+            .build();
     }
 
     @Override
-    public Double getAverageRatingByDriverId(Long driverId) {
+    public AverageRatingResponse getAverageRatingByDriverId(Long driverId) {
         Sort sort = Sort.by(Sort.Order.desc("id"));
         Pageable pageRequest = PageRequest.of(0, lastRidesLimit, sort);
 
@@ -90,10 +95,14 @@ public class RatingServiceImpl implements RatingService {
             );
         }
 
-        return lastRatings.stream()
+        double averageRating = lastRatings.stream()
             .mapToDouble(Rating::getRating)
             .average()
             .orElse(0.0);
+
+        return AverageRatingResponse.builder()
+            .averageRating(averageRating)
+            .build();
     }
 
     @Override
