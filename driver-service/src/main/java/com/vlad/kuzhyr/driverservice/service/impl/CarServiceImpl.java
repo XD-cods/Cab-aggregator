@@ -37,7 +37,7 @@ public class CarServiceImpl implements CarService {
     @Override
     public PageResponse<CarResponse> getAllCar(Integer currentPage, Integer limit) {
         Pageable pageable = PageRequest.of(currentPage, limit);
-        Page<Car> carsPage = carRepository.findByIsEnabledTrue(pageable);
+        Page<Car> carsPage = carRepository.findAll(pageable);
 
         return pageResponseMapper.toPageResponse(
             carsPage,

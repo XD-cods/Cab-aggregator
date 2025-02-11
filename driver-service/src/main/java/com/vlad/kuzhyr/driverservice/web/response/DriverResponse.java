@@ -30,8 +30,10 @@ public record DriverResponse(
     String phone,
 
     @Schema(description = "Driver cars id's", example = "[1,2]")
-    List<Long> carIds
+    List<Long> carIds,
+
+    @Schema(description = "is enable flag", example = "true")
+    Boolean isEnabled
 
 ) {
-
 }

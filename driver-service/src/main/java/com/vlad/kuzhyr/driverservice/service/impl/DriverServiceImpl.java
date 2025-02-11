@@ -47,7 +47,7 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public PageResponse<DriverResponse> getAllDriver(Integer currentPage, Integer limit) {
         Pageable pageable = PageRequest.of(currentPage, limit);
-        Page<Driver> driversPage = driverRepository.findByIsEnabledTrue(pageable);
+        Page<Driver> driversPage = driverRepository.findAll(pageable);
 
         return pageResponseMapper.toPageResponse(
             driversPage,
