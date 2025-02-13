@@ -152,7 +152,9 @@ public class RideServiceImpl implements RideService {
         switch (newStatus) {
             case PASSENGER_PICKED_UP -> ride.setPickupTime(LocalDateTime.now());
             case COMPLETED -> ride.setCompleteTime(LocalDateTime.now());
-            default -> throw new IllegalStateException("Unexpected value: " + newStatus);
+            default -> throw new IllegalStateException(
+                ExceptionMessageConstant.STATUS_NOT_FOUND.formatted(newStatus)
+            );
         }
     }
 

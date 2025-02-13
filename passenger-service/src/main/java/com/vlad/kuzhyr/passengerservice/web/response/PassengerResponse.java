@@ -21,7 +21,7 @@ public record PassengerResponse(
     @Schema(description = "Passenger email", example = "example@gmail.com")
     String email,
 
-    @Schema(description = "Passenger phone", example = "7849232")
+    @Schema(description = "Passenger phone", example = "+375295162318")
     String phone,
 
     @Schema(description = "Passenger enabled", example = "true")

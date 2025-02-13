@@ -24,4 +24,6 @@ public final class ExceptionMessageConstant {
     public static final String DEPARTURE_AND_DESTINATION_ADDRESSES_SAME_MESSAGE =
         "departure and destination addresses can't same";
 
+    public static final String STATUS_NOT_FOUND = "status: %s not found";
+
 }
