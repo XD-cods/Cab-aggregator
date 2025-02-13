@@ -1,10 +1,15 @@
 package com.vlad.kuzhyr.rideservice.exception;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import feign.FeignException;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.time.LocalDateTime;
+import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -12,12 +17,15 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class ControllerAdvice {
+
+    private final ObjectMapper objectMapper;
 
     @ExceptionHandler(value = {
         RideNotFoundException.class,
         RidesNotFoundByPassengerIdException.class,
-        RidesNotFoundByDriverIdException.class
+        RidesNotFoundByDriverIdException.class,
     })
     @ApiResponses(value = {
         @ApiResponse(
@@ -32,6 +40,24 @@ public class ControllerAdvice {
             .errorDescription(exception.getMessage())
             .timestamp(LocalDateTime.now())
             .build());
+    }
+
+    @ExceptionHandler(value = { FeignException.class })
+    public ResponseEntity<Map<String, String>> handleFeignStatusException(FeignException e) {
+        try {
+            Map<String, String> errorBody = objectMapper.readValue(
+                e.contentUTF8(),
+                new TypeReference<>() {
+                }
+            );
+            return ResponseEntity
+                .status(e.status())
+                .body(errorBody);
+        } catch (Exception ex) {
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Internal Server Error", "message", e.getMessage()));
+        }
     }
 
     @ApiResponses(value = {
@@ -65,7 +91,7 @@ public class ControllerAdvice {
         DistanceExtractionException.class,
         NotValidStatusTransitionException.class,
         RideCanNotUpdatableException.class,
-        DepartureAndDestinationAddressesSameException.class
+        DepartureAndDestinationAddressesSameException.class,
     })
     public ResponseEntity<ErrorResponse> requestValidationException(Exception exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.builder()

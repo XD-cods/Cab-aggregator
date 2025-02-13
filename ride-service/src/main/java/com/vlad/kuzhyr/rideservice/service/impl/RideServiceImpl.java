@@ -6,6 +6,8 @@ import com.vlad.kuzhyr.rideservice.persistence.entity.Ride;
 import com.vlad.kuzhyr.rideservice.persistence.entity.RideStatus;
 import com.vlad.kuzhyr.rideservice.persistence.repository.RideRepository;
 import com.vlad.kuzhyr.rideservice.service.RideService;
+import com.vlad.kuzhyr.rideservice.utility.client.DriverFeignClient;
+import com.vlad.kuzhyr.rideservice.utility.client.PassengerFeignClient;
 import com.vlad.kuzhyr.rideservice.utility.constant.ExceptionMessageConstant;
 import com.vlad.kuzhyr.rideservice.utility.mapper.PageResponseMapper;
 import com.vlad.kuzhyr.rideservice.utility.mapper.RideMapper;
@@ -35,6 +37,10 @@ public class RideServiceImpl implements RideService {
     private final AddressService addressService;
 
     private final RideValidation rideValidation;
+
+    private final PassengerFeignClient passengerFeignClient;
+
+    private final DriverFeignClient driverFeignClient;
 
     @Override
     public RideResponse getRideById(Long rideId) {
@@ -117,6 +123,12 @@ public class RideServiceImpl implements RideService {
     }
 
     private Ride createRideFromRideRequest(RideRequest rideRequest) {
+        Long passengerId = rideRequest.passengerId();
+        Long driverId = rideRequest.driverId();
+
+        ensurePassengerExists(passengerId);
+        ensureDriverExists(driverId);
+
         String rideRequestDepartureAddress = rideRequest.departureAddress();
         String rideRequestDestinationAddress = rideRequest.destinationAddress();
 
@@ -140,7 +152,16 @@ public class RideServiceImpl implements RideService {
         switch (newStatus) {
             case PASSENGER_PICKED_UP -> ride.setPickupTime(LocalDateTime.now());
             case COMPLETED -> ride.setCompleteTime(LocalDateTime.now());
+            default -> throw new IllegalStateException("Unexpected value: " + newStatus);
         }
+    }
+
+    private void ensurePassengerExists(Long passengerId) {
+        passengerFeignClient.getPassengerById(passengerId);
+    }
+
+    private void ensureDriverExists(Long driverId) {
+        driverFeignClient.getDriverById(driverId);
     }
 
 }

@@ -6,6 +6,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,14 +23,15 @@ public class MapboxClient {
     private final MapboxMapper mapboxMapper;
 
     @Value("${mapbox.api.secret-key}")
-    private String MAPBOX_ACCESS_TOKEN;
+    private String mapboxAccessToken;
 
+    @Cacheable(value = "geocode", key = "#address.trim().toLowerCase()")
     public double[] geocodeAddress(String address) {
 
         URI url = UriComponentsBuilder
             .fromUriString("https://api.mapbox.com/search/geocode/v6/forward")
             .queryParam("q", address)
-            .queryParam("access_token", MAPBOX_ACCESS_TOKEN)
+            .queryParam("access_token", mapboxAccessToken)
             .buildAndExpand()
             .encode(StandardCharsets.UTF_8)
             .toUri();
@@ -43,12 +45,14 @@ public class MapboxClient {
         return mapboxMapper.extractCoordinatesFromGeocodeResponse(responseBody);
     }
 
+    @Cacheable(value = "distance", key = "#origin.addressName.trim().toLowerCase() +" +
+                                         " '_' + #destination.addressName.trim().toLowerCase()")
     public double calculateDistance(Address origin, Address destination) {
         String coordinates = origin.getLatitude() + "," + origin.getLongitude() + ";"
                              + destination.getLatitude() + "," + destination.getLongitude();
         URI url = UriComponentsBuilder
             .fromUriString("https://api.mapbox.com/directions/v5/mapbox/driving/{coordinates}")
-            .queryParam("access_token", MAPBOX_ACCESS_TOKEN)
+            .queryParam("access_token", mapboxAccessToken)
             .buildAndExpand(coordinates)
             .toUri();
 

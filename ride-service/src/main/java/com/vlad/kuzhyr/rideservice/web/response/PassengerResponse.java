@@ -1,4 +1,4 @@
-package com.vlad.kuzhyr.passengerservice.web.response;
+package com.vlad.kuzhyr.rideservice.web.response;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -22,10 +22,7 @@ public record PassengerResponse(
     String email,
 
     @Schema(description = "Passenger phone", example = "7849232")
-    String phone,
+    String phone
 
-    @Schema(description = "Passenger enabled", example = "true")
-    Boolean isEnabled
 ) {
-
 }
