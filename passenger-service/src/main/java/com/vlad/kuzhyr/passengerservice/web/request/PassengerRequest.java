@@ -13,23 +13,24 @@ import lombok.Builder;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record PassengerRequest(
 
-        @Schema(description = "Passenger first name", example = "Victor")
-        @NotBlank(message = "{validation.firstname.empty}")
-        String firstName,
+    @Schema(description = "Passenger first name", example = "Victor")
+    @NotBlank(message = "{validation.firstname.empty}")
+    String firstName,
 
-        @Schema(description = "Passenger last name", example = "Don")
-        @NotBlank(message = "{validation.lastname.empty}")
-        String lastName,
+    @Schema(description = "Passenger last name", example = "Don")
+    @NotBlank(message = "{validation.lastname.empty}")
+    String lastName,
 
-        @Email(message = "{validation.email.invalid}")
-        @Schema(description = "Passenger email", example = "example@gmail.com")
-        @NotBlank(message = "{validation.email.empty}")
-        String email,
+    @Email(message = "{validation.email.invalid}")
+    @Schema(description = "Passenger email", example = "example@gmail.com")
+    @NotBlank(message = "{validation.email.empty}")
+    String email,
 
-        @Schema(description = "Passenger phone", example = "7849232")
-        @NotBlank(message = "{validation.phone.empty}")
-        @Pattern(regexp = RegularExpressionConstant.PHONE_REG_XP, message = "{validation.phone.invalid}")
-        String phone
+    @Schema(description = "Passenger phone", example = "7849232")
+    @NotBlank(message = "{validation.phone.empty}")
+    @Pattern(regexp = RegularExpressionConstant.PHONE_REG_XP, message = "{validation.phone.invalid}")
+    String phone
 
 ) {
+
 }

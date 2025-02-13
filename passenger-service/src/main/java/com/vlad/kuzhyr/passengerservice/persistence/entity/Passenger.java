@@ -21,25 +21,25 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Passenger {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "passenger_id", unique = true, nullable = false)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "passenger_id", unique = true, nullable = false)
+    private Long id;
 
-  @Column(name = "last_name", nullable = false)
-  private String lastName;
+    @Column(name = "last_name", nullable = false)
+    private String lastName;
 
-  @Column(name = "first_name", nullable = false)
-  private String firstName;
+    @Column(name = "first_name", nullable = false)
+    private String firstName;
 
-  @Column(name = "email", nullable = false)
-  private String email;
+    @Column(name = "email", nullable = false)
+    private String email;
 
-  @Column(name = "phone", nullable = false)
-  private String phone;
+    @Column(name = "phone", nullable = false)
+    private String phone;
 
-  @Builder.Default
-  @Column(name = "is_enabled", nullable = false)
-  private Boolean isEnabled = Boolean.TRUE;
+    @Builder.Default
+    @Column(name = "is_enabled", nullable = false)
+    private Boolean isEnabled = Boolean.TRUE;
 
 }
