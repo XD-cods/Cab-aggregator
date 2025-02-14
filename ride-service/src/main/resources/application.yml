@@ -10,6 +10,26 @@ spring:
     hibernate:
       ddl-auto: validate
     show-sql: true
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            retryer: feign.Retryer$Default
+            connectTimeout: 5000
+            readTimeout: 5000
+            loggerLevel: full
+  data:
+    redis:
+      port: 6379
+      host: localhost
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: 60000
+      key-prefix: "ride-service:"
+      use-key-prefix: true
 
 management:
   endpoints:
@@ -26,3 +46,7 @@ springdoc:
 mapbox:
   api:
     secret-key: ${MAPBOX_API_KEY}
+
+routes:
+  passenger-service: http://localhost:5008/api/v1/passengers
+  driver-service: http://localhost:5003/api/v1/drivers

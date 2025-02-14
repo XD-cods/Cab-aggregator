@@ -22,7 +22,9 @@ public record CarResponse(
     String carNumber,
 
     @Schema(description = "Existing driver id", example = "1")
-    Long driverId
+    Long driverId,
 
+    @Schema(description = "Car enabled", example = "true")
+    Boolean isEnabled
 ) {
 }

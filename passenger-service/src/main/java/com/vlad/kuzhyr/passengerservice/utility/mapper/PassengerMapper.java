@@ -6,6 +6,7 @@ import com.vlad.kuzhyr.passengerservice.web.response.PassengerResponse;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
@@ -15,6 +16,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 )
 public interface PassengerMapper {
 
+    @Mapping(source = "isEnabled", target = "isEnabled")
     PassengerResponse toResponse(Passenger passenger);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
