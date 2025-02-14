@@ -20,8 +20,12 @@ public interface PassengerMapper {
     PassengerResponse toResponse(Passenger passenger);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "isEnabled", ignore = true)
+    @Mapping(target = "id", ignore = true)
     void updateFromRequest(PassengerRequest passengerRequest, @MappingTarget Passenger existPassenger);
 
+    @Mapping(target = "isEnabled", ignore = true)
+    @Mapping(target = "id", ignore = true)
     Passenger toEntity(PassengerRequest passengerRequest);
 
 }

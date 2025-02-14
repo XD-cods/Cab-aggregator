@@ -23,10 +23,14 @@ public interface DriverMapper {
     DriverResponse toResponse(Driver driver);
 
     @Mapping(target = "cars", ignore = true)
+    @Mapping(target = "isEnabled", ignore = true)
+    @Mapping(target = "id", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateFromRequest(DriverRequest driverRequest, @MappingTarget Driver existingDriver);
 
     @Mapping(target = "cars", ignore = true)
+    @Mapping(target = "isEnabled", ignore = true)
+    @Mapping(target = "id", ignore = true)
     Driver toEntity(DriverRequest driverRequest);
 
     @Named("mapCarIds")

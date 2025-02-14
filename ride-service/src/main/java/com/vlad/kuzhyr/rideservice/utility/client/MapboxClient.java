@@ -48,8 +48,9 @@ public class MapboxClient {
     @Cacheable(value = "distance", key = "#origin.addressName.trim().toLowerCase() +" +
                                          " '_' + #destination.addressName.trim().toLowerCase()")
     public double calculateDistance(Address origin, Address destination) {
-        String coordinates = origin.getLatitude() + "," + origin.getLongitude() + ";"
-                             + destination.getLatitude() + "," + destination.getLongitude();
+        String coordinates = origin.getLongitude() + "," + origin.getLatitude() + ";" +
+                             destination.getLongitude() + "," + destination.getLatitude();
+
         URI url = UriComponentsBuilder
             .fromUriString("https://api.mapbox.com/directions/v5/mapbox/driving/{coordinates}")
             .queryParam("access_token", mapboxAccessToken)

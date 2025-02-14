@@ -6,6 +6,7 @@ import com.vlad.kuzhyr.rideservice.utility.client.MapboxClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +17,7 @@ public class AddressCacheService {
     private final MapboxClient mapboxClient;
 
     @Cacheable(value = "addresses", key = "#addressName.trim().toLowerCase()")
+    @Transactional
     public Address findOrCreateAddress(String addressName) {
         String finalAddressName = addressName.trim();
 
@@ -27,8 +29,8 @@ public class AddressCacheService {
         double[] coordinates = mapboxClient.geocodeAddress(addressName);
         Address newAddress = Address.builder()
             .addressName(addressName)
-            .latitude(coordinates[0])
-            .longitude(coordinates[1])
+            .latitude(coordinates[1])
+            .longitude(coordinates[0])
             .build();
 
         return addressRepository.save(newAddress);
