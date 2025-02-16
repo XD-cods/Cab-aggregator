@@ -11,10 +11,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RatingRepository extends JpaRepository<Rating, Long> {
 
-    List<Rating> findByPassengerIdAndRatedBy(Long passengerId, Pageable pageable, RatedBy ratedBy);
+    List<Rating> findByRideInfo_PassengerIdAndRatedBy(Long passengerId, Pageable pageable, RatedBy ratedBy);
 
-    List<Rating> findByDriverIdAndRatedBy(Long driverId, Pageable pageable, RatedBy ratedBy);
+    List<Rating> findByRideInfo_DriverIdAndRatedBy(Long driverId, Pageable pageable, RatedBy ratedBy);
 
-    Optional<Rating> findByRideIdAndRatedBy(Long rideId, RatedBy ratedBy);
+    Optional<Rating> findByRideInfo_RideIdAndRatedBy(Long rideId, RatedBy ratedBy);
 
 }

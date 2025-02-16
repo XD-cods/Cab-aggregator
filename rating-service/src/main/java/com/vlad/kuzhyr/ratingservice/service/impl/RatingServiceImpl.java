@@ -2,11 +2,14 @@ package com.vlad.kuzhyr.ratingservice.service.impl;
 
 import com.vlad.kuzhyr.ratingservice.exception.RatingAlreadyExistsException;
 import com.vlad.kuzhyr.ratingservice.exception.RatingNotFoundException;
-import com.vlad.kuzhyr.ratingservice.exception.RatingsNotFoundedByDriverId;
-import com.vlad.kuzhyr.ratingservice.exception.RatingsNotFoundedByPassengerId;
+import com.vlad.kuzhyr.ratingservice.exception.RatingsNotFoundedByDriverIdException;
+import com.vlad.kuzhyr.ratingservice.exception.RatingsNotFoundedByPassengerIdException;
+import com.vlad.kuzhyr.ratingservice.exception.RideInfoNotFoundException;
 import com.vlad.kuzhyr.ratingservice.persistence.entity.RatedBy;
 import com.vlad.kuzhyr.ratingservice.persistence.entity.Rating;
+import com.vlad.kuzhyr.ratingservice.persistence.entity.RideInfo;
 import com.vlad.kuzhyr.ratingservice.persistence.repository.RatingRepository;
+import com.vlad.kuzhyr.ratingservice.persistence.repository.RideInfoRepository;
 import com.vlad.kuzhyr.ratingservice.service.RatingService;
 import com.vlad.kuzhyr.ratingservice.utility.constant.ExceptionMessageConstant;
 import com.vlad.kuzhyr.ratingservice.utility.mapper.PageResponseMapper;
@@ -36,6 +39,8 @@ public class RatingServiceImpl implements RatingService {
 
     private final PageResponseMapper pageResponseMapper;
 
+    private final RideInfoRepository rideInfoRepository;
+
     @Value("${rating.last.rides.count:10}")
     private int lastRidesLimit;
 
@@ -64,10 +69,10 @@ public class RatingServiceImpl implements RatingService {
         Pageable pageRequest = PageRequest.of(0, lastRidesLimit, sort);
 
         List<Rating> lastRatings =
-            ratingRepository.findByPassengerIdAndRatedBy(passengerId, pageRequest, RatedBy.DRIVER);
+            ratingRepository.findByRideInfo_PassengerIdAndRatedBy(passengerId, pageRequest, RatedBy.DRIVER);
 
         if (lastRatings.isEmpty()) {
-            throw new RatingsNotFoundedByPassengerId(
+            throw new RatingsNotFoundedByPassengerIdException(
                 ExceptionMessageConstant.RATINGS_NOT_FOUND_BY_PASSENGER_ID_MESSAGE.formatted(passengerId)
             );
         }
@@ -87,10 +92,11 @@ public class RatingServiceImpl implements RatingService {
         Sort sort = Sort.by(Sort.Order.desc("id"));
         Pageable pageRequest = PageRequest.of(0, lastRidesLimit, sort);
 
-        List<Rating> lastRatings = ratingRepository.findByDriverIdAndRatedBy(driverId, pageRequest, RatedBy.PASSENGER);
+        List<Rating> lastRatings =
+            ratingRepository.findByRideInfo_DriverIdAndRatedBy(driverId, pageRequest, RatedBy.PASSENGER);
 
         if (lastRatings.isEmpty()) {
-            throw new RatingsNotFoundedByDriverId(
+            throw new RatingsNotFoundedByDriverIdException(
                 ExceptionMessageConstant.RATINGS_NOT_FOUNDED_BY_DRIVER_ID_MESSAGE.formatted(driverId)
             );
         }
@@ -107,7 +113,7 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     public RatingResponse createRating(CreateRatingRequest createRatingRequest) {
-        Optional<Rating> existingRatings = ratingRepository.findByRideIdAndRatedBy(
+        Optional<Rating> existingRatings = ratingRepository.findByRideInfo_RideIdAndRatedBy(
             createRatingRequest.rideId(), createRatingRequest.ratedBy()
         );
 
@@ -121,9 +127,20 @@ public class RatingServiceImpl implements RatingService {
         }
 
         Rating rating = ratingMapper.toEntity(createRatingRequest);
+
+        RideInfo existingRideInfo = getRideInfoByRideId(createRatingRequest.rideId());
+        rating.setRideInfo(existingRideInfo);
+
         Rating savedRating = ratingRepository.save(rating);
 
         return ratingMapper.toResponse(savedRating);
+    }
+
+    private RideInfo getRideInfoByRideId(Long rideId) {
+        return rideInfoRepository.findByRideId(rideId)
+            .orElseThrow(() -> new RideInfoNotFoundException(
+                ExceptionMessageConstant.RIDE_INFO_NOT_FOUND_MESSAGE.formatted(rideId)
+            ));
     }
 
     @Override

@@ -24,6 +24,17 @@ spring:
       port: 6379
       host: localhost
 
+  kafka:
+    bootstrap-servers: ${KAFKA_URL:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      retries: 3
+      acks: 1
+      batch-size: 5
+    topic:
+      ride-completed-topic: ride-completed-event
+
   cache:
     type: redis
     redis:

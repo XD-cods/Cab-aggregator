@@ -18,17 +18,16 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 )
 public interface RatingMapper {
 
+    @Mapping(source = "rideInfo", target = "rideInfo")
     RatingResponse toResponse(Rating ride);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "rideInfo", ignore = true)
     Rating toEntity(CreateRatingRequest rideRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "driverId", ignore = true)
-    @Mapping(target = "rideId", ignore = true)
-    @Mapping(target = "passengerId", ignore = true)
+    @Mapping(target = "rideInfo", ignore = true)
     @Mapping(target = "ratedBy", ignore = true)
     void updateFromRequest(UpdateRatingRequest rideRequest, @MappingTarget Rating ride);
-
 }

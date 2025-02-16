@@ -16,8 +16,9 @@ public class ControllerAdvice {
 
     @ExceptionHandler(value = {
         RatingNotFoundException.class,
-        RatingsNotFoundedByPassengerId.class,
-        RatingsNotFoundedByDriverId.class
+        RatingsNotFoundedByPassengerIdException.class,
+        RatingsNotFoundedByDriverIdException.class,
+        RideInfoNotFoundException.class
     })
     @ApiResponses(value = {
         @ApiResponse(
@@ -57,8 +58,7 @@ public class ControllerAdvice {
         @ApiResponse(
             responseCode = "500",
             description = "Internal server error occurred",
-            content = @Content(schema = @Schema(implementation = ErrorResponse.class)
-            )
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
     })
     @ExceptionHandler(InternalServerErrorOccurred.class)
@@ -74,8 +74,7 @@ public class ControllerAdvice {
         @ApiResponse(
             responseCode = "400",
             description = "Request arguments not valid exception",
-            content = @Content(schema = @Schema(implementation = ErrorResponse.class)
-            )
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
     })
     @ExceptionHandler(value = {

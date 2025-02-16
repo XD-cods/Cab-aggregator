@@ -11,14 +11,8 @@ public record RatingResponse(
     @Schema(description = "rating id", example = "1")
     Long id,
 
-    @Schema(description = "existing driver id", example = "1")
-    Long driverId,
-
-    @Schema(description = "existing ride id", example = "1")
-    Long rideId,
-
-    @Schema(description = "existing passenger id", example = "1")
-    Long passengerId,
+    @Schema(description = "rating details")
+    RideInfoResponse rideInfo,
 
     @Schema(description = "rating", example = "4.5")
     Double rating,
@@ -26,7 +20,7 @@ public record RatingResponse(
     @Schema(description = "comment of ride", example = "This ride was great!")
     String comment,
 
-    @Schema(description = "who rate", example = "PASSENGER")
+    @Schema(description = "who rated", example = "PASSENGER")
     RatedBy ratedBy
 
 ) {

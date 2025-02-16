@@ -6,12 +6,14 @@ import com.vlad.kuzhyr.rideservice.persistence.entity.Ride;
 import com.vlad.kuzhyr.rideservice.persistence.entity.RideStatus;
 import com.vlad.kuzhyr.rideservice.persistence.repository.RideRepository;
 import com.vlad.kuzhyr.rideservice.service.RideService;
+import com.vlad.kuzhyr.rideservice.utility.broker.KafkaProducer;
 import com.vlad.kuzhyr.rideservice.utility.client.DriverFeignClient;
 import com.vlad.kuzhyr.rideservice.utility.client.PassengerFeignClient;
 import com.vlad.kuzhyr.rideservice.utility.constant.ExceptionMessageConstant;
 import com.vlad.kuzhyr.rideservice.utility.mapper.PageResponseMapper;
 import com.vlad.kuzhyr.rideservice.utility.mapper.RideMapper;
 import com.vlad.kuzhyr.rideservice.utility.validation.RideValidation;
+import com.vlad.kuzhyr.rideservice.web.dto.RideInfoDto;
 import com.vlad.kuzhyr.rideservice.web.request.RideRequest;
 import com.vlad.kuzhyr.rideservice.web.request.UpdateRideRequest;
 import com.vlad.kuzhyr.rideservice.web.request.UpdateRideStatusRequest;
@@ -41,6 +43,8 @@ public class RideServiceImpl implements RideService {
     private final PassengerFeignClient passengerFeignClient;
 
     private final DriverFeignClient driverFeignClient;
+
+    private final KafkaProducer kafkaProducer;
 
     @Override
     public RideResponse getRideById(Long rideId) {
@@ -152,9 +156,15 @@ public class RideServiceImpl implements RideService {
         switch (newStatus) {
             case PASSENGER_PICKED_UP -> ride.setPickupTime(LocalDateTime.now());
             case COMPLETED -> ride.setCompleteTime(LocalDateTime.now());
-            default -> throw new IllegalStateException(
-                ExceptionMessageConstant.STATUS_NOT_FOUND.formatted(newStatus)
+            case RATE -> kafkaProducer.sendRideCompletedMessage(
+                RideInfoDto.builder()
+                    .rideId(ride.getId())
+                    .passengerId(ride.getPassengerId())
+                    .driverId(ride.getDriverId())
+                    .build()
             );
+            default -> {
+            }
         }
     }
 

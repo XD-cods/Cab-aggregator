@@ -15,14 +15,6 @@ public record CreateRatingRequest(
     @Schema(description = "existing ride id", example = "1")
     Long rideId,
 
-    @NotNull(message = "{validation.driver-id.null}")
-    @Schema(description = "existing driver id", example = "1")
-    Long driverId,
-
-    @NotNull(message = "{validation.passenger-id.null}")
-    @Schema(description = "existing passenger id", example = "1")
-    Long passengerId,
-
     @NotNull(message = "{validation.rating.null}")
     @Min(value = 0, message = "{validation.rating.small}")
     @Max(value = 5, message = "{validation.rating.over}")

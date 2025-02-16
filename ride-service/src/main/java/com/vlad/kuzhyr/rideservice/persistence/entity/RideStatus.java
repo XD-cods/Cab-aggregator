@@ -17,7 +17,8 @@ public enum RideStatus {
     COMPLETED(8),
     PAYMENT_PENDING(9),
     PAID(10),
-    CANCELLED(11);
+    CANCELLED(11),
+    RATE(12);
 
     private final int code;
 
@@ -39,7 +40,8 @@ public enum RideStatus {
             case ON_THE_WAY -> newStatus == COMPLETED || newStatus == CANCELLED;
             case COMPLETED -> newStatus == PAYMENT_PENDING;
             case PAYMENT_PENDING -> newStatus == PAID;
-            case PAID, CANCELLED -> false;
+            case PAID -> newStatus == RATE;
+            case RATE, CANCELLED -> false;
         };
     }
 
