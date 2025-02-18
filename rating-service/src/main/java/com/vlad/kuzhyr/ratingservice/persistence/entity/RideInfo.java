@@ -6,8 +6,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,6 +38,6 @@ public class RideInfo {
     @Column(name = "passenger_id", nullable = false)
     private Long passengerId;
 
-    @OneToOne(mappedBy = "rideInfo", cascade = CascadeType.ALL)
-    private Rating rating;
+    @OneToMany(mappedBy = "rideInfo", cascade = CascadeType.ALL)
+    private List<Rating> rating;
 }

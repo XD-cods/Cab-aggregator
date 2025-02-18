@@ -27,13 +27,15 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA_URL:localhost:9092}
     producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      key-serializer: org.apache.kafka.common.serialization.LongSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
       retries: 3
       acks: 1
-      batch-size: 5
+      batch-size: 16384
+      buffer-memory: 67108864
     topic:
-      ride-completed-topic: ride-completed-event
+      ride-completed-topic: ride.completed
+      driver-busy-topic: driver.status.updated
 
   cache:
     type: redis

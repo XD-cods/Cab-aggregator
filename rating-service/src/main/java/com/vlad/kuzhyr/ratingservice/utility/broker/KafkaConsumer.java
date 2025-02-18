@@ -1,11 +1,10 @@
 package com.vlad.kuzhyr.ratingservice.utility.broker;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vlad.kuzhyr.ratingservice.persistence.entity.RideInfo;
 import com.vlad.kuzhyr.ratingservice.persistence.repository.RideInfoRepository;
+import com.vlad.kuzhyr.ratingservice.utility.mapper.JsonMapper;
 import com.vlad.kuzhyr.ratingservice.web.dto.RideInfoDto;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -16,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class KafkaConsumer {
 
-    private final ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
 
     private final RideInfoRepository rideInfoRepository;
 
@@ -24,10 +23,10 @@ public class KafkaConsumer {
         topics = "${spring.kafka.topic.ride-completed-topic}",
         groupId = "${spring.kafka.consumer.group-id}"
     )
-    @SneakyThrows
     @Transactional
     public void consumeRideCompleted(String message) {
-        RideInfoDto rideInfoDto = objectMapper.readValue(message, RideInfoDto.class);
+        RideInfoDto rideInfoDto = jsonMapper.fromJson(message, RideInfoDto.class);
+
         RideInfo rideInfo = RideInfo.builder()
             .rideId(rideInfoDto.rideId())
             .driverId(rideInfoDto.driverId())

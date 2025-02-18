@@ -27,10 +27,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public PassengerResponse getPassengerById(Long id) {
-        Passenger existPassenger = passengerRepository.findPassengerByIdAndIsEnabledTrue(id)
-            .orElseThrow(() -> new PassengerNotFoundException(
-                ExceptionMessageConstant.PASSENGER_NOT_FOUND_MESSAGE.formatted(id)
-            ));
+        Passenger existPassenger = getExistingPassengerById(id);
 
         return passengerMapper.toResponse(existPassenger);
     }
@@ -53,6 +50,44 @@ public class PassengerServiceImpl implements PassengerService {
         String passengerRequestEmail = passengerRequest.email();
         String passengerRequestPhone = passengerRequest.phone();
 
+        validatePassengerEmailAndPhone(passengerRequestEmail, passengerRequestPhone);
+
+        Passenger newPassenger = passengerMapper.toEntity(passengerRequest);
+        Passenger savedPassenger = passengerRepository.save(newPassenger);
+
+        return passengerMapper.toResponse(savedPassenger);
+    }
+
+    @Transactional
+    @Override
+    public PassengerResponse updatePassenger(Long id, PassengerRequest passengerRequest) {
+        Passenger existPassenger = getExistingPassengerById(id);
+
+        passengerMapper.updateFromRequest(passengerRequest, existPassenger);
+        Passenger savedPassenger = passengerRepository.save(existPassenger);
+
+        return passengerMapper.toResponse(savedPassenger);
+    }
+
+    @Transactional
+    @Override
+    public Boolean deletePassengerById(Long id) {
+        Passenger existPassenger = getExistingPassengerById(id);
+
+        existPassenger.setIsEnabled(Boolean.FALSE);
+        passengerRepository.save(existPassenger);
+
+        return Boolean.TRUE;
+    }
+
+    private Passenger getExistingPassengerById(Long id) {
+        return passengerRepository.findPassengerByIdAndIsEnabledTrue(id)
+            .orElseThrow(() -> new PassengerNotFoundException(
+                ExceptionMessageConstant.PASSENGER_NOT_FOUND_MESSAGE.formatted(id)
+            ));
+    }
+
+    private void validatePassengerEmailAndPhone(String passengerRequestEmail, String passengerRequestPhone) {
         if (passengerRepository.existsPassengerByEmailAndIsEnabledTrue(passengerRequestEmail)) {
             throw new PassengerAlreadyExistsException(
                 ExceptionMessageConstant.PASSENGER_ALREADY_EXISTS_BY_EMAIL_MESSAGE.formatted(passengerRequestEmail)
@@ -64,36 +99,5 @@ public class PassengerServiceImpl implements PassengerService {
                 ExceptionMessageConstant.PASSENGER_ALREADY_EXISTS_BY_PHONE_MESSAGE.formatted(passengerRequestPhone)
             );
         }
-
-        Passenger newPassenger = passengerMapper.toEntity(passengerRequest);
-        Passenger savedPassenger = passengerRepository.save(newPassenger);
-        return passengerMapper.toResponse(savedPassenger);
     }
-
-    @Transactional
-    @Override
-    public PassengerResponse updatePassenger(Long id, PassengerRequest passengerRequest) {
-        Passenger existPassenger = passengerRepository.findPassengerByIdAndIsEnabledTrue(id)
-            .orElseThrow(() -> new PassengerNotFoundException(
-                ExceptionMessageConstant.PASSENGER_NOT_FOUND_MESSAGE.formatted(id)
-            ));
-
-        passengerMapper.updateFromRequest(passengerRequest, existPassenger);
-        passengerRepository.save(existPassenger);
-        return passengerMapper.toResponse(existPassenger);
-    }
-
-    @Transactional
-    @Override
-    public Boolean deletePassengerById(Long id) {
-        Passenger existPassenger = passengerRepository.findPassengerByIdAndIsEnabledTrue(id)
-            .orElseThrow(() -> new PassengerNotFoundException(
-                ExceptionMessageConstant.PASSENGER_NOT_FOUND_MESSAGE.formatted(id))
-            );
-
-        existPassenger.setIsEnabled(Boolean.FALSE);
-        passengerRepository.save(existPassenger);
-        return Boolean.TRUE;
-    }
-
 }

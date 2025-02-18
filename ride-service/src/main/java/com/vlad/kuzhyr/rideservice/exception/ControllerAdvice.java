@@ -92,6 +92,8 @@ public class ControllerAdvice {
         NotValidStatusTransitionException.class,
         RideCanNotUpdatableException.class,
         DepartureAndDestinationAddressesSameException.class,
+        DriverIsBusyException.class,
+        DriverHasNotCarException.class
     })
     public ResponseEntity<ErrorResponse> requestValidationException(Exception exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.builder()

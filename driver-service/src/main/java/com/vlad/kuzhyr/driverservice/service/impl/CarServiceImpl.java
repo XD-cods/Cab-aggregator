@@ -51,14 +51,11 @@ public class CarServiceImpl implements CarService {
     public CarResponse createCar(CarRequest carRequest) {
         String carRequestNumber = carRequest.carNumber();
 
-        if (carRepository.existsCarByCarNumberAndIsEnabledTrue(carRequestNumber)) {
-            throw new CarAlreadyExistException(
-                ExceptionMessageConstant.CAR_ALREADY_EXISTS_BY_CAR_NUMBER_MESSAGE.formatted(carRequestNumber)
-            );
-        }
+        validateCarByNumber(carRequestNumber);
 
         Car newCar = carMapper.toEntity(carRequest);
         Car savedCar = carRepository.save(newCar);
+
         return carMapper.toResponse(savedCar);
     }
 
@@ -66,9 +63,11 @@ public class CarServiceImpl implements CarService {
     @Transactional
     public CarResponse updateCar(Long id, CarRequest carRequest) {
         Car existCar = getExistingCarById(id);
+
         carMapper.updateFromRequest(carRequest, existCar);
-        carRepository.save(existCar);
-        return carMapper.toResponse(existCar);
+        Car savedCar = carRepository.save(existCar);
+
+        return carMapper.toResponse(savedCar);
     }
 
     @Override
@@ -78,8 +77,8 @@ public class CarServiceImpl implements CarService {
 
         existCar.setDriver(null);
         existCar.setIsEnabled(Boolean.FALSE);
-
         carRepository.save(existCar);
+
         return Boolean.TRUE;
     }
 
@@ -90,5 +89,11 @@ public class CarServiceImpl implements CarService {
             ));
     }
 
+    private void validateCarByNumber(String carNumber) {
+        if (carRepository.existsCarByCarNumberAndIsEnabledTrue(carNumber)) {
+            throw new CarAlreadyExistException(
+                ExceptionMessageConstant.CAR_ALREADY_EXISTS_BY_CAR_NUMBER_MESSAGE.formatted(carNumber)
+            );
+        }
+    }
 }
-

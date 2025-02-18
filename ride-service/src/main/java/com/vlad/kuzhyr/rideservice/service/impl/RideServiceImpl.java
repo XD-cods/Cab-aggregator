@@ -1,5 +1,7 @@
 package com.vlad.kuzhyr.rideservice.service.impl;
 
+import com.vlad.kuzhyr.rideservice.exception.DriverHasNotCarException;
+import com.vlad.kuzhyr.rideservice.exception.DriverIsBusyException;
 import com.vlad.kuzhyr.rideservice.exception.NotValidStatusTransitionException;
 import com.vlad.kuzhyr.rideservice.exception.RideNotFoundException;
 import com.vlad.kuzhyr.rideservice.persistence.entity.Ride;
@@ -17,6 +19,7 @@ import com.vlad.kuzhyr.rideservice.web.dto.RideInfoDto;
 import com.vlad.kuzhyr.rideservice.web.request.RideRequest;
 import com.vlad.kuzhyr.rideservice.web.request.UpdateRideRequest;
 import com.vlad.kuzhyr.rideservice.web.request.UpdateRideStatusRequest;
+import com.vlad.kuzhyr.rideservice.web.response.DriverResponse;
 import com.vlad.kuzhyr.rideservice.web.response.PageResponse;
 import com.vlad.kuzhyr.rideservice.web.response.RideResponse;
 import java.time.LocalDateTime;
@@ -131,17 +134,33 @@ public class RideServiceImpl implements RideService {
         Long driverId = rideRequest.driverId();
 
         ensurePassengerExists(passengerId);
-        ensureDriverExists(driverId);
+        checkDriverAvailability(driverId);
 
-        String rideRequestDepartureAddress = rideRequest.departureAddress();
-        String rideRequestDestinationAddress = rideRequest.destinationAddress();
+        String departureAddress = rideRequest.departureAddress();
+        String destinationAddress = rideRequest.destinationAddress();
 
-        addressService.validateDifferentAddresses(rideRequestDepartureAddress, rideRequestDestinationAddress);
+        addressService.validateDifferentAddresses(departureAddress, destinationAddress);
 
         Ride ride = rideMapper.toEntity(rideRequest);
-        addressService.updateRideAddress(ride, rideRequestDepartureAddress, rideRequestDestinationAddress);
+        addressService.updateRideAddress(ride, departureAddress, destinationAddress);
+        kafkaProducer.sendDriverBusyMessage(driverId, true);
 
         return ride;
+    }
+
+    private void checkDriverAvailability(Long driverId) {
+        DriverResponse driverResponse = getDriverByDriverId(driverId);
+        if (driverResponse.isBusy()) {
+            throw new DriverIsBusyException(
+                ExceptionMessageConstant.DRIVER_BUSY_MESSAGE.formatted(driverId)
+            );
+        }
+
+        if (driverResponse.carIds().isEmpty()) {
+            throw new DriverHasNotCarException(
+                ExceptionMessageConstant.DRIVER_HAS_NO_CAR.formatted(driverId)
+            );
+        }
     }
 
     private void validateStatusTransition(RideStatus currentStatus, RideStatus newStatus) {
@@ -155,7 +174,10 @@ public class RideServiceImpl implements RideService {
     private void updateRideTimestamps(Ride ride, RideStatus newStatus) {
         switch (newStatus) {
             case PASSENGER_PICKED_UP -> ride.setPickupTime(LocalDateTime.now());
-            case COMPLETED -> ride.setCompleteTime(LocalDateTime.now());
+            case COMPLETED -> {
+                ride.setCompleteTime(LocalDateTime.now());
+                kafkaProducer.sendDriverBusyMessage(ride.getDriverId(), false);
+            }
             case RATE -> kafkaProducer.sendRideCompletedMessage(
                 RideInfoDto.builder()
                     .rideId(ride.getId())
@@ -172,8 +194,9 @@ public class RideServiceImpl implements RideService {
         passengerFeignClient.getPassengerById(passengerId);
     }
 
-    private void ensureDriverExists(Long driverId) {
-        driverFeignClient.getDriverById(driverId);
+    private DriverResponse getDriverByDriverId(Long driverId) {
+        DriverResponse driverResponse = driverFeignClient.getDriverById(driverId).getBody();
+        return driverResponse;
     }
 
 }

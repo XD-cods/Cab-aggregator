@@ -33,7 +33,10 @@ public record DriverResponse(
     List<Long> carIds,
 
     @Schema(description = "is enable flag", example = "true")
-    Boolean isEnabled
+    Boolean isEnabled,
+
+    @Schema(description = "is busy flag", example = "false")
+    Boolean isBusy
 
 ) {
 }

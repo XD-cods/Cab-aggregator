@@ -20,7 +20,6 @@ import com.vlad.kuzhyr.ratingservice.web.response.AverageRatingResponse;
 import com.vlad.kuzhyr.ratingservice.web.response.PageResponse;
 import com.vlad.kuzhyr.ratingservice.web.response.RatingResponse;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -34,11 +33,8 @@ import org.springframework.stereotype.Service;
 public class RatingServiceImpl implements RatingService {
 
     private final RatingMapper ratingMapper;
-
     private final RatingRepository ratingRepository;
-
     private final PageResponseMapper pageResponseMapper;
-
     private final RideInfoRepository rideInfoRepository;
 
     @Value("${rating.last.rides.count:10}")
@@ -52,8 +48,7 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     public PageResponse<RatingResponse> getRatings(int currentPage, int limit) {
-        Sort sort = Sort.by(Sort.Order.desc("id"));
-        Pageable pageable = PageRequest.of(currentPage, limit, sort);
+        Pageable pageable = PageRequest.of(currentPage, limit, Sort.by(Sort.Order.desc("id")));
         Page<Rating> ratingsPage = ratingRepository.findAll(pageable);
 
         return pageResponseMapper.toPageResponse(
@@ -65,89 +60,60 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     public AverageRatingResponse getAverageRatingByPassengerId(Long passengerId) {
-        Sort sort = Sort.by(Sort.Order.desc("id"));
-        Pageable pageRequest = PageRequest.of(0, lastRidesLimit, sort);
-
-        List<Rating> lastRatings =
-            ratingRepository.findByRideInfo_PassengerIdAndRatedBy(passengerId, pageRequest, RatedBy.DRIVER);
-
-        if (lastRatings.isEmpty()) {
-            throw new RatingsNotFoundedByPassengerIdException(
-                ExceptionMessageConstant.RATINGS_NOT_FOUND_BY_PASSENGER_ID_MESSAGE.formatted(passengerId)
-            );
-        }
+        List<Rating> lastRatings = getRatingsByPassengerId(passengerId);
 
         double averageRating = lastRatings.stream()
             .mapToDouble(Rating::getRating)
             .average()
             .orElse(0.0);
 
-        return AverageRatingResponse.builder()
+        AverageRatingResponse averageRatingResponse = AverageRatingResponse.builder()
             .averageRating(averageRating)
             .build();
+
+        return averageRatingResponse;
     }
 
     @Override
     public AverageRatingResponse getAverageRatingByDriverId(Long driverId) {
-        Sort sort = Sort.by(Sort.Order.desc("id"));
-        Pageable pageRequest = PageRequest.of(0, lastRidesLimit, sort);
-
-        List<Rating> lastRatings =
-            ratingRepository.findByRideInfo_DriverIdAndRatedBy(driverId, pageRequest, RatedBy.PASSENGER);
-
-        if (lastRatings.isEmpty()) {
-            throw new RatingsNotFoundedByDriverIdException(
-                ExceptionMessageConstant.RATINGS_NOT_FOUNDED_BY_DRIVER_ID_MESSAGE.formatted(driverId)
-            );
-        }
+        List<Rating> lastRatings = getRatingsByDriverId(driverId);
 
         double averageRating = lastRatings.stream()
             .mapToDouble(Rating::getRating)
             .average()
             .orElse(0.0);
 
-        return AverageRatingResponse.builder()
+        AverageRatingResponse averageRatingResponse = AverageRatingResponse.builder()
             .averageRating(averageRating)
             .build();
+
+        return averageRatingResponse;
     }
 
     @Override
     public RatingResponse createRating(CreateRatingRequest createRatingRequest) {
-        Optional<Rating> existingRatings = ratingRepository.findByRideInfo_RideIdAndRatedBy(
-            createRatingRequest.rideId(), createRatingRequest.ratedBy()
-        );
+        Long requestRideId = createRatingRequest.rideId();
+        RatedBy requestRatedBy = createRatingRequest.ratedBy();
 
-        if (existingRatings.isPresent()) {
-            throw new RatingAlreadyExistsException(
-                ExceptionMessageConstant.RATING_ALREADY_EXISTS_MESSAGE.formatted(
-                    createRatingRequest.ratedBy(),
-                    createRatingRequest.rideId()
-                )
-            );
-        }
+        validateCreateRating(requestRideId, requestRatedBy);
 
+        RideInfo existingRideInfo = getRideInfoByRideId(requestRideId);
         Rating rating = ratingMapper.toEntity(createRatingRequest);
-
-        RideInfo existingRideInfo = getRideInfoByRideId(createRatingRequest.rideId());
         rating.setRideInfo(existingRideInfo);
 
+        existingRideInfo.getRating().add(rating);
         Rating savedRating = ratingRepository.save(rating);
 
         return ratingMapper.toResponse(savedRating);
     }
 
-    private RideInfo getRideInfoByRideId(Long rideId) {
-        return rideInfoRepository.findByRideId(rideId)
-            .orElseThrow(() -> new RideInfoNotFoundException(
-                ExceptionMessageConstant.RIDE_INFO_NOT_FOUND_MESSAGE.formatted(rideId)
-            ));
-    }
-
     @Override
     public RatingResponse updateRating(Long id, UpdateRatingRequest updateRatingRequest) {
         Rating existingRating = getExistingRating(id);
+
         ratingMapper.updateFromRequest(updateRatingRequest, existingRating);
         Rating savedRating = ratingRepository.save(existingRating);
+
         return ratingMapper.toResponse(savedRating);
     }
 
@@ -158,4 +124,58 @@ public class RatingServiceImpl implements RatingService {
             ));
     }
 
+    private RideInfo getRideInfoByRideId(Long rideId) {
+        return rideInfoRepository.findByRideId(rideId)
+            .orElseThrow(() -> new RideInfoNotFoundException(
+                ExceptionMessageConstant.RIDE_INFO_NOT_FOUND_MESSAGE.formatted(rideId)
+            ));
+    }
+
+    private List<Rating> getRatingsByPassengerId(Long passengerId) {
+        Pageable pageRequest = PageRequest.of(
+            0,
+            lastRidesLimit,
+            Sort.by(Sort.Order.desc("id"))
+        );
+
+        List<Rating> ratings = ratingRepository.findByRideInfo_PassengerIdAndRatedBy(passengerId, pageRequest,
+            RatedBy.DRIVER);
+
+        if (ratings.isEmpty()) {
+            throw new RatingsNotFoundedByPassengerIdException(
+                ExceptionMessageConstant.RATINGS_NOT_FOUND_BY_PASSENGER_ID_MESSAGE.formatted(passengerId)
+            );
+        }
+        return ratings;
+    }
+
+    private List<Rating> getRatingsByDriverId(Long driverId) {
+        Pageable pageRequest = PageRequest.of(
+            0,
+            lastRidesLimit,
+            Sort.by(Sort.Order.desc("id"))
+        );
+
+        List<Rating> ratings = ratingRepository.findByRideInfo_DriverIdAndRatedBy(driverId, pageRequest,
+            RatedBy.PASSENGER);
+
+        if (ratings.isEmpty()) {
+            throw new RatingsNotFoundedByDriverIdException(
+                ExceptionMessageConstant.RATINGS_NOT_FOUNDED_BY_DRIVER_ID_MESSAGE.formatted(driverId)
+            );
+        }
+
+        return ratings;
+    }
+
+    private void validateCreateRating(Long requestRideId, RatedBy requestRatedBy) {
+        if (ratingRepository.existsByRideInfo_RideIdAndRatedBy(
+            requestRideId, requestRatedBy)) {
+            throw new RatingAlreadyExistsException(
+                ExceptionMessageConstant.RATING_ALREADY_EXISTS_MESSAGE.formatted(
+                    requestRatedBy, requestRideId
+                )
+            );
+        }
+    }
 }

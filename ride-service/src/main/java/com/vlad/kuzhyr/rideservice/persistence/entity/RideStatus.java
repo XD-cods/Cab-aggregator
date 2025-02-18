@@ -17,8 +17,8 @@ public enum RideStatus {
     COMPLETED(8),
     PAYMENT_PENDING(9),
     PAID(10),
-    CANCELLED(11),
-    RATE(12);
+    RATE(11),
+    CANCELLED(12);
 
     private final int code;
 
