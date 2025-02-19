@@ -1,6 +1,7 @@
 package com.vlad.kuzhyr.rideservice.utility.client;
 
 import com.vlad.kuzhyr.rideservice.persistence.entity.Address;
+import com.vlad.kuzhyr.rideservice.utility.constant.MapBoxConstant;
 import com.vlad.kuzhyr.rideservice.utility.mapper.MapboxMapper;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -29,7 +30,7 @@ public class MapboxClient {
     public double[] geocodeAddress(String address) {
 
         URI url = UriComponentsBuilder
-            .fromUriString("https://api.mapbox.com/search/geocode/v6/forward")
+            .fromUriString(MapBoxConstant.GEOCODE_URL)
             .queryParam("q", address)
             .queryParam("access_token", mapboxAccessToken)
             .buildAndExpand()
@@ -52,7 +53,7 @@ public class MapboxClient {
                              destination.getLongitude() + "," + destination.getLatitude();
 
         URI url = UriComponentsBuilder
-            .fromUriString("https://api.mapbox.com/directions/v5/mapbox/driving/{coordinates}")
+            .fromUriString(MapBoxConstant.ROUTE_URL)
             .queryParam("access_token", mapboxAccessToken)
             .buildAndExpand(coordinates)
             .toUri();

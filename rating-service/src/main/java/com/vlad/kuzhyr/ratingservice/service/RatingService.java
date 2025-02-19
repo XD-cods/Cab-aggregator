@@ -1,10 +1,10 @@
 package com.vlad.kuzhyr.ratingservice.service;
 
-import com.vlad.kuzhyr.ratingservice.web.request.CreateRatingRequest;
-import com.vlad.kuzhyr.ratingservice.web.request.UpdateRatingRequest;
-import com.vlad.kuzhyr.ratingservice.web.response.AverageRatingResponse;
-import com.vlad.kuzhyr.ratingservice.web.response.PageResponse;
-import com.vlad.kuzhyr.ratingservice.web.response.RatingResponse;
+import com.vlad.kuzhyr.ratingservice.web.dto.request.CreateRatingRequest;
+import com.vlad.kuzhyr.ratingservice.web.dto.request.UpdateRatingRequest;
+import com.vlad.kuzhyr.ratingservice.web.dto.response.AverageRatingResponse;
+import com.vlad.kuzhyr.ratingservice.web.dto.response.PageResponse;
+import com.vlad.kuzhyr.ratingservice.web.dto.response.RatingResponse;
 
 public interface RatingService {
 

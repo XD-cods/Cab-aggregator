@@ -1,8 +1,8 @@
 package com.vlad.kuzhyr.passengerservice.utility.mapper;
 
 import com.vlad.kuzhyr.passengerservice.persistence.entity.Passenger;
-import com.vlad.kuzhyr.passengerservice.web.request.PassengerRequest;
-import com.vlad.kuzhyr.passengerservice.web.response.PassengerResponse;
+import com.vlad.kuzhyr.passengerservice.web.dto.request.PassengerRequest;
+import com.vlad.kuzhyr.passengerservice.web.dto.response.PassengerResponse;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;

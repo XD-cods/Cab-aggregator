@@ -2,8 +2,8 @@ package com.vlad.kuzhyr.driverservice.utility.mapper;
 
 import com.vlad.kuzhyr.driverservice.persistence.entity.Car;
 import com.vlad.kuzhyr.driverservice.persistence.entity.Driver;
-import com.vlad.kuzhyr.driverservice.web.request.DriverRequest;
-import com.vlad.kuzhyr.driverservice.web.response.DriverResponse;
+import com.vlad.kuzhyr.driverservice.web.dto.request.DriverRequest;
+import com.vlad.kuzhyr.driverservice.web.dto.response.DriverResponse;
 import java.util.ArrayList;
 import java.util.List;
 import org.mapstruct.BeanMapping;

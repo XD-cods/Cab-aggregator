@@ -17,6 +17,9 @@ public class KafkaConfig {
     @Value("${spring.kafka.topic.driver-busy-topic}")
     private String driverBusyTopic;
 
+    @Value("${spring.kafka.topic.passenger-busy-topic}")
+    private String passengerBusyTopic;
+
     @Bean
     public NewTopic rideCompletedTopic() {
         return TopicBuilder
@@ -34,5 +37,15 @@ public class KafkaConfig {
             .replicas(1)
             .build();
     }
+
+    @Bean
+    public NewTopic passengerBusyTopic() {
+        return TopicBuilder
+            .name(passengerBusyTopic)
+            .partitions(3)
+            .replicas(1)
+            .build();
+    }
+
 
 }

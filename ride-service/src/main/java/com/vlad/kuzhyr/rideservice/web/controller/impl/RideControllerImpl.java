@@ -2,11 +2,11 @@ package com.vlad.kuzhyr.rideservice.web.controller.impl;
 
 import com.vlad.kuzhyr.rideservice.service.RideService;
 import com.vlad.kuzhyr.rideservice.web.controller.RideController;
-import com.vlad.kuzhyr.rideservice.web.request.RideRequest;
-import com.vlad.kuzhyr.rideservice.web.request.UpdateRideRequest;
-import com.vlad.kuzhyr.rideservice.web.request.UpdateRideStatusRequest;
-import com.vlad.kuzhyr.rideservice.web.response.PageResponse;
-import com.vlad.kuzhyr.rideservice.web.response.RideResponse;
+import com.vlad.kuzhyr.rideservice.web.dto.request.RideRequest;
+import com.vlad.kuzhyr.rideservice.web.dto.request.UpdateRideRequest;
+import com.vlad.kuzhyr.rideservice.web.dto.request.UpdateRideStatusRequest;
+import com.vlad.kuzhyr.rideservice.web.dto.response.PageResponse;
+import com.vlad.kuzhyr.rideservice.web.dto.response.RideResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

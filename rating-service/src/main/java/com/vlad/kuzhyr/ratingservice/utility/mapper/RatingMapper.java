@@ -1,9 +1,9 @@
 package com.vlad.kuzhyr.ratingservice.utility.mapper;
 
 import com.vlad.kuzhyr.ratingservice.persistence.entity.Rating;
-import com.vlad.kuzhyr.ratingservice.web.request.CreateRatingRequest;
-import com.vlad.kuzhyr.ratingservice.web.request.UpdateRatingRequest;
-import com.vlad.kuzhyr.ratingservice.web.response.RatingResponse;
+import com.vlad.kuzhyr.ratingservice.web.dto.request.CreateRatingRequest;
+import com.vlad.kuzhyr.ratingservice.web.dto.request.UpdateRatingRequest;
+import com.vlad.kuzhyr.ratingservice.web.dto.response.RatingResponse;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
@@ -27,7 +27,7 @@ public interface RatingMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "rideInfo", ignore = true)
     @Mapping(target = "ratedBy", ignore = true)
+    @Mapping(target = "rideInfo", ignore = true)
     void updateFromRequest(UpdateRatingRequest rideRequest, @MappingTarget Rating ride);
 }

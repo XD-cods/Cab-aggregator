@@ -26,5 +26,8 @@ public final class ExceptionMessageConstant {
 
     public static final String DRIVER_BUSY_MESSAGE = "driver busy by driver id: %d";
 
-    public static final String DRIVER_HAS_NO_CAR = "Driver with ID %d has no car assigned.";
+    public static final String PASSENGER_BUSY_MESSAGE = "passenger busy by passenger id: %d";
+
+    public static final String DRIVER_HAS_NO_CAR = "driver with ID %d has no car assigned.";
+
 }

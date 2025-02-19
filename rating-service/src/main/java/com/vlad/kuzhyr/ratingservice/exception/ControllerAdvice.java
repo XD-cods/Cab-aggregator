@@ -18,7 +18,7 @@ public class ControllerAdvice {
         RatingNotFoundException.class,
         RatingsNotFoundedByPassengerIdException.class,
         RatingsNotFoundedByDriverIdException.class,
-        RideInfoNotFoundException.class
+        RideInfoPayloadNotFoundException.class
     })
     @ApiResponses(value = {
         @ApiResponse(

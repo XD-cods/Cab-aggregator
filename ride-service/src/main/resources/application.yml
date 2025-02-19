@@ -36,6 +36,7 @@ spring:
     topic:
       ride-completed-topic: ride.completed
       driver-busy-topic: driver.status.updated
+      passenger-busy-topic: passenger.status.updated
 
   cache:
     type: redis

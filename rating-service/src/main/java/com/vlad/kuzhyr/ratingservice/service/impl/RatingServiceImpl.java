@@ -4,7 +4,7 @@ import com.vlad.kuzhyr.ratingservice.exception.RatingAlreadyExistsException;
 import com.vlad.kuzhyr.ratingservice.exception.RatingNotFoundException;
 import com.vlad.kuzhyr.ratingservice.exception.RatingsNotFoundedByDriverIdException;
 import com.vlad.kuzhyr.ratingservice.exception.RatingsNotFoundedByPassengerIdException;
-import com.vlad.kuzhyr.ratingservice.exception.RideInfoNotFoundException;
+import com.vlad.kuzhyr.ratingservice.exception.RideInfoPayloadNotFoundException;
 import com.vlad.kuzhyr.ratingservice.persistence.entity.RatedBy;
 import com.vlad.kuzhyr.ratingservice.persistence.entity.Rating;
 import com.vlad.kuzhyr.ratingservice.persistence.entity.RideInfo;
@@ -14,11 +14,11 @@ import com.vlad.kuzhyr.ratingservice.service.RatingService;
 import com.vlad.kuzhyr.ratingservice.utility.constant.ExceptionMessageConstant;
 import com.vlad.kuzhyr.ratingservice.utility.mapper.PageResponseMapper;
 import com.vlad.kuzhyr.ratingservice.utility.mapper.RatingMapper;
-import com.vlad.kuzhyr.ratingservice.web.request.CreateRatingRequest;
-import com.vlad.kuzhyr.ratingservice.web.request.UpdateRatingRequest;
-import com.vlad.kuzhyr.ratingservice.web.response.AverageRatingResponse;
-import com.vlad.kuzhyr.ratingservice.web.response.PageResponse;
-import com.vlad.kuzhyr.ratingservice.web.response.RatingResponse;
+import com.vlad.kuzhyr.ratingservice.web.dto.request.CreateRatingRequest;
+import com.vlad.kuzhyr.ratingservice.web.dto.request.UpdateRatingRequest;
+import com.vlad.kuzhyr.ratingservice.web.dto.response.AverageRatingResponse;
+import com.vlad.kuzhyr.ratingservice.web.dto.response.PageResponse;
+import com.vlad.kuzhyr.ratingservice.web.dto.response.RatingResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -126,7 +126,7 @@ public class RatingServiceImpl implements RatingService {
 
     private RideInfo getRideInfoByRideId(Long rideId) {
         return rideInfoRepository.findByRideId(rideId)
-            .orElseThrow(() -> new RideInfoNotFoundException(
+            .orElseThrow(() -> new RideInfoPayloadNotFoundException(
                 ExceptionMessageConstant.RIDE_INFO_NOT_FOUND_MESSAGE.formatted(rideId)
             ));
     }

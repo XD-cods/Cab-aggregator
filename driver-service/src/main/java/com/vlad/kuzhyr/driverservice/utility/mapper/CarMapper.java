@@ -1,8 +1,8 @@
 package com.vlad.kuzhyr.driverservice.utility.mapper;
 
 import com.vlad.kuzhyr.driverservice.persistence.entity.Car;
-import com.vlad.kuzhyr.driverservice.web.request.CarRequest;
-import com.vlad.kuzhyr.driverservice.web.response.CarResponse;
+import com.vlad.kuzhyr.driverservice.web.dto.request.CarRequest;
+import com.vlad.kuzhyr.driverservice.web.dto.response.CarResponse;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;

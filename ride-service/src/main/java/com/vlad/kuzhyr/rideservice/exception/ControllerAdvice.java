@@ -32,7 +32,7 @@ public class ControllerAdvice {
             responseCode = "404",
             description = "Resource not found",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-            )
+        )
     })
     public ResponseEntity<ErrorResponse> notFoundException(Exception exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse.builder()
@@ -42,7 +42,7 @@ public class ControllerAdvice {
             .build());
     }
 
-    @ExceptionHandler(value = { FeignException.class })
+    @ExceptionHandler(value = {FeignException.class})
     public ResponseEntity<Map<String, String>> handleFeignStatusException(FeignException e) {
         try {
             Map<String, String> errorBody = objectMapper.readValue(
@@ -66,7 +66,7 @@ public class ControllerAdvice {
             description = "Internal server error occurred",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)
             )
-            )
+        )
     })
     @ExceptionHandler(InternalServerErrorOccurred.class)
     public ResponseEntity<ErrorResponse> internalServerErrorOccurred(InternalServerErrorOccurred exception) {
@@ -83,7 +83,7 @@ public class ControllerAdvice {
             description = "Request arguments not valid exception",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)
             )
-            )
+        )
     })
     @ExceptionHandler(value = {
         MethodArgumentNotValidException.class,
@@ -93,6 +93,7 @@ public class ControllerAdvice {
         RideCanNotUpdatableException.class,
         DepartureAndDestinationAddressesSameException.class,
         DriverIsBusyException.class,
+        PassengerIsBusyException.class,
         DriverHasNotCarException.class
     })
     public ResponseEntity<ErrorResponse> requestValidationException(Exception exception) {

@@ -1,6 +1,6 @@
 package com.vlad.kuzhyr.rideservice.utility.mapper;
 
-import com.vlad.kuzhyr.rideservice.web.response.PageResponse;
+import com.vlad.kuzhyr.rideservice.web.dto.response.PageResponse;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;

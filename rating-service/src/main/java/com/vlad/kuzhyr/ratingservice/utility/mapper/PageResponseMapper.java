@@ -1,6 +1,6 @@
 package com.vlad.kuzhyr.ratingservice.utility.mapper;
 
-import com.vlad.kuzhyr.ratingservice.web.response.PageResponse;
+import com.vlad.kuzhyr.ratingservice.web.dto.response.PageResponse;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;

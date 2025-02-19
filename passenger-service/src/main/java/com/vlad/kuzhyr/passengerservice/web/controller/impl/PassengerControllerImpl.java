@@ -2,9 +2,9 @@ package com.vlad.kuzhyr.passengerservice.web.controller.impl;
 
 import com.vlad.kuzhyr.passengerservice.service.PassengerService;
 import com.vlad.kuzhyr.passengerservice.web.controller.PassengerController;
-import com.vlad.kuzhyr.passengerservice.web.request.PassengerRequest;
-import com.vlad.kuzhyr.passengerservice.web.response.PageResponse;
-import com.vlad.kuzhyr.passengerservice.web.response.PassengerResponse;
+import com.vlad.kuzhyr.passengerservice.web.dto.request.PassengerRequest;
+import com.vlad.kuzhyr.passengerservice.web.dto.response.PageResponse;
+import com.vlad.kuzhyr.passengerservice.web.dto.response.PassengerResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

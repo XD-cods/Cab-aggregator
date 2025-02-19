@@ -1,8 +1,8 @@
 package com.vlad.kuzhyr.rideservice.utility.mapper;
 
 import com.vlad.kuzhyr.rideservice.persistence.entity.Ride;
-import com.vlad.kuzhyr.rideservice.web.request.RideRequest;
-import com.vlad.kuzhyr.rideservice.web.response.RideResponse;
+import com.vlad.kuzhyr.rideservice.web.dto.request.RideRequest;
+import com.vlad.kuzhyr.rideservice.web.dto.response.RideResponse;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

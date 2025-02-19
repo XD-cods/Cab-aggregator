@@ -3,6 +3,8 @@ package com.vlad.kuzhyr.rideservice.service.impl;
 import com.vlad.kuzhyr.rideservice.exception.DepartureAndDestinationAddressesSameException;
 import com.vlad.kuzhyr.rideservice.persistence.entity.Address;
 import com.vlad.kuzhyr.rideservice.persistence.entity.Ride;
+import com.vlad.kuzhyr.rideservice.service.impl.cache.AddressCacheService;
+import com.vlad.kuzhyr.rideservice.utility.calculator.PriceCalculator;
 import com.vlad.kuzhyr.rideservice.utility.client.MapboxClient;
 import com.vlad.kuzhyr.rideservice.utility.constant.ExceptionMessageConstant;
 import java.math.BigDecimal;
@@ -17,7 +19,7 @@ public class AddressService {
 
     private final MapboxClient mapboxClient;
 
-    private final PriceService priceService;
+    private final PriceCalculator priceCalculator;
 
     public void validateDifferentAddresses(String departureAddress, String destinationAddress) {
         departureAddress = departureAddress.trim();
@@ -33,7 +35,7 @@ public class AddressService {
         Address departureAddress = addressCacheService.findOrCreateAddress(newDepartureAddress);
         Address destinationAddress = addressCacheService.findOrCreateAddress(newDestinationAddress);
         double distance = mapboxClient.calculateDistance(departureAddress, destinationAddress);
-        BigDecimal price = priceService.calculatePrice(distance);
+        BigDecimal price = priceCalculator.calculatePrice(distance);
 
         ride.setDepartureAddress(departureAddress);
         ride.setDestinationAddress(destinationAddress);

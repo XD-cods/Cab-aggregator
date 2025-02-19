@@ -1,8 +1,8 @@
 package com.vlad.kuzhyr.passengerservice.service;
 
-import com.vlad.kuzhyr.passengerservice.web.request.PassengerRequest;
-import com.vlad.kuzhyr.passengerservice.web.response.PageResponse;
-import com.vlad.kuzhyr.passengerservice.web.response.PassengerResponse;
+import com.vlad.kuzhyr.passengerservice.web.dto.request.PassengerRequest;
+import com.vlad.kuzhyr.passengerservice.web.dto.response.PageResponse;
+import com.vlad.kuzhyr.passengerservice.web.dto.response.PassengerResponse;
 
 public interface PassengerService {
 

@@ -10,4 +10,5 @@ public interface KafkaMessageRepository extends JpaRepository<KafkaMessage, Long
 
     List<KafkaMessage> findByIsSentFalse();
 
+    void deleteByIsSent(Boolean isSent);
 }

@@ -2,9 +2,9 @@ package com.vlad.kuzhyr.driverservice.web.controller.impl;
 
 import com.vlad.kuzhyr.driverservice.service.CarService;
 import com.vlad.kuzhyr.driverservice.web.controller.CarController;
-import com.vlad.kuzhyr.driverservice.web.request.CarRequest;
-import com.vlad.kuzhyr.driverservice.web.response.CarResponse;
-import com.vlad.kuzhyr.driverservice.web.response.PageResponse;
+import com.vlad.kuzhyr.driverservice.web.dto.request.CarRequest;
+import com.vlad.kuzhyr.driverservice.web.dto.response.CarResponse;
+import com.vlad.kuzhyr.driverservice.web.dto.response.PageResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

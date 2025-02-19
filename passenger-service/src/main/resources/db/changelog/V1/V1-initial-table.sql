@@ -8,5 +8,6 @@ CREATE TABLE IF NOT EXISTS passenger (
     email VARCHAR(255) NOT NULL,
     phone VARCHAR(20) NOT NULL,
     is_enabled boolean not null default true,
+    is_busy boolean not null default false,
     CONSTRAINT pk_passenger PRIMARY KEY (passenger_id)
 );

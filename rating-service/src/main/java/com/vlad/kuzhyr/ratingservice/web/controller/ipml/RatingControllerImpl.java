@@ -2,11 +2,11 @@ package com.vlad.kuzhyr.ratingservice.web.controller.ipml;
 
 import com.vlad.kuzhyr.ratingservice.service.RatingService;
 import com.vlad.kuzhyr.ratingservice.web.controller.RatingController;
-import com.vlad.kuzhyr.ratingservice.web.request.CreateRatingRequest;
-import com.vlad.kuzhyr.ratingservice.web.request.UpdateRatingRequest;
-import com.vlad.kuzhyr.ratingservice.web.response.AverageRatingResponse;
-import com.vlad.kuzhyr.ratingservice.web.response.PageResponse;
-import com.vlad.kuzhyr.ratingservice.web.response.RatingResponse;
+import com.vlad.kuzhyr.ratingservice.web.dto.request.CreateRatingRequest;
+import com.vlad.kuzhyr.ratingservice.web.dto.request.UpdateRatingRequest;
+import com.vlad.kuzhyr.ratingservice.web.dto.response.AverageRatingResponse;
+import com.vlad.kuzhyr.ratingservice.web.dto.response.PageResponse;
+import com.vlad.kuzhyr.ratingservice.web.dto.response.RatingResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
