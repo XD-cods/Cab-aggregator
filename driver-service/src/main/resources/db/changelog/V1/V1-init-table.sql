@@ -9,7 +9,6 @@ CREATE TABLE IF NOT EXISTS driver (
     gender INTEGER NOT NULL DEFAULT 4,
     phone VARCHAR(20) NOT NULL,
     is_enabled BOOLEAN NOT NULL DEFAULT TRUE,
-    is_busy BOOLEAN NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_driver PRIMARY KEY (driver_id)
 );
 

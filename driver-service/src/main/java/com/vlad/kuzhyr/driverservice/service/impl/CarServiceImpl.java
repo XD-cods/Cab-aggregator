@@ -1,6 +1,5 @@
 package com.vlad.kuzhyr.driverservice.service.impl;
 
-import com.vlad.kuzhyr.driverservice.exception.CarAlreadyExistException;
 import com.vlad.kuzhyr.driverservice.exception.CarNotFoundException;
 import com.vlad.kuzhyr.driverservice.persistence.entity.Car;
 import com.vlad.kuzhyr.driverservice.persistence.repository.CarRepository;
@@ -8,6 +7,7 @@ import com.vlad.kuzhyr.driverservice.service.CarService;
 import com.vlad.kuzhyr.driverservice.utility.constant.ExceptionMessageConstant;
 import com.vlad.kuzhyr.driverservice.utility.mapper.CarMapper;
 import com.vlad.kuzhyr.driverservice.utility.mapper.PageResponseMapper;
+import com.vlad.kuzhyr.driverservice.utility.validator.CarValidator;
 import com.vlad.kuzhyr.driverservice.web.dto.request.CarRequest;
 import com.vlad.kuzhyr.driverservice.web.dto.response.CarResponse;
 import com.vlad.kuzhyr.driverservice.web.dto.response.PageResponse;
@@ -23,10 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class CarServiceImpl implements CarService {
 
     private final CarRepository carRepository;
-
     private final CarMapper carMapper;
-
     private final PageResponseMapper pageResponseMapper;
+    private final CarValidator carValidator;
 
     @Override
     public CarResponse getCarById(Long id) {
@@ -51,7 +50,7 @@ public class CarServiceImpl implements CarService {
     public CarResponse createCar(CarRequest carRequest) {
         String carRequestNumber = carRequest.carNumber();
 
-        validateCarByNumber(carRequestNumber);
+        carValidator.validateCarByNumber(carRequestNumber);
 
         Car newCar = carMapper.toEntity(carRequest);
         Car savedCar = carRepository.save(newCar);
@@ -89,11 +88,4 @@ public class CarServiceImpl implements CarService {
             ));
     }
 
-    private void validateCarByNumber(String carNumber) {
-        if (carRepository.existsCarByCarNumberAndIsEnabledTrue(carNumber)) {
-            throw new CarAlreadyExistException(
-                ExceptionMessageConstant.CAR_ALREADY_EXISTS_BY_CAR_NUMBER_MESSAGE.formatted(carNumber)
-            );
-        }
-    }
 }

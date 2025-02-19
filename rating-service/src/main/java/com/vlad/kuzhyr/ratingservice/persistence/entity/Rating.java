@@ -32,7 +32,7 @@ public class Rating {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ride_info_id", nullable = false, unique = true)
+    @JoinColumn(name = "ride_info_id", nullable = false)
     private RideInfo rideInfo;
 
     @Column(name = "rating", nullable = false)

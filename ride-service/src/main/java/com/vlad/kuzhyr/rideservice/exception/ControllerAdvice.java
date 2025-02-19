@@ -32,7 +32,7 @@ public class ControllerAdvice {
             responseCode = "404",
             description = "Resource not found",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-        )
+            )
     })
     public ResponseEntity<ErrorResponse> notFoundException(Exception exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse.builder()
@@ -64,9 +64,8 @@ public class ControllerAdvice {
         @ApiResponse(
             responseCode = "500",
             description = "Internal server error occurred",
-            content = @Content(schema = @Schema(implementation = ErrorResponse.class)
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
-        )
     })
     @ExceptionHandler(InternalServerErrorOccurred.class)
     public ResponseEntity<ErrorResponse> internalServerErrorOccurred(InternalServerErrorOccurred exception) {
@@ -81,9 +80,8 @@ public class ControllerAdvice {
         @ApiResponse(
             responseCode = "400",
             description = "Request arguments not valid exception",
-            content = @Content(schema = @Schema(implementation = ErrorResponse.class)
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
-        )
     })
     @ExceptionHandler(value = {
         MethodArgumentNotValidException.class,

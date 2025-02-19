@@ -26,7 +26,7 @@ public class RideInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ride_info_id", nullable = false, unique = true)
+    @Column(name = "ride_info_id", nullable = false)
     private Long rideInfoId;
 
     @Column(name = "ride_id", nullable = false)

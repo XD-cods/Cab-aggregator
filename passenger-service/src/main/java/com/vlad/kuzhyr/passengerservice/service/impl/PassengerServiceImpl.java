@@ -1,6 +1,5 @@
 package com.vlad.kuzhyr.passengerservice.service.impl;
 
-import com.vlad.kuzhyr.passengerservice.exception.PassengerAlreadyExistsException;
 import com.vlad.kuzhyr.passengerservice.exception.PassengerNotFoundException;
 import com.vlad.kuzhyr.passengerservice.persistence.entity.Passenger;
 import com.vlad.kuzhyr.passengerservice.persistence.repository.PassengerRepository;
@@ -8,6 +7,7 @@ import com.vlad.kuzhyr.passengerservice.service.PassengerService;
 import com.vlad.kuzhyr.passengerservice.utility.constant.ExceptionMessageConstant;
 import com.vlad.kuzhyr.passengerservice.utility.mapper.PageResponseMapper;
 import com.vlad.kuzhyr.passengerservice.utility.mapper.PassengerMapper;
+import com.vlad.kuzhyr.passengerservice.utility.validator.PassengerValidator;
 import com.vlad.kuzhyr.passengerservice.web.dto.request.PassengerRequest;
 import com.vlad.kuzhyr.passengerservice.web.dto.response.PageResponse;
 import com.vlad.kuzhyr.passengerservice.web.dto.response.PassengerResponse;
@@ -24,6 +24,7 @@ public class PassengerServiceImpl implements PassengerService {
     private final PassengerRepository passengerRepository;
     private final PassengerMapper passengerMapper;
     private final PageResponseMapper pageResponseMapper;
+    private final PassengerValidator passengerValidator;
 
     @Override
     public PassengerResponse getPassengerById(Long id) {
@@ -50,7 +51,7 @@ public class PassengerServiceImpl implements PassengerService {
         String passengerRequestEmail = passengerRequest.email();
         String passengerRequestPhone = passengerRequest.phone();
 
-        validatePassengerEmailAndPhone(passengerRequestEmail, passengerRequestPhone);
+        passengerValidator.validatePassengerEmailAndPhone(passengerRequestEmail, passengerRequestPhone);
 
         Passenger newPassenger = passengerMapper.toEntity(passengerRequest);
         Passenger savedPassenger = passengerRepository.save(newPassenger);
@@ -87,17 +88,4 @@ public class PassengerServiceImpl implements PassengerService {
             ));
     }
 
-    private void validatePassengerEmailAndPhone(String passengerRequestEmail, String passengerRequestPhone) {
-        if (passengerRepository.existsPassengerByEmailAndIsEnabledTrue(passengerRequestEmail)) {
-            throw new PassengerAlreadyExistsException(
-                ExceptionMessageConstant.PASSENGER_ALREADY_EXISTS_BY_EMAIL_MESSAGE.formatted(passengerRequestEmail)
-            );
-        }
-
-        if (passengerRepository.existsPassengerByPhoneAndIsEnabledTrue(passengerRequestPhone)) {
-            throw new PassengerAlreadyExistsException(
-                ExceptionMessageConstant.PASSENGER_ALREADY_EXISTS_BY_PHONE_MESSAGE.formatted(passengerRequestPhone)
-            );
-        }
-    }
 }

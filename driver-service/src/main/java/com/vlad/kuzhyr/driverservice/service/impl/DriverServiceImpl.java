@@ -1,7 +1,6 @@
 package com.vlad.kuzhyr.driverservice.service.impl;
 
 import com.vlad.kuzhyr.driverservice.exception.CarNotFoundException;
-import com.vlad.kuzhyr.driverservice.exception.DriverAlreadyExistException;
 import com.vlad.kuzhyr.driverservice.persistence.entity.Car;
 import com.vlad.kuzhyr.driverservice.persistence.entity.Driver;
 import com.vlad.kuzhyr.driverservice.persistence.repository.CarRepository;
@@ -10,6 +9,7 @@ import com.vlad.kuzhyr.driverservice.service.DriverService;
 import com.vlad.kuzhyr.driverservice.utility.constant.ExceptionMessageConstant;
 import com.vlad.kuzhyr.driverservice.utility.mapper.DriverMapper;
 import com.vlad.kuzhyr.driverservice.utility.mapper.PageResponseMapper;
+import com.vlad.kuzhyr.driverservice.utility.validator.DriverValidator;
 import com.vlad.kuzhyr.driverservice.web.dto.request.DriverRequest;
 import com.vlad.kuzhyr.driverservice.web.dto.request.DriverUpdateCarsRequest;
 import com.vlad.kuzhyr.driverservice.web.dto.response.DriverResponse;
@@ -27,12 +27,10 @@ import org.springframework.stereotype.Service;
 public class DriverServiceImpl implements DriverService {
 
     private final DriverRepository driverRepository;
-
     private final DriverMapper driverMapper;
-
     private final CarRepository carRepository;
-
     private final PageResponseMapper pageResponseMapper;
+    private final DriverValidator driverValidator;
 
     @Override
     public DriverResponse getDriverById(Long id) {
@@ -59,7 +57,7 @@ public class DriverServiceImpl implements DriverService {
         String driverRequestEmail = driverRequest.email();
         String driverRequestPhone = driverRequest.phone();
 
-        validateDriver(driverRequestEmail, driverRequestPhone);
+        driverValidator.validateDriver(driverRequestEmail, driverRequestPhone);
 
         Driver newDriver = driverMapper.toEntity(driverRequest);
         List<Car> cars = carRepository.findAllById(driverRequest.carIds());
@@ -75,7 +73,7 @@ public class DriverServiceImpl implements DriverService {
         String driverRequestEmail = driverRequest.email();
         String driverRequestPhone = driverRequest.phone();
 
-        validateDriver(driverRequestEmail, driverRequestPhone);
+        driverValidator.validateDriver(driverRequestEmail, driverRequestPhone);
 
         Driver existDriver = getDriverOrElseThrow(id);
 
@@ -125,20 +123,6 @@ public class DriverServiceImpl implements DriverService {
     private Driver getDriverOrElseThrow(Long id) {
         return driverRepository.findDriverByIdAndIsEnabledTrue(id).orElseThrow(
             () -> new CarNotFoundException(ExceptionMessageConstant.DRIVER_NOT_FOUND_MESSAGE.formatted(id)));
-    }
-
-    private void validateDriver(String driverRequestEmail, String driverRequestPhone) {
-        if (driverRepository.existsDriverByEmailAndIsEnabledTrue(driverRequestEmail)) {
-            throw new DriverAlreadyExistException(
-                ExceptionMessageConstant.DRIVER_ALREADY_EXISTS_BY_EMAIL_MESSAGE.formatted(driverRequestEmail)
-            );
-        }
-
-        if (driverRepository.existsDriverByPhoneAndIsEnabledTrue(driverRequestPhone)) {
-            throw new DriverAlreadyExistException(
-                ExceptionMessageConstant.DRIVER_ALREADY_EXISTS_BY_PHONE_MESSAGE.formatted(driverRequestPhone)
-            );
-        }
     }
 
 }

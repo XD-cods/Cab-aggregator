@@ -1,23 +1,16 @@
 package com.vlad.kuzhyr.rideservice.service.impl;
 
-import com.vlad.kuzhyr.rideservice.exception.DriverHasNotCarException;
-import com.vlad.kuzhyr.rideservice.exception.DriverIsBusyException;
 import com.vlad.kuzhyr.rideservice.exception.NotValidStatusTransitionException;
-import com.vlad.kuzhyr.rideservice.exception.PassengerIsBusyException;
 import com.vlad.kuzhyr.rideservice.exception.RideNotFoundException;
 import com.vlad.kuzhyr.rideservice.persistence.entity.Ride;
 import com.vlad.kuzhyr.rideservice.persistence.entity.RideStatus;
 import com.vlad.kuzhyr.rideservice.persistence.repository.RideRepository;
 import com.vlad.kuzhyr.rideservice.service.RideService;
 import com.vlad.kuzhyr.rideservice.utility.broker.KafkaProducer;
-import com.vlad.kuzhyr.rideservice.utility.client.DriverFeignClient;
-import com.vlad.kuzhyr.rideservice.utility.client.PassengerFeignClient;
 import com.vlad.kuzhyr.rideservice.utility.constant.ExceptionMessageConstant;
 import com.vlad.kuzhyr.rideservice.utility.mapper.PageResponseMapper;
 import com.vlad.kuzhyr.rideservice.utility.mapper.RideMapper;
 import com.vlad.kuzhyr.rideservice.utility.validation.RideValidation;
-import com.vlad.kuzhyr.rideservice.web.dto.external.DriverResponse;
-import com.vlad.kuzhyr.rideservice.web.dto.external.PassengerResponse;
 import com.vlad.kuzhyr.rideservice.web.dto.external.RideInfoPayload;
 import com.vlad.kuzhyr.rideservice.web.dto.request.RideRequest;
 import com.vlad.kuzhyr.rideservice.web.dto.request.UpdateRideRequest;
@@ -36,19 +29,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class RideServiceImpl implements RideService {
 
     private final RideRepository rideRepository;
-
     private final RideMapper rideMapper;
-
     private final PageResponseMapper pageResponseMapper;
-
     private final AddressService addressService;
-
     private final RideValidation rideValidation;
-
-    private final PassengerFeignClient passengerFeignClient;
-
-    private final DriverFeignClient driverFeignClient;
-
     private final KafkaProducer kafkaProducer;
 
     @Override
@@ -135,7 +119,7 @@ public class RideServiceImpl implements RideService {
         Long passengerId = rideRequest.passengerId();
         Long driverId = rideRequest.driverId();
 
-        checkDriverAndPassengerAvailability(driverId, passengerId);
+        rideValidation.checkDriverAndPassengerAvailability(driverId, passengerId);
 
         String departureAddress = rideRequest.departureAddress();
         String destinationAddress = rideRequest.destinationAddress();
@@ -146,29 +130,6 @@ public class RideServiceImpl implements RideService {
         addressService.updateRideAddress(ride, departureAddress, destinationAddress);
         setDriverAndPassengerBusyStatus(passengerId, driverId, true);
         return ride;
-    }
-
-    private void checkDriverAndPassengerAvailability(Long driverId, Long passengerId) {
-        DriverResponse driverResponse = getDriverByDriverId(driverId);
-        PassengerResponse passengerResponse = getPassengerByPassengerId(passengerId);
-
-        if (driverResponse.isBusy()) {
-            throw new DriverIsBusyException(
-                ExceptionMessageConstant.DRIVER_BUSY_MESSAGE.formatted(driverId)
-            );
-        }
-
-        if (passengerResponse.isBusy()) {
-            throw new PassengerIsBusyException(
-                ExceptionMessageConstant.PASSENGER_BUSY_MESSAGE.formatted(passengerId)
-            );
-        }
-
-        if (driverResponse.carIds().isEmpty()) {
-            throw new DriverHasNotCarException(
-                ExceptionMessageConstant.DRIVER_HAS_NO_CAR.formatted(driverId)
-            );
-        }
     }
 
     private void validateStatusTransition(RideStatus currentStatus, RideStatus newStatus) {
@@ -202,16 +163,6 @@ public class RideServiceImpl implements RideService {
     private void setDriverAndPassengerBusyStatus(Long passengerId, Long driverId, Boolean isBusy) {
         kafkaProducer.sendDriverBusyMessage(driverId, isBusy);
         kafkaProducer.sendPassengerBusyTopic(passengerId, isBusy);
-    }
-
-    private PassengerResponse getPassengerByPassengerId(Long passengerId) {
-        PassengerResponse passengerResponse = passengerFeignClient.getPassengerById(passengerId).getBody();
-        return passengerResponse;
-    }
-
-    private DriverResponse getDriverByDriverId(Long driverId) {
-        DriverResponse driverResponse = driverFeignClient.getDriverById(driverId).getBody();
-        return driverResponse;
     }
 
 }

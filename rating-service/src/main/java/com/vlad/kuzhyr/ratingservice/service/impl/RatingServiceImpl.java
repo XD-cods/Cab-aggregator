@@ -1,6 +1,5 @@
 package com.vlad.kuzhyr.ratingservice.service.impl;
 
-import com.vlad.kuzhyr.ratingservice.exception.RatingAlreadyExistsException;
 import com.vlad.kuzhyr.ratingservice.exception.RatingNotFoundException;
 import com.vlad.kuzhyr.ratingservice.exception.RatingsNotFoundedByDriverIdException;
 import com.vlad.kuzhyr.ratingservice.exception.RatingsNotFoundedByPassengerIdException;
@@ -14,6 +13,7 @@ import com.vlad.kuzhyr.ratingservice.service.RatingService;
 import com.vlad.kuzhyr.ratingservice.utility.constant.ExceptionMessageConstant;
 import com.vlad.kuzhyr.ratingservice.utility.mapper.PageResponseMapper;
 import com.vlad.kuzhyr.ratingservice.utility.mapper.RatingMapper;
+import com.vlad.kuzhyr.ratingservice.utility.validator.RatingValidator;
 import com.vlad.kuzhyr.ratingservice.web.dto.request.CreateRatingRequest;
 import com.vlad.kuzhyr.ratingservice.web.dto.request.UpdateRatingRequest;
 import com.vlad.kuzhyr.ratingservice.web.dto.response.AverageRatingResponse;
@@ -36,6 +36,7 @@ public class RatingServiceImpl implements RatingService {
     private final RatingRepository ratingRepository;
     private final PageResponseMapper pageResponseMapper;
     private final RideInfoRepository rideInfoRepository;
+    private final RatingValidator ratingValidator;
 
     @Value("${rating.last.rides.count:10}")
     private int lastRidesLimit;
@@ -62,14 +63,7 @@ public class RatingServiceImpl implements RatingService {
     public AverageRatingResponse getAverageRatingByPassengerId(Long passengerId) {
         List<Rating> lastRatings = getRatingsByPassengerId(passengerId);
 
-        double averageRating = lastRatings.stream()
-            .mapToDouble(Rating::getRating)
-            .average()
-            .orElse(0.0);
-
-        AverageRatingResponse averageRatingResponse = AverageRatingResponse.builder()
-            .averageRating(averageRating)
-            .build();
+        AverageRatingResponse averageRatingResponse = getAverageRatingResponse(lastRatings);
 
         return averageRatingResponse;
     }
@@ -78,14 +72,7 @@ public class RatingServiceImpl implements RatingService {
     public AverageRatingResponse getAverageRatingByDriverId(Long driverId) {
         List<Rating> lastRatings = getRatingsByDriverId(driverId);
 
-        double averageRating = lastRatings.stream()
-            .mapToDouble(Rating::getRating)
-            .average()
-            .orElse(0.0);
-
-        AverageRatingResponse averageRatingResponse = AverageRatingResponse.builder()
-            .averageRating(averageRating)
-            .build();
+        AverageRatingResponse averageRatingResponse = getAverageRatingResponse(lastRatings);
 
         return averageRatingResponse;
     }
@@ -95,7 +82,7 @@ public class RatingServiceImpl implements RatingService {
         Long requestRideId = createRatingRequest.rideId();
         RatedBy requestRatedBy = createRatingRequest.ratedBy();
 
-        validateCreateRating(requestRideId, requestRatedBy);
+        ratingValidator.validateCreateRating(requestRideId, requestRatedBy);
 
         RideInfo existingRideInfo = getRideInfoByRideId(requestRideId);
         Rating rating = ratingMapper.toEntity(createRatingRequest);
@@ -168,14 +155,16 @@ public class RatingServiceImpl implements RatingService {
         return ratings;
     }
 
-    private void validateCreateRating(Long requestRideId, RatedBy requestRatedBy) {
-        if (ratingRepository.existsByRideInfo_RideIdAndRatedBy(
-            requestRideId, requestRatedBy)) {
-            throw new RatingAlreadyExistsException(
-                ExceptionMessageConstant.RATING_ALREADY_EXISTS_MESSAGE.formatted(
-                    requestRatedBy, requestRideId
-                )
-            );
-        }
+
+    private AverageRatingResponse getAverageRatingResponse(List<Rating> lastRatings) {
+        double averageRating = lastRatings.stream()
+            .mapToDouble(Rating::getRating)
+            .average()
+            .orElse(0.0);
+
+        return AverageRatingResponse.builder()
+            .averageRating(averageRating)
+            .build();
     }
+
 }
