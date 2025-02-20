@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -79,9 +80,24 @@ public class ControllerAdvice {
     })
     @ExceptionHandler(value = {
         MethodArgumentNotValidException.class,
-        RatedByNullException.class
+        RatedByNullException.class,
     })
     public ResponseEntity<ErrorResponse> requestValidationException(MethodArgumentNotValidException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.builder()
+            .error(String.valueOf(HttpStatus.BAD_REQUEST))
+            .errorDescription(exception.getMessage())
+            .timestamp(LocalDateTime.now())
+            .build());
+    }
+
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "400",
+            description = "Constraint violation exception",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintViolation(ConstraintViolationException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.builder()
             .error(String.valueOf(HttpStatus.BAD_REQUEST))
             .errorDescription(exception.getMessage())
