@@ -3,7 +3,9 @@ package com.vlad.kuzhyr.driverservice.utility.mapper;
 import com.vlad.kuzhyr.driverservice.persistence.entity.Gender;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Converter
 public class GenderConverter implements AttributeConverter<Gender, Integer> {
 
@@ -15,6 +17,7 @@ public class GenderConverter implements AttributeConverter<Gender, Integer> {
     @Override
     public Gender convertToEntityAttribute(Integer code) {
         if (code == null) {
+            log.error("Gender converter. Convert to entity. Code is null.");
             return null;
         }
 
