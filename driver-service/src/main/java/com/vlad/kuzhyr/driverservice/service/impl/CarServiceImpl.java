@@ -99,7 +99,7 @@ public class CarServiceImpl implements CarService {
     }
 
     private Car getExistingCarById(Long id) {
-        log.debug("Driver service. Attempting to find car. Car id: {}", id);
+        log.debug("Car service. Attempting to find car. Car id: {}", id);
 
         return carRepository.findCarByIdAndIsEnabledTrue(id)
             .orElseThrow(() -> {
