@@ -12,11 +12,13 @@ import com.vlad.kuzhyr.passengerservice.web.dto.request.PassengerRequest;
 import com.vlad.kuzhyr.passengerservice.web.dto.response.PageResponse;
 import com.vlad.kuzhyr.passengerservice.web.dto.response.PassengerResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PassengerServiceImpl implements PassengerService {
@@ -30,6 +32,7 @@ public class PassengerServiceImpl implements PassengerService {
     public PassengerResponse getPassengerById(Long id) {
         Passenger existPassenger = getExistingPassengerById(id);
 
+        log.info("Passenger service. Passenger get by id. Passenger id:{}", id);
         return passengerMapper.toResponse(existPassenger);
     }
 
@@ -38,11 +41,16 @@ public class PassengerServiceImpl implements PassengerService {
         PageRequest pageRequest = PageRequest.of(currentPage, limit);
         Page<Passenger> passengersPage = passengerRepository.findAll(pageRequest);
 
-        return pageResponseMapper.toPageResponse(
+        PageResponse<PassengerResponse> pageResponse = pageResponseMapper.toPageResponse(
             passengersPage,
             currentPage,
             passengerMapper::toResponse
         );
+
+        log.info("Passenger service. Fetch all passengers. Current page: {}, total pages: {}",
+            pageResponse.currentPage(),
+            pageResponse.totalPages());
+        return pageResponse;
     }
 
     @Transactional
@@ -51,11 +59,17 @@ public class PassengerServiceImpl implements PassengerService {
         String passengerRequestEmail = passengerRequest.email();
         String passengerRequestPhone = passengerRequest.phone();
 
+        log.debug("Passenger service. Create passenger. Passenger email: {}, passenger phone: {}",
+            passengerRequestEmail,
+            passengerRequestPhone
+        );
+
         passengerValidator.validatePassengerEmailAndPhone(passengerRequestEmail, passengerRequestPhone);
 
         Passenger newPassenger = passengerMapper.toEntity(passengerRequest);
         Passenger savedPassenger = passengerRepository.save(newPassenger);
 
+        log.info("Passenger service. Created passenger. Passenger id: {}", savedPassenger.getId());
         return passengerMapper.toResponse(savedPassenger);
     }
 
@@ -63,9 +77,12 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     public PassengerResponse updatePassenger(Long id, PassengerRequest passengerRequest) {
         Passenger existPassenger = getExistingPassengerById(id);
+        log.debug("Passenger service. Update passenger. Passenger id: {}", id);
 
         passengerMapper.updateFromRequest(passengerRequest, existPassenger);
         Passenger savedPassenger = passengerRepository.save(existPassenger);
+
+        log.info("Passenger service. Updated passenger. Passenger id: {}", savedPassenger.getId());
 
         return passengerMapper.toResponse(savedPassenger);
     }
@@ -75,17 +92,26 @@ public class PassengerServiceImpl implements PassengerService {
     public Boolean deletePassengerById(Long id) {
         Passenger existPassenger = getExistingPassengerById(id);
 
+        log.debug("Passenger service. Delete passenger. Passenger id: {}", id);
+
         existPassenger.setIsEnabled(Boolean.FALSE);
         passengerRepository.save(existPassenger);
+
+        log.info("Passenger service. Deleted passenger. Passenger id: {}", id);
 
         return Boolean.TRUE;
     }
 
     private Passenger getExistingPassengerById(Long id) {
+        log.debug("Passenger service. Attempting to find passenger. Passenger id: {}", id);
+
         return passengerRepository.findPassengerByIdAndIsEnabledTrue(id)
-            .orElseThrow(() -> new PassengerNotFoundException(
-                ExceptionMessageConstant.PASSENGER_NOT_FOUND_MESSAGE.formatted(id)
-            ));
+            .orElseThrow(() -> {
+                log.error("Passenger service. Passenger not found. Passenger id: {}", id);
+                return new PassengerNotFoundException(
+                    ExceptionMessageConstant.PASSENGER_NOT_FOUND_MESSAGE.formatted(id)
+                );
+            });
     }
 
 }
