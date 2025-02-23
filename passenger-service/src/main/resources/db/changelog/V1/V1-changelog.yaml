@@ -1,3 +1,5 @@
 databaseChangeLog:
   - include:
       file: db/changelog/V1/V1-initial-table.sql
+  - include:
+      file: db/changelog/V1/V1-add-busy-column.sql

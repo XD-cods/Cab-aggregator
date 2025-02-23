@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +43,7 @@ public class ControllerAdvice {
             .build());
     }
 
-    @ExceptionHandler(value = { FeignException.class })
+    @ExceptionHandler(value = {FeignException.class})
     public ResponseEntity<Map<String, String>> handleFeignStatusException(FeignException e) {
         try {
             Map<String, String> errorBody = objectMapper.readValue(
@@ -64,8 +65,7 @@ public class ControllerAdvice {
         @ApiResponse(
             responseCode = "500",
             description = "Internal server error occurred",
-            content = @Content(schema = @Schema(implementation = ErrorResponse.class)
-            )
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
     })
     @ExceptionHandler(InternalServerErrorOccurred.class)
@@ -81,8 +81,7 @@ public class ControllerAdvice {
         @ApiResponse(
             responseCode = "400",
             description = "Request arguments not valid exception",
-            content = @Content(schema = @Schema(implementation = ErrorResponse.class)
-            )
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
     })
     @ExceptionHandler(value = {
@@ -92,8 +91,26 @@ public class ControllerAdvice {
         NotValidStatusTransitionException.class,
         RideCanNotUpdatableException.class,
         DepartureAndDestinationAddressesSameException.class,
+        DriverIsBusyException.class,
+        PassengerIsBusyException.class,
+        DriverHasNotCarException.class,
     })
     public ResponseEntity<ErrorResponse> requestValidationException(Exception exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.builder()
+            .error(String.valueOf(HttpStatus.BAD_REQUEST))
+            .errorDescription(exception.getMessage())
+            .timestamp(LocalDateTime.now())
+            .build());
+    }
+
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "400",
+            description = "Constraint violation exception",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintViolation(ConstraintViolationException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.builder()
             .error(String.valueOf(HttpStatus.BAD_REQUEST))
             .errorDescription(exception.getMessage())

@@ -1,8 +1,8 @@
 package com.vlad.kuzhyr.passengerservice.web.controller;
 
-import com.vlad.kuzhyr.passengerservice.web.request.PassengerRequest;
-import com.vlad.kuzhyr.passengerservice.web.response.PageResponse;
-import com.vlad.kuzhyr.passengerservice.web.response.PassengerResponse;
+import com.vlad.kuzhyr.passengerservice.web.dto.request.PassengerRequest;
+import com.vlad.kuzhyr.passengerservice.web.dto.response.PageResponse;
+import com.vlad.kuzhyr.passengerservice.web.dto.response.PassengerResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

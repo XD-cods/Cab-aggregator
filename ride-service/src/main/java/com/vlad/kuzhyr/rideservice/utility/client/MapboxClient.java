@@ -1,10 +1,12 @@
 package com.vlad.kuzhyr.rideservice.utility.client;
 
 import com.vlad.kuzhyr.rideservice.persistence.entity.Address;
+import com.vlad.kuzhyr.rideservice.utility.constant.MapBoxConstant;
 import com.vlad.kuzhyr.rideservice.utility.mapper.MapboxMapper;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
@@ -14,12 +16,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class MapboxClient {
 
     private final RestTemplate restTemplate;
-
     private final MapboxMapper mapboxMapper;
 
     @Value("${mapbox.api.secret-key}")
@@ -27,9 +29,10 @@ public class MapboxClient {
 
     @Cacheable(value = "geocode", key = "#address.trim().toLowerCase()")
     public double[] geocodeAddress(String address) {
+        log.debug("MapboxClient. Geocoding address. Address: {}", address);
 
         URI url = UriComponentsBuilder
-            .fromUriString("https://api.mapbox.com/search/geocode/v6/forward")
+            .fromUriString(MapBoxConstant.GEOCODE_URL)
             .queryParam("q", address)
             .queryParam("access_token", mapboxAccessToken)
             .buildAndExpand()
@@ -41,24 +44,33 @@ public class MapboxClient {
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         String responseBody = restTemplate.exchange(url, HttpMethod.GET, entity, String.class).getBody();
+        double[] coordinates = mapboxMapper.extractCoordinatesFromGeocodeResponse(responseBody);
 
-        return mapboxMapper.extractCoordinatesFromGeocodeResponse(responseBody);
+        log.info("MapboxClient. Geocoded address. Address: {}, Coordinates: [{}, {}]", address, coordinates[0],
+            coordinates[1]);
+        return coordinates;
     }
 
     @Cacheable(value = "distance", key = "#origin.addressName.trim().toLowerCase() +" +
                                          " '_' + #destination.addressName.trim().toLowerCase()")
     public double calculateDistance(Address origin, Address destination) {
-        String coordinates = origin.getLatitude() + "," + origin.getLongitude() + ";"
-                             + destination.getLatitude() + "," + destination.getLongitude();
+        log.debug("MapboxClient. Calculating distance. Origin: {}, Destination: {}",
+            origin.getAddressName(), destination.getAddressName());
+
+        String coordinates = origin.getLongitude() + "," + origin.getLatitude() + ";" +
+                             destination.getLongitude() + "," + destination.getLatitude();
+
         URI url = UriComponentsBuilder
-            .fromUriString("https://api.mapbox.com/directions/v5/mapbox/driving/{coordinates}")
+            .fromUriString(MapBoxConstant.ROUTE_URL)
             .queryParam("access_token", mapboxAccessToken)
             .buildAndExpand(coordinates)
             .toUri();
 
         String responseBody = restTemplate.getForEntity(url, String.class).getBody();
+        double distance = mapboxMapper.extractDistanceFromDirectionsResponse(responseBody);
 
-        return mapboxMapper.extractDistanceFromDirectionsResponse(responseBody);
+        log.info("MapboxClient. Calculated distance. Origin: {}, Destination: {}, Distance: {} meters",
+            origin.getAddressName(), destination.getAddressName(), distance);
+        return distance;
     }
-
 }

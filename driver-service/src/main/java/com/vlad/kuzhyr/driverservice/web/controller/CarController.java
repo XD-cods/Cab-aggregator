@@ -1,8 +1,8 @@
 package com.vlad.kuzhyr.driverservice.web.controller;
 
-import com.vlad.kuzhyr.driverservice.web.request.CarRequest;
-import com.vlad.kuzhyr.driverservice.web.response.CarResponse;
-import com.vlad.kuzhyr.driverservice.web.response.PageResponse;
+import com.vlad.kuzhyr.driverservice.web.dto.request.CarRequest;
+import com.vlad.kuzhyr.driverservice.web.dto.response.CarResponse;
+import com.vlad.kuzhyr.driverservice.web.dto.response.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

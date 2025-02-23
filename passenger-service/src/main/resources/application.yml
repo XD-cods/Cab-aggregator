@@ -11,6 +11,21 @@ spring:
       ddl-auto: validate
     show-sql: true
 
+  kafka:
+    bootstrap-servers: ${KAFKA_URL:localhost:9092}
+    consumer:
+      group-id: passenger-ride-group
+      key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring:
+          deserializer:
+            value:
+              delegate:
+                class: org.apache.kafka.common.serialization.StringDeserializer
+    topic:
+      passenger-busy-topic: passenger.status.updated
+
 management:
   endpoints:
     web:

@@ -1,6 +1,6 @@
 package com.vlad.kuzhyr.driverservice.utility.mapper;
 
-import com.vlad.kuzhyr.driverservice.web.response.PageResponse;
+import com.vlad.kuzhyr.driverservice.web.dto.response.PageResponse;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
