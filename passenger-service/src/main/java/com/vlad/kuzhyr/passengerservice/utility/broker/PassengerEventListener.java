@@ -24,9 +24,11 @@ public class PassengerEventListener {
         @Payload Boolean isBusy,
         @Header(KafkaHeaders.RECEIVED_KEY) Long passengerId
     ) {
-        log.info("Passenger event listener. Consume passenger busy topic. Passenger id: {}, passenger is busy: {}",
-            passengerId,
-            isBusy);
+        log.info(
+            "consumePassengerBusyTopic: Consume passenger busy event. Passenger id: {}, " +
+            "isBusy: {}",
+            passengerId, isBusy);
+
 
         passengerProcessor.updatePassengerByIdAndIsBusy(passengerId, isBusy);
     }

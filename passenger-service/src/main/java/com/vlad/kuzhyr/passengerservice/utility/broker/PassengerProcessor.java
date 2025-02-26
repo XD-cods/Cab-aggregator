@@ -16,26 +16,24 @@ public class PassengerProcessor {
     private final PassengerRepository passengerRepository;
 
     public void updatePassengerByIdAndIsBusy(Long passengerId, boolean isBusy) {
-        log.debug("Passenger processor. Attempting to update passenger. Passenger id: {}, passenger is busy: {}",
-            passengerId,
-            isBusy
-        );
+        log.debug("updatePassengerByIdAndIsBusy: Entering method. Passenger id: {}, isBusy: {}",
+            passengerId, isBusy);
+
         Passenger passenger = getPassengerById(passengerId);
 
         passenger.setIsBusy(isBusy);
         Passenger savedPassenger = passengerRepository.save(passenger);
 
-        log.debug("Passenger processor. Passenger updated. Passenger id: {}, passenger is busy: {}",
-            savedPassenger.getId(),
-            savedPassenger.getIsBusy()
-        );
+        log.info("updatePassengerByIdAndIsBusy: Passenger updated successfully. Passenger id: {}, new isBusy: {}",
+            savedPassenger.getId(), savedPassenger.getIsBusy());
     }
 
     public Passenger getPassengerById(Long passengerId) {
-        log.debug("Passenger processor. Attempting to find passenger. Passenger id {}", passengerId);
+        log.debug("getPassengerById: Attempting to find passenger. Passenger id: {}", passengerId);
+
         return passengerRepository.findById(passengerId)
             .orElseThrow(() -> {
-                log.error("Passenger processor. Passenger not found. Passenger id: {}", passengerId);
+                log.error("getPassengerById: Passenger not found. Passenger id: {}", passengerId);
                 return new PassengerNotFoundException(
                     ExceptionMessageConstant.PASSENGER_NOT_FOUND_MESSAGE.formatted(passengerId)
                 );

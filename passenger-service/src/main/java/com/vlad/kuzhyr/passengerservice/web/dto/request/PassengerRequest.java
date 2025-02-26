@@ -3,6 +3,7 @@ package com.vlad.kuzhyr.passengerservice.web.dto.request;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.vlad.kuzhyr.passengerservice.utility.constant.RegularExpressionConstant;
+import com.vlad.kuzhyr.passengerservice.utility.logger.LogUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -32,4 +33,13 @@ public record PassengerRequest(
     String phone
 
 ) {
+    @Override
+    public String toString() {
+        return "PassengerRequest{" +
+               "firstName='" + firstName + '\'' +
+               ", lastName='" + "#####" + '\'' +
+               ", email='" + LogUtils.maskEmail(email) + '\'' +
+               ", phone='" + LogUtils.maskPhone(phone) + '\'' +
+               '}';
+    }
 }

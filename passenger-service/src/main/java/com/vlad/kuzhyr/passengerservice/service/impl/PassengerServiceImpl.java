@@ -30,14 +30,19 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public PassengerResponse getPassengerById(Long id) {
-        Passenger existPassenger = getExistingPassengerById(id);
+        log.debug("getPassengerById: Entering method. Passenger id: {}", id);
 
-        log.info("Passenger service. Passenger get by id. Passenger id:{}", id);
-        return passengerMapper.toResponse(existPassenger);
+        Passenger existingPassenger = getExistingPassengerById(id);
+
+        log.info("getPassengerById: Passenger found. Passenger id: {}", id);
+        return passengerMapper.toResponse(existingPassenger);
     }
 
     @Override
     public PageResponse<PassengerResponse> getPassengers(Integer currentPage, Integer limit) {
+        log.debug("getPassengers: Entering method. Current page: {}, limit: {}", currentPage,
+            limit);
+
         PageRequest pageRequest = PageRequest.of(currentPage, limit);
         Page<Passenger> passengersPage = passengerRepository.findAll(pageRequest);
 
@@ -47,71 +52,71 @@ public class PassengerServiceImpl implements PassengerService {
             passengerMapper::toResponse
         );
 
-        log.info("Passenger service. Get all passengers. Current page: {}, total pages: {}",
+        log.info(
+            "getPassengers: Page of passengers retrieved. Current page: {}, total pages: {}, " +
+            "total elements: {}",
             pageResponse.currentPage(),
-            pageResponse.totalPages());
+            pageResponse.totalPages(),
+            pageResponse.totalElements()
+        );
         return pageResponse;
     }
 
     @Transactional
     @Override
     public PassengerResponse createPassenger(PassengerRequest passengerRequest) {
+        log.debug("createPassenger: Entering method. Passenger request: {}", passengerRequest);
+
         String passengerRequestEmail = passengerRequest.email();
         String passengerRequestPhone = passengerRequest.phone();
-
-        log.debug("Passenger service. Create passenger. Passenger email: {}, passenger phone: {}",
-            passengerRequestEmail,
-            passengerRequestPhone
-        );
 
         passengerValidator.validatePassengerEmailAndPhone(passengerRequestEmail, passengerRequestPhone);
 
         Passenger newPassenger = passengerMapper.toEntity(passengerRequest);
         Passenger savedPassenger = passengerRepository.save(newPassenger);
 
-        log.info("Passenger service. Created passenger. Passenger id: {}", savedPassenger.getId());
+        log.info("createPassenger: Passenger created successfully. Passenger id: {}",
+            savedPassenger.getId());
         return passengerMapper.toResponse(savedPassenger);
     }
 
     @Transactional
     @Override
     public PassengerResponse updatePassenger(Long id, PassengerRequest passengerRequest) {
+        log.debug("updatePassenger: Entering method. Passenger id: {}, passenger request: {}", id, passengerRequest);
+
         Passenger existingPassenger = getExistingPassengerById(id);
-        log.debug("Passenger service. Update passenger. Passenger id: {}", id);
 
         passengerMapper.updateFromRequest(passengerRequest, existingPassenger);
         Passenger savedPassenger = passengerRepository.save(existingPassenger);
 
-        log.info("Passenger service. Updated passenger. Passenger id: {}", savedPassenger.getId());
-
+        log.info("updatePassenger: Passenger updated successfully. Passenger id: {}", id);
         return passengerMapper.toResponse(savedPassenger);
     }
 
     @Transactional
     @Override
     public Boolean deletePassengerById(Long id) {
-        Passenger existPassenger = getExistingPassengerById(id);
+        log.debug("deletePassengerById: Entering method. Passenger id: {}", id);
 
-        log.debug("Passenger service. Delete passenger. Passenger id: {}", id);
+        Passenger existingPassenger = getExistingPassengerById(id);
 
-        existPassenger.setIsEnabled(Boolean.FALSE);
-        passengerRepository.save(existPassenger);
+        existingPassenger.setIsEnabled(Boolean.FALSE);
+        passengerRepository.save(existingPassenger);
 
-        log.info("Passenger service. Deleted passenger. Passenger id: {}", id);
-
+        log.info("deletePassengerById: Passenger deleted successfully. Passenger id: {}", id);
         return Boolean.TRUE;
     }
 
     private Passenger getExistingPassengerById(Long id) {
-        log.debug("Passenger service. Attempting to find passenger. Passenger id: {}", id);
+        log.debug("getExistingPassengerById: Attempting to find passenger. Passenger id: {}", id);
 
         return passengerRepository.findPassengerByIdAndIsEnabledTrue(id)
             .orElseThrow(() -> {
-                log.error("Passenger service. Passenger not found. Passenger id: {}", id);
+                log.error("getExistingPassengerById: Passenger not found. Passenger id: {}", id);
                 return new PassengerNotFoundException(
                     ExceptionMessageConstant.PASSENGER_NOT_FOUND_MESSAGE.formatted(id)
                 );
             });
     }
-
 }

@@ -23,7 +23,7 @@ public interface PassengerMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "isEnabled", ignore = true)
     @Mapping(target = "id", ignore = true)
-    void updateFromRequest(PassengerRequest passengerRequest, @MappingTarget Passenger existPassenger);
+    void updateFromRequest(PassengerRequest passengerRequest, @MappingTarget Passenger existingPassenger);
 
     @Mapping(target = "isEnabled", ignore = true)
     @Mapping(target = "id", ignore = true)
