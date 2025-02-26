@@ -15,4 +15,12 @@ public record PageResponse<T>(
     Integer totalPages
 
 ) {
+    @Override
+    public String toString() {
+        return "PageResponse{" +
+               "currentPage=" + currentPage +
+               ", totalElements=" + totalElements +
+               ", totalPages=" + totalPages +
+               '}';
+    }
 }

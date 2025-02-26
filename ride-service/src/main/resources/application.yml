@@ -41,7 +41,7 @@ spring:
   cache:
     type: redis
     redis:
-      time-to-live: 60000
+      time-to-live: 10000
       key-prefix: "ride-service:"
       use-key-prefix: true
 
