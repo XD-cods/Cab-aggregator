@@ -2,6 +2,7 @@ package com.vlad.kuzhyr.driverservice.web.dto.request;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.vlad.kuzhyr.driverservice.utility.logger.LogUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
@@ -28,7 +29,7 @@ public record CarRequest(
         return "CarRequest{" +
                "color='" + color + '\'' +
                ", carBrand='" + carBrand + '\'' +
-               ", carNumber='" + "######" + '\'' +
+               ", carNumber='" + LogUtils.maskFormattedCarNumber(carNumber) + '\'' +
                '}';
     }
 }

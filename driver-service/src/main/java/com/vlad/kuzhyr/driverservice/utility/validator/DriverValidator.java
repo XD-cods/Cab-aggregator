@@ -16,9 +16,14 @@ public class DriverValidator {
     private final DriverRepository driverRepository;
 
     public void validateDriver(String driverRequestEmail, String driverRequestPhone) {
-        String maskedEmail = LogUtils.maskEmail(driverRequestEmail);
-        String maskedPhone = LogUtils.maskPhone(driverRequestPhone);
 
+        validateDriverByEmail(driverRequestEmail);
+        validateDriverByPhone(driverRequestPhone);
+
+    }
+
+    private void validateDriverByEmail(String driverRequestEmail) {
+        String maskedEmail = LogUtils.maskEmail(driverRequestEmail);
         log.debug("validateDriver: Validating driver email. Email: {}", maskedEmail);
 
         if (driverRepository.existsDriverByEmailAndIsEnabledTrue(driverRequestEmail)) {
@@ -27,7 +32,10 @@ public class DriverValidator {
                 ExceptionMessageConstant.DRIVER_ALREADY_EXISTS_BY_EMAIL_MESSAGE.formatted(driverRequestEmail)
             );
         }
+    }
 
+    private void validateDriverByPhone(String driverRequestPhone) {
+        String maskedPhone = LogUtils.maskPhone(driverRequestPhone);
         log.debug("validateDriver: Validating driver phone. Phone: {}", maskedPhone);
 
         if (driverRepository.existsDriverByPhoneAndIsEnabledTrue(driverRequestPhone)) {
