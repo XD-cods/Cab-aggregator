@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.vlad.kuzhyr.driverservice.persistence.entity.Gender;
 import com.vlad.kuzhyr.driverservice.utility.constant.RegularExpressionConstant;
+import com.vlad.kuzhyr.driverservice.utility.logger.LogUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -42,4 +43,15 @@ public record DriverRequest(
     List<Long> carIds
 
 ) {
+    @Override
+    public String toString() {
+        return "DriverRequest{" +
+               "firstName='" + firstName + '\'' +
+               ", lastName='" + "########" + '\'' +
+               ", email='" + LogUtils.maskEmail(email) + '\'' +
+               ", gender=" + gender +
+               ", phone='" + LogUtils.maskPhone(phone) + '\'' +
+               ", carIds=" + carIds +
+               '}';
+    }
 }

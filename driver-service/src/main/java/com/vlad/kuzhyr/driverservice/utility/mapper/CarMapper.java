@@ -24,7 +24,7 @@ public interface CarMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "driver", ignore = true)
     @Mapping(target = "isEnabled", ignore = true)
-    void updateFromRequest(CarRequest carRequest, @MappingTarget Car existCar);
+    void updateFromRequest(CarRequest carRequest, @MappingTarget Car existingCar);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "driver", ignore = true)

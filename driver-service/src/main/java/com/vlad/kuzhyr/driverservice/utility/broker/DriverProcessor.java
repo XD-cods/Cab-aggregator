@@ -16,7 +16,7 @@ public class DriverProcessor {
     private final DriverRepository driverRepository;
 
     public void updateDriverByIdAndIsBusy(Long driverId, boolean isBusy) {
-        log.debug("Driver processor. Attempting to update driver. Driver id: {}, driver is busy: {}",
+        log.debug("updateDriverByIdAndIsBusy: Entering method. Driver id: {}, is busy: {}",
             driverId,
             isBusy
         );
@@ -24,17 +24,19 @@ public class DriverProcessor {
         Driver driverToUpdate = getDriverById(driverId);
         driverToUpdate.setIsBusy(isBusy);
         Driver savedDriver = driverRepository.save(driverToUpdate);
-        log.debug("Driver processor. Driver updated. Driver id: {}, driver is busy: {}",
+
+        log.info("updateDriverByIdAndIsBusy: Driver updated successfully. Driver id: {}, is busy: {}",
             savedDriver.getId(),
             savedDriver.getIsBusy()
         );
     }
 
     public Driver getDriverById(Long driverId) {
-        log.debug("Driver processor. Attempting to get driver. Driver id: {}", driverId);
+        log.debug("getDriverById: Attempting to find driver. Driver id: {}", driverId);
+
         return driverRepository.findById(driverId)
             .orElseThrow(() -> {
-                log.error("Driver processor. Driver not found. Driver id: {}", driverId);
+                log.error("getDriverById: Driver not found. Driver id: {}", driverId);
                 return new DriverNotFoundException(
                     ExceptionMessageConstant.DRIVER_NOT_FOUND_MESSAGE.formatted(driverId)
                 );

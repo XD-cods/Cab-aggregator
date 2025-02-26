@@ -10,4 +10,10 @@ public record DriverUpdateCarsRequest(
     List<Long> carIds
 
 ) {
+    @Override
+    public String toString() {
+        return "DriverUpdateCarsRequest{" +
+               "carIds=" + carIds +
+               '}';
+    }
 }

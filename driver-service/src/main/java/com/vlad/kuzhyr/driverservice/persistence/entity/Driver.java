@@ -64,4 +64,5 @@ public class Driver {
     @Builder.Default
     @OneToMany(mappedBy = "driver", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Car> cars = new ArrayList<>();
+
 }

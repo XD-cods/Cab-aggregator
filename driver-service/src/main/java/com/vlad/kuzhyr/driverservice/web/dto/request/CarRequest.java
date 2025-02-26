@@ -23,4 +23,12 @@ public record CarRequest(
     String carNumber
 
 ) {
+    @Override
+    public String toString() {
+        return "CarRequest{" +
+               "color='" + color + '\'' +
+               ", carBrand='" + carBrand + '\'' +
+               ", carNumber='" + "######" + '\'' +
+               '}';
+    }
 }

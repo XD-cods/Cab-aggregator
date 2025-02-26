@@ -31,14 +31,18 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public CarResponse getCarById(Long id) {
-        Car existCar = getExistingCarById(id);
+        log.info("getCarById: Entering method. Car id: {}", id);
 
-        log.info("CarServiceImpl. Get car by id. car id: {}", id);
-        return carMapper.toResponse(existCar);
+        Car existingCar = getExistingCarById(id);
+
+        log.info("getCarById: Car found. Car id: {}", id);
+        return carMapper.toResponse(existingCar);
     }
 
     @Override
     public PageResponse<CarResponse> getAllCar(Integer currentPage, Integer limit) {
+        log.debug("getAllCar: Entering method. Current page: {}, limit: {}", currentPage, limit);
+
         Pageable pageable = PageRequest.of(currentPage, limit);
         Page<Car> carsPage = carRepository.findAll(pageable);
 
@@ -48,64 +52,69 @@ public class CarServiceImpl implements CarService {
             carMapper::toResponse
         );
 
-        log.info("CarServiceImpl. Get all cars. current page: {}, total pages: {}", pageResponse.currentPage(),
-            pageResponse.totalPages());
+        log.info(
+            "getAllCar: Page of cars retrieved. Current page: {}, total pages: {}, total elements: {}",
+            pageResponse.currentPage(),
+            pageResponse.totalPages(),
+            pageResponse.totalElements()
+        );
         return pageResponse;
     }
 
     @Override
     @Transactional
     public CarResponse createCar(CarRequest carRequest) {
-        log.debug("CarServiceImpl. Entering in method createCar.");
+        log.debug("createCar: Entering method. Car request: {}", carRequest);
+
         String carRequestNumber = carRequest.carNumber();
 
-        log.debug("CarServiceImpl. Entering in method createCar.");
         carValidator.validateCarByNumber(carRequestNumber);
 
         Car newCar = carMapper.toEntity(carRequest);
         Car savedCar = carRepository.save(newCar);
 
-        log.info("CarServiceImpl. Create car. Car id: {}", savedCar.getId());
+        log.info("createCar: Car created successfully. Car id: {}", savedCar.getId());
         return carMapper.toResponse(savedCar);
     }
 
     @Override
     @Transactional
     public CarResponse updateCar(Long id, CarRequest carRequest) {
-        log.debug("CarServiceImpl. Entering in method updateCar");
-        Car existCar = getExistingCarById(id);
+        log.debug("updateCar: Entering method. Car id: {}, car request: {}", id, carRequest);
 
-        log.debug("CarServiceImpl. Update car from car request. Car request: {}", carRequest.toString());
-        carMapper.updateFromRequest(carRequest, existCar);
-        Car savedCar = carRepository.save(existCar);
+        Car existingCar = getExistingCarById(id);
 
-        log.info("CarServiceImpl. Update car. Car id: {}", id);
+        carMapper.updateFromRequest(carRequest, existingCar);
+        Car savedCar = carRepository.save(existingCar);
+
+        log.info("updateCar: Car updated successfully. Car id: {}", id);
         return carMapper.toResponse(savedCar);
     }
 
     @Override
     @Transactional
     public Boolean deleteCarById(Long id) {
-        Car existCar = getExistingCarById(id);
+        log.debug("deleteCarById: Entering method. Car id: {}", id);
 
-        existCar.setDriver(null);
-        existCar.setIsEnabled(Boolean.FALSE);
-        carRepository.save(existCar);
+        Car existingCar = getExistingCarById(id);
 
-        log.info("CarServiceImpl. Delete car. Car id: {}", id);
+        existingCar.setDriver(null);
+        existingCar.setIsEnabled(Boolean.FALSE);
+        carRepository.save(existingCar);
+
+        log.info("deleteCarById: Car deleted successfully. Car id: {}", id);
         return Boolean.TRUE;
     }
 
     private Car getExistingCarById(Long id) {
-        log.debug("CarServiceImpl. Attempting to find car. Car id: {}", id);
+        log.debug("getExistingCarById: Attempting to find car. Car id: {}", id);
 
         return carRepository.findCarByIdAndIsEnabledTrue(id)
             .orElseThrow(() -> {
-                log.error("CarServiceImpl. Car not found. car id: {}", id);
+                log.error("getExistingCarById: Car not found. Car id: {}", id);
                 return new CarNotFoundException(
                     ExceptionMessageConstant.CAR_NOT_FOUND_MESSAGE.formatted(id)
                 );
             });
     }
-
 }
