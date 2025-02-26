@@ -23,7 +23,7 @@ public class DriverEventListener {
         @Payload Boolean isBusy,
         @Header(KafkaHeaders.RECEIVED_KEY) Long driverId
     ) {
-        log.info("consumeDriverBusyEvent: Consuming driver busy event. Driver id: {}, is busy: {}",
+        log.info("consumeDriverBusyEvent: Consuming driver busy event. Driver id: {}, isBusy: {}",
             driverId,
             isBusy
         );

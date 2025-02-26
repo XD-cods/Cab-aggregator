@@ -62,7 +62,7 @@ public class DriverServiceImpl implements DriverService {
     @Override
     @Transactional
     public DriverResponse createDriver(DriverRequest driverRequest) {
-        log.debug("createDriver: Entering method. Driver request: {}", driverRequest);
+        log.debug("createDriver: Entering method. {}", driverRequest);
 
         driverValidator.validateDriver(driverRequest.email(), driverRequest.phone());
 
@@ -78,7 +78,7 @@ public class DriverServiceImpl implements DriverService {
     @Override
     @Transactional
     public DriverResponse updateDriver(Long id, DriverRequest driverRequest) {
-        log.debug("updateDriver: Entering method. Driver id: {}, driver request: {}", id, driverRequest);
+        log.debug("updateDriver: Entering method. Driver id: {}, {}", id, driverRequest);
 
         driverValidator.validateDriver(driverRequest.email(), driverRequest.phone());
 
@@ -95,14 +95,14 @@ public class DriverServiceImpl implements DriverService {
     @Override
     @Transactional
     public DriverResponse updateDriverCarsById(Long id, DriverUpdateCarsRequest driverUpdateCarsRequest) {
-        log.debug("updateDriverCarsById: Entering method. Driver id: {}, cars id's:{}", id, driverUpdateCarsRequest);
+        log.debug("updateDriverCarsById: Entering method. Driver id: {}, {}", id, driverUpdateCarsRequest);
 
         Driver existingDriver = getDriverOrElseThrow(id);
         List<Car> cars = carRepository.findAllById(driverUpdateCarsRequest.carIds());
         setCarsDriver(existingDriver, cars);
         Driver savedDriver = driverRepository.save(existingDriver);
 
-        log.info("updateDriverCarsById: Driver cars updated successfully. Driver id: {}, cars id's: {}", id,
+        log.info("updateDriverCarsById: Driver cars updated successfully. Driver id: {}, {}", id,
             driverUpdateCarsRequest);
         return driverMapper.toResponse(savedDriver);
     }

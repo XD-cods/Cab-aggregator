@@ -28,4 +28,11 @@ public record RideRequest(
     Long passengerId
 
 ) {
+    @Override
+    public String toString() {
+        return "RideRequest{" +
+               "passengerId=" + passengerId +
+               ", driverId=" + driverId +
+               '}';
+    }
 }

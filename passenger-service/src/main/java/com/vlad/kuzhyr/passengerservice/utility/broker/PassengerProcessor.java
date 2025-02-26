@@ -24,7 +24,7 @@ public class PassengerProcessor {
         passenger.setIsBusy(isBusy);
         Passenger savedPassenger = passengerRepository.save(passenger);
 
-        log.info("updatePassengerByIdAndIsBusy: Passenger updated successfully. Passenger id: {}, new isBusy: {}",
+        log.debug("updatePassengerByIdAndIsBusy: Passenger updated successfully. Passenger id: {}, new isBusy: {}",
             savedPassenger.getId(), savedPassenger.getIsBusy());
     }
 

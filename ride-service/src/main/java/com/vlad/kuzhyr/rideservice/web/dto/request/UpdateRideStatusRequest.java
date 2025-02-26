@@ -14,4 +14,10 @@ public record UpdateRideStatusRequest(
     RideStatus rideStatus
 
 ) {
+    @Override
+    public String toString() {
+        return "UpdateRideStatusRequest{" +
+               "rideStatus=" + rideStatus +
+               '}';
+    }
 }

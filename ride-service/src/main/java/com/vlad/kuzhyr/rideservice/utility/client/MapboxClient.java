@@ -1,6 +1,7 @@
 package com.vlad.kuzhyr.rideservice.utility.client;
 
 import com.vlad.kuzhyr.rideservice.persistence.entity.Address;
+import com.vlad.kuzhyr.rideservice.utility.constant.ArrayIndexConstant;
 import com.vlad.kuzhyr.rideservice.utility.constant.MapBoxConstant;
 import com.vlad.kuzhyr.rideservice.utility.mapper.MapboxMapper;
 import java.net.URI;
@@ -29,7 +30,7 @@ public class MapboxClient {
 
     @Cacheable(value = "geocode", key = "#address.trim().toLowerCase()")
     public double[] geocodeAddress(String address) {
-        log.debug("MapboxClient. Geocoding address. Address: {}", address);
+        log.debug("geocodeAddress: Entering method. Address: {}", address);
 
         URI url = UriComponentsBuilder
             .fromUriString(MapBoxConstant.GEOCODE_URL)
@@ -46,15 +47,16 @@ public class MapboxClient {
         String responseBody = restTemplate.exchange(url, HttpMethod.GET, entity, String.class).getBody();
         double[] coordinates = mapboxMapper.extractCoordinatesFromGeocodeResponse(responseBody);
 
-        log.info("MapboxClient. Geocoded address. Address: {}, Coordinates: [{}, {}]", address, coordinates[0],
-            coordinates[1]);
+        log.debug("geocodeAddress: Geocoded address. Address: {}, Coordinates: [{}, {}]", address,
+            coordinates[ArrayIndexConstant.INDEX_LONGITUDE],
+            coordinates[ArrayIndexConstant.INDEX_LATITUDE]);
         return coordinates;
     }
 
     @Cacheable(value = "distance", key = "#origin.addressName.trim().toLowerCase() +" +
                                          " '_' + #destination.addressName.trim().toLowerCase()")
     public double calculateDistance(Address origin, Address destination) {
-        log.debug("MapboxClient. Calculating distance. Origin: {}, Destination: {}",
+        log.debug("calculateDistance: Entering method. Origin: {}, Destination: {}",
             origin.getAddressName(), destination.getAddressName());
 
         String coordinates = origin.getLongitude() + "," + origin.getLatitude() + ";" +
@@ -69,9 +71,9 @@ public class MapboxClient {
         String responseBody = restTemplate.getForEntity(url, String.class).getBody();
         double distance = mapboxMapper.extractDistanceFromDirectionsResponse(responseBody);
 
-        log.info("MapboxClient. Calculated distance. Origin: {}, Destination: {}, Distance: {} meters",
+        log.debug(
+            "calculateDistance: Calculated distance. Origin: {}, Destination: {}, Distance: {} meters",
             origin.getAddressName(), destination.getAddressName(), distance);
         return distance;
     }
-
 }

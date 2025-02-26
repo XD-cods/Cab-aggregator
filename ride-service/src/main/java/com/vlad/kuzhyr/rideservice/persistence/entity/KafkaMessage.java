@@ -47,4 +47,17 @@ public class KafkaMessage {
     @Column(name = "is_sent", nullable = false)
     @Builder.Default
     private Boolean isSent = Boolean.FALSE;
+
+    @Override
+    public String toString() {
+        return "KafkaMessage{" +
+               "id=" + id +
+               ", topic='" + topic + '\'' +
+               ", key=" + key +
+               ", message='" + message + '\'' +
+               ", createdAt=" + createdAt +
+               ", sentAt=" + sentAt +
+               ", isSent=" + isSent +
+               '}';
+    }
 }

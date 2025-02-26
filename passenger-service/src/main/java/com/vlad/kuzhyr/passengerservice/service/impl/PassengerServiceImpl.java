@@ -40,8 +40,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public PageResponse<PassengerResponse> getPassengers(Integer currentPage, Integer limit) {
-        log.debug("getPassengers: Entering method. Current page: {}, limit: {}", currentPage,
-            limit);
+        log.debug("getPassengers: Entering method. Current page: {}, limit: {}", currentPage, limit);
 
         PageRequest pageRequest = PageRequest.of(currentPage, limit);
         Page<Passenger> passengersPage = passengerRepository.findAll(pageRequest);
@@ -52,20 +51,14 @@ public class PassengerServiceImpl implements PassengerService {
             passengerMapper::toResponse
         );
 
-        log.info(
-            "getPassengers: Page of passengers retrieved. Current page: {}, total pages: {}, " +
-            "total elements: {}",
-            pageResponse.currentPage(),
-            pageResponse.totalPages(),
-            pageResponse.totalElements()
-        );
+        log.info("getPassengers: Page of passengers retrieved. {}", pageResponse);
         return pageResponse;
     }
 
     @Transactional
     @Override
     public PassengerResponse createPassenger(PassengerRequest passengerRequest) {
-        log.debug("createPassenger: Entering method. Passenger request: {}", passengerRequest);
+        log.debug("createPassenger: Entering method. {}", passengerRequest);
 
         String passengerRequestEmail = passengerRequest.email();
         String passengerRequestPhone = passengerRequest.phone();
@@ -83,7 +76,7 @@ public class PassengerServiceImpl implements PassengerService {
     @Transactional
     @Override
     public PassengerResponse updatePassenger(Long id, PassengerRequest passengerRequest) {
-        log.debug("updatePassenger: Entering method. Passenger id: {}, passenger request: {}", id, passengerRequest);
+        log.debug("updatePassenger: Entering method. Passenger id: {}, {}", id, passengerRequest);
 
         Passenger existingPassenger = getExistingPassengerById(id);
 

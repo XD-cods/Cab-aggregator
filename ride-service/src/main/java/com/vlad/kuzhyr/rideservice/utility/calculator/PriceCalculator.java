@@ -15,10 +15,10 @@ public class PriceCalculator {
     private static final BigDecimal METERS_IN_KM = BigDecimal.valueOf(1000);
 
     public BigDecimal calculatePrice(double distanceInMeters) {
-        log.debug("Price calculator. Calculating price. Distance: {} meters", distanceInMeters);
+        log.debug("calculatePrice: Entering method. Distance: {} meters", distanceInMeters);
         BigDecimal price =
             RATE_PER_KM.multiply(BigDecimal.valueOf(distanceInMeters)).divide(METERS_IN_KM, RoundingMode.HALF_EVEN);
-        log.info("Price calculator. Calculated price. Distance: {} meters, Price: {}", distanceInMeters, price);
+        log.debug("calculatePrice: Calculated price. Distance: {} meters, Price: {}", distanceInMeters, price);
         return price;
     }
 

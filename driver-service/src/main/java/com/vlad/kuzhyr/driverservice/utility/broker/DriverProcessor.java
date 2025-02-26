@@ -16,7 +16,7 @@ public class DriverProcessor {
     private final DriverRepository driverRepository;
 
     public void updateDriverByIdAndIsBusy(Long driverId, boolean isBusy) {
-        log.debug("updateDriverByIdAndIsBusy: Entering method. Driver id: {}, is busy: {}",
+        log.debug("updateDriverByIdAndIsBusy: Entering method. Driver id: {}, isBusy: {}",
             driverId,
             isBusy
         );
@@ -25,7 +25,7 @@ public class DriverProcessor {
         driverToUpdate.setIsBusy(isBusy);
         Driver savedDriver = driverRepository.save(driverToUpdate);
 
-        log.info("updateDriverByIdAndIsBusy: Driver updated successfully. Driver id: {}, is busy: {}",
+        log.info("updateDriverByIdAndIsBusy: Driver updated successfully. Driver id: {}, isBusy: {}",
             savedDriver.getId(),
             savedDriver.getIsBusy()
         );

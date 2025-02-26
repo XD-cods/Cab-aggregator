@@ -27,6 +27,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -65,12 +66,7 @@ public class RatingServiceImpl implements RatingService {
             ratingMapper::toResponse
         );
 
-        log.info(
-            "getRatings: Page of ratings retrieved. Current page: {}, total pages: {}, total elements: {}",
-            pageResponse.currentPage(),
-            pageResponse.totalPages(),
-            pageResponse.totalElements()
-        );
+        log.info("getRatings: Page of ratings retrieved. {}", pageResponse);
         return pageResponse;
     }
 
@@ -82,7 +78,7 @@ public class RatingServiceImpl implements RatingService {
 
         AverageRatingResponse averageRatingResponse = getAverageRatingResponse(lastRatings);
 
-        log.info("getAverageRatingByPassengerId: Average rating calculated. Passenger id: {}, average rating: {}",
+        log.info("getAverageRatingByPassengerId: Average rating calculated. Passenger id: {}, {}",
             passengerId,
             averageRatingResponse.averageRating()
         );
@@ -97,7 +93,7 @@ public class RatingServiceImpl implements RatingService {
 
         AverageRatingResponse averageRatingResponse = getAverageRatingResponse(lastRatings);
 
-        log.info("getAverageRatingByDriverId: Average rating calculated. Driver id: {}, average rating: {}",
+        log.info("getAverageRatingByDriverId: Average rating calculated. Driver id: {}, {}",
             driverId,
             averageRatingResponse.averageRating()
         );
@@ -105,8 +101,9 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
+    @Transactional
     public RatingResponse createRating(CreateRatingRequest createRatingRequest) {
-        log.debug("createRating: Entering method. CreateRatingRequest: {}", createRatingRequest);
+        log.debug("createRating: Entering method. {}", createRatingRequest);
 
         Long requestRideId = createRatingRequest.rideId();
         RatedBy requestRatedBy = createRatingRequest.ratedBy();
@@ -125,8 +122,9 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
+    @Transactional
     public RatingResponse updateRating(Long id, UpdateRatingRequest updateRatingRequest) {
-        log.debug("updateRating: Entering method. Rating id: {}, UpdateRatingRequest: {}", id, updateRatingRequest);
+        log.debug("updateRating: Entering method. Rating id: {}, {}", id, updateRatingRequest);
 
         Rating existingRating = getExistingRating(id);
 

@@ -5,7 +5,7 @@ import com.vlad.kuzhyr.rideservice.persistence.entity.Ride;
 import com.vlad.kuzhyr.rideservice.persistence.entity.RideStatus;
 import com.vlad.kuzhyr.rideservice.persistence.repository.RideRepository;
 import com.vlad.kuzhyr.rideservice.service.RideService;
-import com.vlad.kuzhyr.rideservice.utility.broker.KafkaProducer;
+import com.vlad.kuzhyr.rideservice.utility.broker.RideEventProducer;
 import com.vlad.kuzhyr.rideservice.utility.constant.ExceptionMessageConstant;
 import com.vlad.kuzhyr.rideservice.utility.mapper.PageResponseMapper;
 import com.vlad.kuzhyr.rideservice.utility.mapper.RideMapper;
@@ -34,61 +34,89 @@ public class RideServiceImpl implements RideService {
     private final PageResponseMapper pageResponseMapper;
     private final AddressService addressService;
     private final RideValidation rideValidation;
-    private final KafkaProducer kafkaProducer;
+    private final RideEventProducer rideEventProducer;
 
     @Override
     public RideResponse getRideById(Long rideId) {
-        log.debug("Ride service. Get ride by id. Ride id: {}", rideId);
+        log.debug("getRideById: Entering method. Ride id: {}", rideId);
+
         Ride ride = findRideByIdOrThrow(rideId);
-        log.info("Ride service. Retrieved ride by id. Ride id: {}", rideId);
+
+        log.info("getRideById: Ride found. Ride id: {}", rideId);
         return rideMapper.toResponse(ride);
     }
 
     @Override
     public PageResponse<RideResponse> getAllRidesByDriverId(Long driverId, Integer currentPage, Integer limit) {
-        log.debug("Ride service. Get all rides by driver id. Driver id: {}", driverId);
+        log.debug("getAllRidesByDriverId: Entering method. Driver id: {}, current page: {}, limit: {}", driverId,
+            currentPage, limit);
+
         rideValidation.validateRidesExistByDriverId(driverId);
         Page<Ride> ridesPage = rideRepository.findByDriverId(driverId, PageRequest.of(currentPage, limit));
-        log.info("Ride service. Retrieved all rides by driver id. Driver id: {}", driverId);
-        return pageResponseMapper.toPageResponse(ridesPage, currentPage, rideMapper::toResponse);
+
+        PageResponse<RideResponse> pageResponse =
+            pageResponseMapper.toPageResponse(
+                ridesPage,
+                currentPage,
+                rideMapper::toResponse
+            );
+
+        log.info("getAllRidesByDriverId: Page of rides by driverId retrieved. Driver id: {}, {}",
+            driverId, pageResponse);
+        return pageResponse;
     }
 
     @Override
     public PageResponse<RideResponse> getAllRidesByPassengerId(Long passengerId, Integer currentPage, Integer limit) {
-        log.debug("Ride service. Get all rides by passenger id. Passenger id: {}", passengerId);
+        log.debug("getAllRidesByPassengerId: Entering method. Passenger id: {}, current page: {}, limit: {}",
+            passengerId, currentPage, limit);
+
         rideValidation.validateRidesExistByPassengerId(passengerId);
         Page<Ride> ridesPage = rideRepository.findByPassengerId(passengerId, PageRequest.of(currentPage, limit));
-        log.info("Ride service. Retrieved all rides by passenger id. Passenger id: {}", passengerId);
-        return pageResponseMapper.toPageResponse(ridesPage, currentPage, rideMapper::toResponse);
+
+        PageResponse<RideResponse> pageResponse =
+            pageResponseMapper.toPageResponse(ridesPage, currentPage, rideMapper::toResponse);
+
+        log.info(
+            "getAllRidesByPassengerId: Page of rides by passenger id retrieved. Passenger id: {}, {}",
+            passengerId, pageResponse);
+        return pageResponse;
     }
 
     @Override
     public PageResponse<RideResponse> getAllRides(Integer currentPage, Integer limit) {
-        log.debug("Ride service. Get all rides. Current page: {}, limit: {}", currentPage, limit);
+        log.debug("getAllRides: Entering method. Current page: {}, limit: {}", currentPage, limit);
+
         Page<Ride> ridesPage = rideRepository.findAll(PageRequest.of(currentPage, limit));
-        log.info("Ride service. Retrieved all rides. Current page: {}, total pages: {}", currentPage,
-            ridesPage.getTotalPages());
-        return pageResponseMapper.toPageResponse(ridesPage, currentPage, rideMapper::toResponse);
+
+        PageResponse<RideResponse> pageResponse =
+            pageResponseMapper.toPageResponse(ridesPage, currentPage, rideMapper::toResponse);
+
+        log.info("getAllRides: Page of rides retrieved. {}", pageResponse);
+        return pageResponse;
     }
 
     @Override
     @Transactional
     public RideResponse updateRide(Long rideId, UpdateRideRequest rideRequest) {
-        log.debug("Ride service. Update ride. Ride id: {}", rideId);
+        log.debug("updateRide: Entering method. Ride id: {}, {}", rideId, rideRequest);
+
         Ride ride = findRideByIdOrThrow(rideId);
         rideValidation.validateRideIsUpdatable(ride);
 
         updateRideAddressIfNeeded(ride, rideRequest);
 
         Ride updatedRide = rideRepository.save(ride);
-        log.info("Ride service. Updated ride. Ride id: {}", rideId);
+
+        log.info("updateRide: Ride updated. Ride id: {}", rideId);
         return rideMapper.toResponse(updatedRide);
     }
 
     @Override
     @Transactional
     public RideResponse updateRideStatus(Long rideId, UpdateRideStatusRequest rideRequest) {
-        log.debug("Ride service. Update ride status. Ride id: {}", rideId);
+        log.debug("updateRideStatus: Entering method. Ride id: {}, {}", rideId, rideRequest);
+
         Ride ride = findRideByIdOrThrow(rideId);
         RideStatus newStatus = rideRequest.rideStatus();
 
@@ -98,26 +126,29 @@ public class RideServiceImpl implements RideService {
         ride.setRideStatus(newStatus);
 
         Ride updatedRide = rideRepository.save(ride);
-        log.info("Ride service. Updated ride status. Ride id: {}, new status: {}", rideId, newStatus);
+
+        log.info("updateRideStatus: Ride status updated. Ride id: {}, new status: {}", rideId, newStatus);
         return rideMapper.toResponse(updatedRide);
     }
 
     @Override
     @Transactional
     public RideResponse createRide(RideRequest rideRequest) {
-        log.debug("Ride service. Create ride. Passenger id: {}, driver id: {}", rideRequest.passengerId(),
-            rideRequest.driverId());
+        log.debug("createRide: Entering method. {}", rideRequest);
+
         Ride ride = createRideFromRideRequest(rideRequest);
         Ride savedRide = rideRepository.save(ride);
-        log.info("Ride service. Created ride. Ride id: {}", savedRide.getId());
+
+        log.info("createRide: Ride created. Ride id: {}", savedRide.getId());
         return rideMapper.toResponse(savedRide);
     }
 
     private Ride findRideByIdOrThrow(Long rideId) {
-        log.debug("Ride service. Attempting to find ride by id. Ride id: {}", rideId);
+        log.debug("findRideByIdOrThrow: Attempting to find ride. Ride id: {}", rideId);
+
         return rideRepository.findById(rideId)
             .orElseThrow(() -> {
-                log.error("Ride service. Ride not found. Ride id: {}", rideId);
+                log.error("findRideByIdOrThrow: Ride not found. Ride id: {}", rideId);
                 return new RideNotFoundException(
                     ExceptionMessageConstant.RIDE_NOT_FOUND_MESSAGE.formatted(rideId)
                 );
@@ -132,7 +163,7 @@ public class RideServiceImpl implements RideService {
 
         if (!currentDepartureAddress.equals(rideRequestDepartureAddress)
             || !currentDestinationAddress.equals(rideRequestDestinationAddress)) {
-            log.debug("Ride service. Updating ride address. Ride id: {}", ride.getId());
+            log.debug("updateRideAddressIfNeeded: Updating ride address. Ride id: {}", ride.getId());
             addressService.updateRideAddress(ride, rideRequestDepartureAddress, rideRequestDestinationAddress);
         }
     }
@@ -151,6 +182,7 @@ public class RideServiceImpl implements RideService {
         Ride ride = rideMapper.toEntity(rideRequest);
         addressService.updateRideAddress(ride, departureAddress, destinationAddress);
         setDriverAndPassengerBusyStatus(passengerId, driverId, true);
+
         return ride;
     }
 
@@ -158,26 +190,26 @@ public class RideServiceImpl implements RideService {
         switch (newStatus) {
             case PASSENGER_PICKED_UP -> {
                 ride.setPickupTime(LocalDateTime.now());
-                log.debug("Ride service. Passenger picked up. Ride id: {}", ride.getId());
+                log.debug("updateRideTimestamps: Passenger picked up. Ride id: {}", ride.getId());
             }
             case COMPLETED -> {
                 ride.setCompleteTime(LocalDateTime.now());
                 setDriverAndPassengerBusyStatus(ride.getPassengerId(), ride.getDriverId(), false);
-                log.debug("Ride service. Ride completed. Ride id: {}", ride.getId());
+                log.debug("updateRideTimestamps: Ride completed. Ride id: {}", ride.getId());
             }
             case RATE -> {
-                kafkaProducer.sendRideCompletedMessage(
+                rideEventProducer.sendRideCompletedMessage(
                     RideInfoPayload.builder()
                         .rideId(ride.getId())
                         .passengerId(ride.getPassengerId())
                         .driverId(ride.getDriverId())
                         .build()
                 );
-                log.debug("Ride service. Ride rated. Ride id: {}", ride.getId());
+                log.debug("updateRideTimestamps: Ride rated. Ride id: {}", ride.getId());
             }
             case CANCELLED -> {
                 setDriverAndPassengerBusyStatus(ride.getPassengerId(), ride.getDriverId(), false);
-                log.debug("Ride service. Ride cancelled. Ride id: {}", ride.getId());
+                log.debug("updateRideTimestamps: Ride cancelled. Ride id: {}", ride.getId());
             }
             default -> {
             }
@@ -185,10 +217,10 @@ public class RideServiceImpl implements RideService {
     }
 
     private void setDriverAndPassengerBusyStatus(Long passengerId, Long driverId, Boolean isBusy) {
-        log.debug("Ride service. Setting driver and passenger busy status. Driver id: {}, passenger id: {}, isBusy: {}",
+        log.debug("setDriverAndPassengerBusyStatus: Setting busy status. Driver id: {}, passenger id: {}, isBusy: {}",
             driverId, passengerId, isBusy);
-        kafkaProducer.sendDriverBusyMessage(driverId, isBusy);
-        kafkaProducer.sendPassengerBusyTopic(passengerId, isBusy);
-    }
 
+        rideEventProducer.sendDriverBusyMessage(driverId, isBusy);
+        rideEventProducer.sendPassengerBusyTopic(passengerId, isBusy);
+    }
 }

@@ -31,7 +31,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public CarResponse getCarById(Long id) {
-        log.info("getCarById: Entering method. Car id: {}", id);
+        log.debug("getCarById: Entering method. Car id: {}", id);
 
         Car existingCar = getExistingCarById(id);
 
@@ -52,12 +52,7 @@ public class CarServiceImpl implements CarService {
             carMapper::toResponse
         );
 
-        log.info(
-            "getAllCar: Page of cars retrieved. Current page: {}, total pages: {}, total elements: {}",
-            pageResponse.currentPage(),
-            pageResponse.totalPages(),
-            pageResponse.totalElements()
-        );
+        log.info("getAllCar: Page of cars retrieved. {}", pageResponse);
         return pageResponse;
     }
 

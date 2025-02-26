@@ -27,9 +27,11 @@ public class KafkaMessageScheduler {
         lockAtLeastFor = "PT1S"
     )
     public void processKafkaMessage() {
-        log.debug("Kafka message scheduler. Processing Kafka messages.");
+
         List<KafkaMessage> unsentMessages = kafkaMessageService.getUnsentMessages();
         Set<KafkaMessage> uniqueMessages = new HashSet<>(unsentMessages);
+
+        log.debug("processKafkaMessage: Found unsent messages. Messages amount: {}", uniqueMessages.size());
 
         for (KafkaMessage kafkaMessage : uniqueMessages) {
             if (kafkaMessage.getKey() == null) {
@@ -37,11 +39,12 @@ public class KafkaMessageScheduler {
             } else {
                 kafkaTemplate.send(kafkaMessage.getTopic(), kafkaMessage.getKey(), kafkaMessage.getMessage());
             }
-            this.kafkaMessageService.markAsSent(kafkaMessage);
-            log.info("Kafka message scheduler. Sent message. Topic: {}, Key: {}", kafkaMessage.getTopic(),
-                kafkaMessage.getKey());
+            kafkaMessageService.markAsSent(kafkaMessage);
+            log.debug("processKafkaMessage: Sent message. Topic: {}, Key: {}",
+                kafkaMessage.getTopic(), kafkaMessage.getKey());
         }
-        log.info("Kafka message scheduler. Processed {} Kafka messages.", uniqueMessages.size());
+
+        log.debug("processKafkaMessage: Processed Kafka messages. Messages amount: {}", uniqueMessages.size());
     }
 
     @Scheduled(cron = "0 0 0 * * ?")
@@ -51,9 +54,8 @@ public class KafkaMessageScheduler {
         lockAtLeastFor = "PT1M"
     )
     public void cleanupSentMessages() {
-        log.debug("Kafka message scheduler. Cleaning up sent messages.");
         kafkaMessageService.deleteSentMessages();
-        log.info("Kafka message scheduler. Cleaned up sent messages.");
-    }
 
+        log.debug("cleanupSentMessages: Cleaned up sent messages.");
+    }
 }

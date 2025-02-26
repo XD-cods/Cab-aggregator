@@ -68,4 +68,5 @@ public class Ride {
     @Column(name = "order_create_time")
     @CreationTimestamp
     private LocalDateTime orderCreateTime;
+
 }

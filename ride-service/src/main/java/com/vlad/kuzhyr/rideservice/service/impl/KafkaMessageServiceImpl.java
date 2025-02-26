@@ -20,41 +20,49 @@ public class KafkaMessageServiceImpl implements KafkaMessageService {
     @Transactional(readOnly = true)
     @Override
     public List<KafkaMessage> getUnsentMessages() {
-        log.debug("Kafka message service. Getting unsent messages.");
+        log.debug("getUnsentMessages: Entering method.");
+
         List<KafkaMessage> unsentMessages = kafkaMessageRepository.findByIsSentFalse();
-        log.info("Kafka message service. Retrieved unsent messages. Unsent messages size: {}", unsentMessages.size());
+
+        log.debug("getUnsentMessages: Retrieved unsent messages. Count: {}", unsentMessages.size());
         return unsentMessages;
     }
 
     @Transactional
     @Override
     public void saveMessage(String topic, Long key, String message) {
-        log.debug("Kafka message service. Saving message. Topic: {}, key: {}", topic, key);
+        log.debug("saveMessage: Entering method. Topic: {}, key: {}, message: {}", topic, key, message);
+
         KafkaMessage kafkaMessage = KafkaMessage.builder()
             .topic(topic)
             .key(key)
             .message(message)
             .build();
 
-        kafkaMessageRepository.save(kafkaMessage);
-        log.info("Kafka message service. Saved message. Topic: {}, key: {}", topic, key);
+        KafkaMessage savedMessage = kafkaMessageRepository.save(kafkaMessage);
+
+        log.debug("saveMessage: Message saved. {}", savedMessage);
     }
 
     @Transactional
     @Override
     public void markAsSent(KafkaMessage kafkaMessage) {
-        log.debug("Kafka message service. Marking message as sent. Message id: {}", kafkaMessage.getId());
+        log.debug("markAsSent: Entering method. Message id: {}", kafkaMessage.getId());
+
         kafkaMessage.setIsSent(true);
         kafkaMessage.setSentAt(LocalDateTime.now());
         kafkaMessageRepository.save(kafkaMessage);
-        log.info("Kafka message service. Marked message as sent. Message id: {}", kafkaMessage.getId());
+
+        log.debug("markAsSent: Message marked as sent. Message id: {}", kafkaMessage.getId());
     }
 
     @Transactional
     @Override
     public void deleteSentMessages() {
-        kafkaMessageRepository.deleteByIsSent(true);
-        log.info("Kafka message service. Deleted sent messages.");
-    }
+        log.debug("deleteSentMessages: Entering method.");
 
+        kafkaMessageRepository.deleteByIsSent(true);
+
+        log.debug("deleteSentMessages: Sent messages deleted.");
+    }
 }
