@@ -51,7 +51,7 @@ public class DriverServiceImpl implements DriverService {
         PageResponse<DriverResponse> pageResponse =
             pageResponseMapper.toPageResponse(driversPage, currentPage, driverMapper::toResponse);
 
-        log.info("Driver service. Fetch all drivers. current page:{}, total pages:{}", pageResponse.currentPage(),
+        log.info("Driver service. Get all drivers. current page:{}, total pages:{}", pageResponse.currentPage(),
             pageResponse.totalPages());
 
         return pageResponse;

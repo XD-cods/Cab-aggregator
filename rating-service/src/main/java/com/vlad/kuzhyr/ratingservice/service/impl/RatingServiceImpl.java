@@ -61,7 +61,7 @@ public class RatingServiceImpl implements RatingService {
             ratingMapper::toResponse
         );
 
-        log.info("Rating service. Fetch all ratings. Current page: {}, total pages: {}",
+        log.info("Rating service. Get all ratings. Current page: {}, total pages: {}",
             pageResponse.currentPage(),
             pageResponse.totalPages()
         );

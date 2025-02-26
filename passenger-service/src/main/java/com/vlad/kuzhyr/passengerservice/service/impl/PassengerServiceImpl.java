@@ -47,7 +47,7 @@ public class PassengerServiceImpl implements PassengerService {
             passengerMapper::toResponse
         );
 
-        log.info("Passenger service. Fetch all passengers. Current page: {}, total pages: {}",
+        log.info("Passenger service. Get all passengers. Current page: {}, total pages: {}",
             pageResponse.currentPage(),
             pageResponse.totalPages());
         return pageResponse;
@@ -76,11 +76,11 @@ public class PassengerServiceImpl implements PassengerService {
     @Transactional
     @Override
     public PassengerResponse updatePassenger(Long id, PassengerRequest passengerRequest) {
-        Passenger existPassenger = getExistingPassengerById(id);
+        Passenger existingPassenger = getExistingPassengerById(id);
         log.debug("Passenger service. Update passenger. Passenger id: {}", id);
 
-        passengerMapper.updateFromRequest(passengerRequest, existPassenger);
-        Passenger savedPassenger = passengerRepository.save(existPassenger);
+        passengerMapper.updateFromRequest(passengerRequest, existingPassenger);
+        Passenger savedPassenger = passengerRepository.save(existingPassenger);
 
         log.info("Passenger service. Updated passenger. Passenger id: {}", savedPassenger.getId());
 

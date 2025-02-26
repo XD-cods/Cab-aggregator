@@ -23,5 +23,4 @@ public record CarRequest(
     String carNumber
 
 ) {
-
 }

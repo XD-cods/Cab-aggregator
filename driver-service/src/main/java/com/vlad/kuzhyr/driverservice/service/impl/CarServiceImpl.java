@@ -33,7 +33,7 @@ public class CarServiceImpl implements CarService {
     public CarResponse getCarById(Long id) {
         Car existCar = getExistingCarById(id);
 
-        log.info("Car service. Get car by id. car id: {}", id);
+        log.info("CarServiceImpl. Get car by id. car id: {}", id);
         return carMapper.toResponse(existCar);
     }
 
@@ -48,7 +48,7 @@ public class CarServiceImpl implements CarService {
             carMapper::toResponse
         );
 
-        log.info("Car service. Fetch all cars. current page: {}, total pages: {}", pageResponse.currentPage(),
+        log.info("CarServiceImpl. Get all cars. current page: {}, total pages: {}", pageResponse.currentPage(),
             pageResponse.totalPages());
         return pageResponse;
     }
@@ -56,30 +56,30 @@ public class CarServiceImpl implements CarService {
     @Override
     @Transactional
     public CarResponse createCar(CarRequest carRequest) {
+        log.debug("CarServiceImpl. Entering in method createCar.");
         String carRequestNumber = carRequest.carNumber();
 
-        log.debug("Car service. Create car. Car number: {}", carRequestNumber);
-
+        log.debug("CarServiceImpl. Entering in method createCar.");
         carValidator.validateCarByNumber(carRequestNumber);
 
         Car newCar = carMapper.toEntity(carRequest);
         Car savedCar = carRepository.save(newCar);
 
-        log.info("Car service. Create car. Car id: {}", savedCar.getId());
+        log.info("CarServiceImpl. Create car. Car id: {}", savedCar.getId());
         return carMapper.toResponse(savedCar);
     }
 
     @Override
     @Transactional
     public CarResponse updateCar(Long id, CarRequest carRequest) {
+        log.debug("CarServiceImpl. Entering in method updateCar");
         Car existCar = getExistingCarById(id);
 
-        log.debug("Car service. Update car. Car id: {}", id);
-
+        log.debug("CarServiceImpl. Update car from car request. Car request: {}", carRequest.toString());
         carMapper.updateFromRequest(carRequest, existCar);
         Car savedCar = carRepository.save(existCar);
 
-        log.info("Car service. Update car. Car id: {}", id);
+        log.info("CarServiceImpl. Update car. Car id: {}", id);
         return carMapper.toResponse(savedCar);
     }
 
@@ -88,22 +88,20 @@ public class CarServiceImpl implements CarService {
     public Boolean deleteCarById(Long id) {
         Car existCar = getExistingCarById(id);
 
-        log.debug("Car service. Delete car. Car id: {}", id);
-
         existCar.setDriver(null);
         existCar.setIsEnabled(Boolean.FALSE);
         carRepository.save(existCar);
 
-        log.info("Car service. Delete car. Car id: {}", id);
+        log.info("CarServiceImpl. Delete car. Car id: {}", id);
         return Boolean.TRUE;
     }
 
     private Car getExistingCarById(Long id) {
-        log.debug("Car service. Attempting to find car. Car id: {}", id);
+        log.debug("CarServiceImpl. Attempting to find car. Car id: {}", id);
 
         return carRepository.findCarByIdAndIsEnabledTrue(id)
             .orElseThrow(() -> {
-                log.error("Car service. Car not found. car id: {}", id);
+                log.error("CarServiceImpl. Car not found. car id: {}", id);
                 return new CarNotFoundException(
                     ExceptionMessageConstant.CAR_NOT_FOUND_MESSAGE.formatted(id)
                 );

@@ -19,4 +19,5 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
         @NotNull(message = "{validation.rating.null}") Long rideInfoId,
         @NotNull(message = "{validation.rated-by.null}") RatedBy ratedBy
     );
+
 }

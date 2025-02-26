@@ -21,4 +21,5 @@ public class PriceCalculator {
         log.info("Price calculator. Calculated price. Distance: {} meters, Price: {}", distanceInMeters, price);
         return price;
     }
+
 }

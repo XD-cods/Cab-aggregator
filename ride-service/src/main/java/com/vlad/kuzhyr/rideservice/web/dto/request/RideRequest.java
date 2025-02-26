@@ -28,5 +28,4 @@ public record RideRequest(
     Long passengerId
 
 ) {
-
 }

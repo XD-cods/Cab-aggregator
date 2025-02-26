@@ -53,4 +53,5 @@ public class AddressService {
         log.info("Address service. Updated ride address. Ride id: {}, New Departure: {}, New Destination: {}",
             ride.getId(), newDepartureAddress, newDestinationAddress);
     }
+
 }

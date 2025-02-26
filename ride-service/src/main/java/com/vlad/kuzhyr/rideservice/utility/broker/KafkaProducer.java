@@ -53,4 +53,5 @@ public class KafkaProducer {
         kafkaMessageService.saveMessage(passengerBusyTopic, passengerId, jsonMessage);
         log.info("Kafka producer. Sent passenger busy message. Passenger id: {}, isBusy: {}", passengerId, isBusy);
     }
+
 }

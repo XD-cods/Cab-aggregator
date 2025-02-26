@@ -55,4 +55,5 @@ public class KafkaMessageScheduler {
         kafkaMessageService.deleteSentMessages();
         log.info("Kafka message scheduler. Cleaned up sent messages.");
     }
+
 }
