@@ -40,4 +40,14 @@ public class RideInfo {
 
     @OneToMany(mappedBy = "rideInfo", cascade = CascadeType.ALL)
     private List<Rating> rating;
+
+    @Override
+    public String toString() {
+        return "RideInfo{" +
+               "rideInfoId=" + rideInfoId +
+               ", rideId=" + rideId +
+               ", driverId=" + driverId +
+               ", passengerId=" + passengerId +
+               '}';
+    }
 }

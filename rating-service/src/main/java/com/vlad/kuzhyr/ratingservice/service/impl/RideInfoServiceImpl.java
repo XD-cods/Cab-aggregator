@@ -18,26 +18,26 @@ public class RideInfoServiceImpl implements RideInfoService {
 
     @Override
     public RideInfo getRideInfoByRideId(Long rideId) {
-        log.debug("Ride info service. Attempting to find ride info. Ride info id: {}", rideId);
+        log.debug("getRideInfoByRideId: Entering method. Ride id: {}", rideId);
 
-        return rideInfoRepository.findByRideId(rideId)
+        RideInfo rideInfo = rideInfoRepository.findByRideId(rideId)
             .orElseThrow(() -> {
-                log.error("Ride info service. Ride info not found. Ride info id: {}", rideId);
+                log.error("getRideInfoByRideId: Ride info not found. Ride id: {}", rideId);
                 return new RideInfoPayloadNotFoundException(
                     ExceptionMessageConstant.RIDE_INFO_NOT_FOUND_MESSAGE.formatted(rideId)
                 );
             });
+
+        log.info("getRideInfoByRideId: Ride info found. Ride id: {}", rideId);
+        return rideInfo;
     }
 
     @Override
     public void saveRideInfo(RideInfo rideInfo) {
+        log.debug("saveRideInfo: Entering method. Ride info: {}", rideInfo);
+
         RideInfo savedRideInfo = rideInfoRepository.save(rideInfo);
 
-        log.debug("Ride info service. Save new ride info. Ride id: {}, passenger id: {}, driver id: {}",
-            savedRideInfo.getRideId(),
-            savedRideInfo.getPassengerId(),
-            savedRideInfo.getDriverId()
-        );
+        log.info("saveRideInfo: Ride info saved successfully. Ride info: {}", savedRideInfo);
     }
-
 }

@@ -44,14 +44,18 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     public RatingResponse getRatingByRatingId(Long id) {
+        log.debug("getRatingByRatingId: Entering method. Rating id: {}", id);
+
         Rating existingRating = getExistingRating(id);
 
-        log.info("Rating service. Get rating by id. Rating id: {}", id);
+        log.info("getRatingByRatingId: Rating found. Rating id: {}", id);
         return ratingMapper.toResponse(existingRating);
     }
 
     @Override
     public PageResponse<RatingResponse> getRatings(int currentPage, int limit) {
+        log.debug("getRatings: Entering method. Current page: {}, limit: {}", currentPage, limit);
+
         Pageable pageable = PageRequest.of(currentPage, limit, Sort.by(Sort.Order.desc("id")));
         Page<Rating> ratingsPage = ratingRepository.findAll(pageable);
 
@@ -61,20 +65,24 @@ public class RatingServiceImpl implements RatingService {
             ratingMapper::toResponse
         );
 
-        log.info("Rating service. Get all ratings. Current page: {}, total pages: {}",
+        log.info(
+            "getRatings: Page of ratings retrieved. Current page: {}, total pages: {}, total elements: {}",
             pageResponse.currentPage(),
-            pageResponse.totalPages()
+            pageResponse.totalPages(),
+            pageResponse.totalElements()
         );
         return pageResponse;
     }
 
     @Override
     public AverageRatingResponse getAverageRatingByPassengerId(Long passengerId) {
+        log.debug("getAverageRatingByPassengerId: Entering method. Passenger id: {}", passengerId);
+
         List<Rating> lastRatings = getRatingsByPassengerId(passengerId);
 
         AverageRatingResponse averageRatingResponse = getAverageRatingResponse(lastRatings);
 
-        log.info("Rating service. Get average rating for passenger. Passenger id: {}, average rating: {}",
+        log.info("getAverageRatingByPassengerId: Average rating calculated. Passenger id: {}, average rating: {}",
             passengerId,
             averageRatingResponse.averageRating()
         );
@@ -83,11 +91,13 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     public AverageRatingResponse getAverageRatingByDriverId(Long driverId) {
+        log.debug("getAverageRatingByDriverId: Entering method. Driver id: {}", driverId);
+
         List<Rating> lastRatings = getRatingsByDriverId(driverId);
 
         AverageRatingResponse averageRatingResponse = getAverageRatingResponse(lastRatings);
 
-        log.info("Rating service. Get average rating for driver. Driver id: {}, average rating: {}",
+        log.info("getAverageRatingByDriverId: Average rating calculated. Driver id: {}, average rating: {}",
             driverId,
             averageRatingResponse.averageRating()
         );
@@ -96,13 +106,10 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     public RatingResponse createRating(CreateRatingRequest createRatingRequest) {
+        log.debug("createRating: Entering method. CreateRatingRequest: {}", createRatingRequest);
+
         Long requestRideId = createRatingRequest.rideId();
         RatedBy requestRatedBy = createRatingRequest.ratedBy();
-
-        log.debug("Rating service. Create rating. Ride id: {}, rated by: {}",
-            requestRideId,
-            requestRatedBy
-        );
 
         ratingValidator.validateCreateRating(requestRideId, requestRatedBy);
 
@@ -113,29 +120,29 @@ public class RatingServiceImpl implements RatingService {
         existingRideInfo.getRating().add(rating);
         Rating savedRating = ratingRepository.save(rating);
 
-        log.info("Rating service. Created new rating. Rating id: {}", savedRating.getId());
+        log.info("createRating: Rating created successfully. Rating id: {}", savedRating.getId());
         return ratingMapper.toResponse(savedRating);
     }
 
     @Override
     public RatingResponse updateRating(Long id, UpdateRatingRequest updateRatingRequest) {
-        Rating existingRating = getExistingRating(id);
+        log.debug("updateRating: Entering method. Rating id: {}, UpdateRatingRequest: {}", id, updateRatingRequest);
 
-        log.debug("Rating service. Update rating. Rating id: {}", id);
+        Rating existingRating = getExistingRating(id);
 
         ratingMapper.updateFromRequest(updateRatingRequest, existingRating);
         Rating savedRating = ratingRepository.save(existingRating);
 
-        log.info("Rating service. Updated rating. Rating id: {}", savedRating.getId());
+        log.info("updateRating: Rating updated successfully. Rating id: {}", savedRating.getId());
         return ratingMapper.toResponse(savedRating);
     }
 
     private Rating getExistingRating(Long id) {
-        log.debug("Rating service. Attempting to find rating. Rating id: {}", id);
+        log.debug("getExistingRating: Attempting to find rating. Rating id: {}", id);
 
         return ratingRepository.findById(id)
             .orElseThrow(() -> {
-                log.error("Rating service. Rating not found. Rating id: {}", id);
+                log.error("getExistingRating: Rating not found. Rating id: {}", id);
                 return new RatingNotFoundException(
                     ExceptionMessageConstant.RATING_NOT_FOUND_MESSAGE.formatted(id)
                 );
@@ -143,7 +150,7 @@ public class RatingServiceImpl implements RatingService {
     }
 
     private List<Rating> getRatingsByPassengerId(Long passengerId) {
-        log.debug("Rating service. Attempting to find ratings by passenger id. Passenger id: {}", passengerId);
+        log.debug("getRatingsByPassengerId: Attempting to find ratings by passenger id. Passenger id: {}", passengerId);
 
         Pageable pageRequest = PageRequest.of(
             0,
@@ -155,8 +162,7 @@ public class RatingServiceImpl implements RatingService {
             RatedBy.DRIVER);
 
         if (ratings.isEmpty()) {
-            log.error("Rating service. Not found ratings by passenger id. Passenger id: {}", passengerId);
-
+            log.error("getRatingsByPassengerId: Ratings not found by passenger id. Passenger id: {}", passengerId);
             throw new RatingsNotFoundedByPassengerIdException(
                 ExceptionMessageConstant.RATINGS_NOT_FOUND_BY_PASSENGER_ID_MESSAGE.formatted(passengerId)
             );
@@ -165,7 +171,7 @@ public class RatingServiceImpl implements RatingService {
     }
 
     private List<Rating> getRatingsByDriverId(Long driverId) {
-        log.debug("Rating service. Attempting to find ratings by driver id. Driver id: {}", driverId);
+        log.debug("getRatingsByDriverId: Attempting to find ratings by driver id. Driver id: {}", driverId);
 
         Pageable pageRequest = PageRequest.of(
             0,
@@ -177,7 +183,7 @@ public class RatingServiceImpl implements RatingService {
             RatedBy.PASSENGER);
 
         if (ratings.isEmpty()) {
-            log.error("Rating service. Not found ratings by driver id. Driver id: {}", driverId);
+            log.error("getRatingsByDriverId: Ratings not found by driver id. Driver id: {}", driverId);
             throw new RatingsNotFoundedByDriverIdException(
                 ExceptionMessageConstant.RATINGS_NOT_FOUNDED_BY_DRIVER_ID_MESSAGE.formatted(driverId)
             );
@@ -186,9 +192,9 @@ public class RatingServiceImpl implements RatingService {
         return ratings;
     }
 
-
     private AverageRatingResponse getAverageRatingResponse(List<Rating> lastRatings) {
-        log.debug("Rating service. Get average rating response. Last ratings collection size: {}", lastRatings.size());
+        log.debug("getAverageRatingResponse: Calculating average rating. Last ratings collection size: {}",
+            lastRatings.size());
 
         double averageRating = lastRatings.stream()
             .mapToDouble(Rating::getRating)
@@ -199,9 +205,8 @@ public class RatingServiceImpl implements RatingService {
             .averageRating(averageRating)
             .build();
 
-        log.debug("Rating service. Get average rating response. Average rating: {}",
+        log.debug("getAverageRatingResponse: Average rating calculated. Average rating: {}",
             averageRatingResponse.averageRating());
         return averageRatingResponse;
     }
-
 }

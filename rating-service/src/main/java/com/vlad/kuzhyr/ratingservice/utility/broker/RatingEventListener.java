@@ -28,7 +28,7 @@ public class RatingEventListener {
     )
     @Transactional
     public void consumeRideCompleted(String message) {
-        log.info("Rating event listener. Consume ride complete topic message. Message: {}", message);
+        log.info("consumeRideCompleted: Consume ride completed event. Message: {}", message);
 
         RideInfoPayload rideInfoPayload = jsonMapper.fromJson(message, RideInfoPayload.class);
 

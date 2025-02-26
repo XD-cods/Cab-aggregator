@@ -11,4 +11,10 @@ public record AverageRatingResponse(
     Double averageRating
 
 ) {
+    @Override
+    public String toString() {
+        return "AverageRatingResponse{" +
+               "averageRating=" + averageRating +
+               '}';
+    }
 }

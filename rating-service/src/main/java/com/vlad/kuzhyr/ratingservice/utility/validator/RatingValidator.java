@@ -16,14 +16,14 @@ public class RatingValidator {
     private final RatingRepository ratingRepository;
 
     public void validateCreateRating(Long requestRideId, RatedBy requestRatedBy) {
-        log.debug("Rating validator. Validate create rating. Ride id: {}, rated by: {}",
+        log.debug("validateCreateRating: Validate rating creation by ride id and ratedBy. Ride id: {}, ratedBy: {}",
             requestRideId,
             requestRatedBy
         );
 
         if (ratingRepository.existsByRideInfo_RideIdAndRatedBy(
             requestRideId, requestRatedBy)) {
-            log.error("Rating validator. Rating already exists. Ride id: {}, rated by: {}",
+            log.error("validateCreateRating: Rating already exists. Ride id: {}, rated by: {}",
                 requestRideId,
                 requestRatedBy
             );

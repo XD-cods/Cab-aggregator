@@ -20,4 +20,15 @@ public record UpdateRatingRequest(
     String comment
 
 ) {
+    @Override
+    public String toString() {
+        String truncatedComment = comment != null
+                                  ? comment.substring(0, Math.min(comment.length(), 20))
+                                  : null;
+
+        return "UpdateRatingRequest{" +
+               "rating=" + rating +
+               ", comment='" + truncatedComment + '\'' +
+               '}';
+    }
 }

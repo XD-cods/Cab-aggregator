@@ -29,4 +29,17 @@ public record CreateRatingRequest(
     RatedBy ratedBy
 
 ) {
+    @Override
+    public String toString() {
+        String truncatedComment = comment != null
+                                  ? comment.substring(0, Math.min(comment.length(), 20))
+                                  : null;
+
+        return "CreateRatingRequest{" +
+               "rideId=" + rideId +
+               ", rating=" + rating +
+               ", comment=" + truncatedComment +
+               ", ratedBy=" + ratedBy +
+               '}';
+    }
 }
