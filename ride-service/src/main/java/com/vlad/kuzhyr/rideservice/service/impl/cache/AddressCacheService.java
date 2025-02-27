@@ -18,9 +18,6 @@ public class AddressCacheService {
     private final AddressRepository addressRepository;
     private final MapboxClient mapboxClient;
 
-    private static final int INDEX_LATITUDE = 1;
-    private static final int INDEX_LONGITUDE = 0;
-
     @Cacheable(value = "addresses", key = "#addressName.trim().toLowerCase()")
     @Transactional
     public Address findOrCreateAddress(String addressName) {
@@ -41,8 +38,8 @@ public class AddressCacheService {
         double[] coordinates = mapboxClient.geocodeAddress(addressName);
         Address newAddress = Address.builder()
             .addressName(addressName)
-            .latitude(coordinates[ArrayIndexConstant.INDEX_LATITUDE])
-            .longitude(coordinates[ArrayIndexConstant.INDEX_LONGITUDE])
+            .latitude(coordinates[ArrayIndexConstant.LATITUDE_INDEX])
+            .longitude(coordinates[ArrayIndexConstant.LONGITUDE_INDEX])
             .build();
 
         Address savedAddress = addressRepository.save(newAddress);

@@ -37,7 +37,9 @@ spring:
       ride-completed-topic: ride.completed
       driver-busy-topic: driver.status.updated
       passenger-busy-topic: passenger.status.updated
-
+    message:
+      scheduler:
+        fixed-rate: 3000
   cache:
     type: redis
     redis:

@@ -20,7 +20,7 @@ public class KafkaMessageScheduler {
     private final KafkaMessageService kafkaMessageService;
     private final KafkaTemplate<Long, Object> kafkaTemplate;
 
-    @Scheduled(fixedRate = 3000)
+    @Scheduled(fixedRateString = "${spring.kafka.message.scheduler.fixed-rate}")
     @SchedulerLock(
         name = "KafkaMessageScheduler_processKafkaMessage",
         lockAtMostFor = "PT5S",

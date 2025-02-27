@@ -48,8 +48,8 @@ public class MapboxClient {
         double[] coordinates = mapboxMapper.extractCoordinatesFromGeocodeResponse(responseBody);
 
         log.debug("geocodeAddress: Geocoded address. Address: {}, Coordinates: [{}, {}]", address,
-            coordinates[ArrayIndexConstant.INDEX_LONGITUDE],
-            coordinates[ArrayIndexConstant.INDEX_LATITUDE]);
+            coordinates[ArrayIndexConstant.LONGITUDE_INDEX],
+            coordinates[ArrayIndexConstant.LATITUDE_INDEX]);
         return coordinates;
     }
 
