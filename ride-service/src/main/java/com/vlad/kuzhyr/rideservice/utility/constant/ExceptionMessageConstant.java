@@ -24,6 +24,10 @@ public final class ExceptionMessageConstant {
     public static final String DEPARTURE_AND_DESTINATION_ADDRESSES_SAME_MESSAGE =
         "departure and destination addresses can't same";
 
-    public static final String STATUS_NOT_FOUND = "status: %s not found";
+    public static final String DRIVER_BUSY_MESSAGE = "driver busy by driver id: %d";
+
+    public static final String PASSENGER_BUSY_MESSAGE = "passenger busy by passenger id: %d";
+
+    public static final String DRIVER_HAS_NO_CAR = "driver with ID %d has no car assigned.";
 
 }

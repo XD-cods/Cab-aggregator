@@ -24,10 +24,26 @@ spring:
       port: 6379
       host: localhost
 
+  kafka:
+    bootstrap-servers: ${KAFKA_URL:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.LongSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      retries: 3
+      acks: 1
+      batch-size: 16384
+      buffer-memory: 67108864
+    topic:
+      ride-completed-topic: ride.completed
+      driver-busy-topic: driver.status.updated
+      passenger-busy-topic: passenger.status.updated
+    message:
+      scheduler:
+        fixed-rate: 3000
   cache:
     type: redis
     redis:
-      time-to-live: 60000
+      time-to-live: 10000
       key-prefix: "ride-service:"
       use-key-prefix: true
 

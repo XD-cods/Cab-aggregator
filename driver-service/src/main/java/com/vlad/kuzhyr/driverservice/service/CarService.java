@@ -1,8 +1,8 @@
 package com.vlad.kuzhyr.driverservice.service;
 
-import com.vlad.kuzhyr.driverservice.web.request.CarRequest;
-import com.vlad.kuzhyr.driverservice.web.response.CarResponse;
-import com.vlad.kuzhyr.driverservice.web.response.PageResponse;
+import com.vlad.kuzhyr.driverservice.web.dto.request.CarRequest;
+import com.vlad.kuzhyr.driverservice.web.dto.response.CarResponse;
+import com.vlad.kuzhyr.driverservice.web.dto.response.PageResponse;
 
 public interface CarService {
 

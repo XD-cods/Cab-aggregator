@@ -1,6 +1,6 @@
 package com.vlad.kuzhyr.rideservice.utility.client;
 
-import com.vlad.kuzhyr.rideservice.web.response.PassengerResponse;
+import com.vlad.kuzhyr.rideservice.web.dto.external.PassengerResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

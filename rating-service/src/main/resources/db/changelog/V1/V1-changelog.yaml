@@ -1,3 +1,5 @@
 databaseChangeLog:
   - include:
       file: db/changelog/V1/V1-init-table.sql
+  - include:
+      file: db/changelog/V1/V1-add-ride-info.sql

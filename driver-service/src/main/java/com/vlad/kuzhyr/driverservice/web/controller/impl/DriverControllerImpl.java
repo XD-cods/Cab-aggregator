@@ -2,16 +2,17 @@ package com.vlad.kuzhyr.driverservice.web.controller.impl;
 
 import com.vlad.kuzhyr.driverservice.service.DriverService;
 import com.vlad.kuzhyr.driverservice.web.controller.DriverController;
-import com.vlad.kuzhyr.driverservice.web.request.DriverRequest;
-import com.vlad.kuzhyr.driverservice.web.request.DriverUpdateCarsRequest;
-import com.vlad.kuzhyr.driverservice.web.response.DriverResponse;
-import com.vlad.kuzhyr.driverservice.web.response.PageResponse;
+import com.vlad.kuzhyr.driverservice.web.dto.request.DriverRequest;
+import com.vlad.kuzhyr.driverservice.web.dto.request.DriverUpdateCarsRequest;
+import com.vlad.kuzhyr.driverservice.web.dto.response.DriverResponse;
+import com.vlad.kuzhyr.driverservice.web.dto.response.PageResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/drivers")
+@Validated
 public class DriverControllerImpl implements DriverController {
 
     private final DriverService driverService;

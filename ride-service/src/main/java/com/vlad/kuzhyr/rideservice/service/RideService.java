@@ -1,10 +1,10 @@
 package com.vlad.kuzhyr.rideservice.service;
 
-import com.vlad.kuzhyr.rideservice.web.request.RideRequest;
-import com.vlad.kuzhyr.rideservice.web.request.UpdateRideRequest;
-import com.vlad.kuzhyr.rideservice.web.request.UpdateRideStatusRequest;
-import com.vlad.kuzhyr.rideservice.web.response.PageResponse;
-import com.vlad.kuzhyr.rideservice.web.response.RideResponse;
+import com.vlad.kuzhyr.rideservice.web.dto.request.RideRequest;
+import com.vlad.kuzhyr.rideservice.web.dto.request.UpdateRideRequest;
+import com.vlad.kuzhyr.rideservice.web.dto.request.UpdateRideStatusRequest;
+import com.vlad.kuzhyr.rideservice.web.dto.response.PageResponse;
+import com.vlad.kuzhyr.rideservice.web.dto.response.RideResponse;
 
 public interface RideService {
 

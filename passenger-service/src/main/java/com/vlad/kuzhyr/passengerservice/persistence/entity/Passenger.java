@@ -42,4 +42,8 @@ public class Passenger {
     @Column(name = "is_enabled", nullable = false)
     private Boolean isEnabled = Boolean.TRUE;
 
+    @Builder.Default
+    @Column(name = "is_busy", nullable = false)
+    private Boolean isBusy = Boolean.FALSE;
+
 }

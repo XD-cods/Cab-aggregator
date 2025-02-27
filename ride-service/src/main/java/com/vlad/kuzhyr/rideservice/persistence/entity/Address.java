@@ -36,4 +36,11 @@ public class Address implements Serializable {
     @Column(name = "address_longitude", nullable = false)
     private Double longitude;
 
+    @Override
+    public String toString() {
+        return "{" +
+               "latitude=" + latitude +
+               ", longitude=" + longitude +
+               '}';
+    }
 }

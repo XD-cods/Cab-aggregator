@@ -2,15 +2,16 @@ package com.vlad.kuzhyr.passengerservice.web.controller.impl;
 
 import com.vlad.kuzhyr.passengerservice.service.PassengerService;
 import com.vlad.kuzhyr.passengerservice.web.controller.PassengerController;
-import com.vlad.kuzhyr.passengerservice.web.request.PassengerRequest;
-import com.vlad.kuzhyr.passengerservice.web.response.PageResponse;
-import com.vlad.kuzhyr.passengerservice.web.response.PassengerResponse;
+import com.vlad.kuzhyr.passengerservice.web.dto.request.PassengerRequest;
+import com.vlad.kuzhyr.passengerservice.web.dto.response.PageResponse;
+import com.vlad.kuzhyr.passengerservice.web.dto.response.PassengerResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/passengers")
 @RequiredArgsConstructor
+@Validated
 public class PassengerControllerImpl implements PassengerController {
 
     private final PassengerService passengerService;

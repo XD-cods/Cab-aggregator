@@ -54,11 +54,15 @@ public class Driver {
     private String phone;
 
     @Builder.Default
-    @OneToMany(mappedBy = "driver", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Car> cars = new ArrayList<>();
-
-    @Builder.Default
     @Column(name = "is_enabled", nullable = false)
     private Boolean isEnabled = Boolean.TRUE;
+
+    @Column(name = "is_busy", nullable = false)
+    @Builder.Default
+    private Boolean isBusy = Boolean.FALSE;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "driver", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Car> cars = new ArrayList<>();
 
 }

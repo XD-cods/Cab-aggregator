@@ -1,6 +1,6 @@
 package com.vlad.kuzhyr.passengerservice.utility.mapper;
 
-import com.vlad.kuzhyr.passengerservice.web.response.PageResponse;
+import com.vlad.kuzhyr.passengerservice.web.dto.response.PageResponse;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;

@@ -8,7 +8,6 @@
         <version>3.4.1</version>
         <relativePath/>
     </parent>
-    <packaging>pom</packaging>
     <groupId>com.vlad.kuzhyr</groupId>
     <artifactId>Cab-aggregator</artifactId>
     <version>0.0.1</version>

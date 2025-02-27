@@ -13,4 +13,3 @@ CREATE TABLE rating (
     CONSTRAINT chk_rating_range CHECK (rating >= 0 AND rating <= 5),
     CONSTRAINT chk_rating_precision CHECK (rating = ROUND(rating::numeric, 2))
 );
-

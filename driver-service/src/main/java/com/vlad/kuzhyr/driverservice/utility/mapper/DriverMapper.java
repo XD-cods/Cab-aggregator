@@ -2,19 +2,21 @@ package com.vlad.kuzhyr.driverservice.utility.mapper;
 
 import com.vlad.kuzhyr.driverservice.persistence.entity.Car;
 import com.vlad.kuzhyr.driverservice.persistence.entity.Driver;
-import com.vlad.kuzhyr.driverservice.web.request.DriverRequest;
-import com.vlad.kuzhyr.driverservice.web.response.DriverResponse;
+import com.vlad.kuzhyr.driverservice.web.dto.request.DriverRequest;
+import com.vlad.kuzhyr.driverservice.web.dto.response.DriverResponse;
 import java.util.ArrayList;
 import java.util.List;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
-@Mapper(componentModel = "spring",
+@Mapper(
+    componentModel = MappingConstants.ComponentModel.SPRING,
     injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
 public interface DriverMapper {
@@ -23,10 +25,14 @@ public interface DriverMapper {
     DriverResponse toResponse(Driver driver);
 
     @Mapping(target = "cars", ignore = true)
+    @Mapping(target = "isEnabled", ignore = true)
+    @Mapping(target = "id", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateFromRequest(DriverRequest driverRequest, @MappingTarget Driver existingDriver);
 
     @Mapping(target = "cars", ignore = true)
+    @Mapping(target = "isEnabled", ignore = true)
+    @Mapping(target = "id", ignore = true)
     Driver toEntity(DriverRequest driverRequest);
 
     @Named("mapCarIds")
@@ -35,4 +41,3 @@ public interface DriverMapper {
     }
 
 }
-
