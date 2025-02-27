@@ -30,7 +30,8 @@ public class AddressService {
 
         if (departureAddress.equalsIgnoreCase(destinationAddress)) {
             log.error(
-                "validateDifferentAddresses: Departure and destination addresses are the same. Departure: {}, Destination: {}",
+                "validateDifferentAddresses: Departure and destination addresses are the same. Departure: {}, " +
+                "Destination: {}",
                 departureAddress, destinationAddress);
             throw new DepartureAndDestinationAddressesSameException(
                 ExceptionMessageConstant.DEPARTURE_AND_DESTINATION_ADDRESSES_SAME_MESSAGE
