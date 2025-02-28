@@ -30,7 +30,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -163,8 +162,7 @@ public class PassengerControllerImplTest {
 
         mockMvc.perform(delete(ControllerRouteConstant.DELETE_PASSENGER_URL.formatted(passengerId)))
             .andExpect(status().isOk())
-            .andExpect(content().string("true"))
-            .andDo(print());
+            .andExpect(content().string("true"));
 
         verify(passengerService).deletePassengerById(passengerId);
     }
@@ -178,8 +176,7 @@ public class PassengerControllerImplTest {
 
         mockMvc.perform(delete(ControllerRouteConstant.DELETE_PASSENGER_URL.formatted(nonExistingPassengerId)))
             .andExpect(status().isNotFound())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andDo(print());
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
         verify(passengerService).deletePassengerById(nonExistingPassengerId);
     }
