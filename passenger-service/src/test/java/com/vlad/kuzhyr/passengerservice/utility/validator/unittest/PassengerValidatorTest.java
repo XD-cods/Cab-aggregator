@@ -1,6 +1,6 @@
-package com.vlad.kuzhyr.passengerservice.unittest.utility.validator;
+package com.vlad.kuzhyr.passengerservice.utility.validator.unittest;
 
-import com.vlad.kuzhyr.passengerservice.constant.TestDataProvider;
+import com.vlad.kuzhyr.passengerservice.constant.UnitTestDataProvider;
 import com.vlad.kuzhyr.passengerservice.exception.PassengerAlreadyExistsException;
 import com.vlad.kuzhyr.passengerservice.persistence.repository.PassengerRepository;
 import com.vlad.kuzhyr.passengerservice.utility.constant.ExceptionMessageConstant;
@@ -27,8 +27,8 @@ class PassengerValidatorTest {
     @InjectMocks
     private PassengerValidator passengerValidator;
 
-    private final String passengerRequestEmail = TestDataProvider.TEST_EMAIL;
-    private final String passengerRequestPhone = TestDataProvider.TEST_PHONE;
+    private final String passengerRequestEmail = UnitTestDataProvider.TEST_EMAIL;
+    private final String passengerRequestPhone = UnitTestDataProvider.TEST_PHONE;
 
     @Test
     void validatePassengerEmailAndPhone_shouldThrowConflictExceptionByEmail() {

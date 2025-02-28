@@ -1,6 +1,6 @@
-package com.vlad.kuzhyr.passengerservice.unittest.utility.broker;
+package com.vlad.kuzhyr.passengerservice.utility.broker.unittest;
 
-import com.vlad.kuzhyr.passengerservice.constant.TestDataProvider;
+import com.vlad.kuzhyr.passengerservice.constant.UnitTestDataProvider;
 import com.vlad.kuzhyr.passengerservice.exception.PassengerNotFoundException;
 import com.vlad.kuzhyr.passengerservice.persistence.entity.Passenger;
 import com.vlad.kuzhyr.passengerservice.persistence.repository.PassengerRepository;
@@ -12,7 +12,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.never;
@@ -33,13 +36,16 @@ public class PassengerProcessorTest {
 
     @BeforeEach
     void setUp() {
-        passenger = TestDataProvider.createPassenger();
+        passenger = UnitTestDataProvider.passenger();
     }
 
-    @Test
-    void updatePassengerByIdAndIsBusy_shouldUpdatePassengerIsBusy() {
+    @ParameterizedTest
+    @CsvSource({
+        "true",
+        "false"
+    })
+    void updatePassengerByIdAndIsBusy_shouldUpdatePassengerIsBusy(boolean isBusy) {
         Long existingPassengerId = passenger.getId();
-        boolean isBusy = true;
 
         when(passengerRepository.findById(existingPassengerId)).thenReturn(Optional.of(passenger));
         when(passengerRepository.save(passenger)).thenReturn(passenger);
@@ -55,12 +61,11 @@ public class PassengerProcessorTest {
     @Test
     void updatePassengerByIdAndIsBusy_shouldThrowNotFoundPassengerException() {
         Long notExistingPassengerId = 0L;
-        boolean isBusy = true;
 
         when(passengerRepository.findById(notExistingPassengerId)).thenReturn(Optional.empty());
 
         PassengerNotFoundException exception = assertThrows(PassengerNotFoundException.class,
-            () -> passengerProcessor.updatePassengerByIdAndIsBusy(notExistingPassengerId, isBusy));
+            () -> passengerProcessor.updatePassengerByIdAndIsBusy(notExistingPassengerId, anyBoolean()));
 
         assertEquals(ExceptionMessageConstant.PASSENGER_NOT_FOUND_MESSAGE.formatted(notExistingPassengerId),
             exception.getMessage());
