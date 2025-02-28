@@ -61,7 +61,7 @@ public class PassengerControllerImplTest {
 
     @Test
     public void getPassengerById_shouldReturnPassengerResponse() throws Exception {
-        Long passengerId = UnitTestDataProvider.TEST_ID;
+        Long passengerId = UnitTestDataProvider.TEST_PASSENGER_ID;
         PassengerResponse passengerResponse = UnitTestDataProvider.passengerResponse();
 
         when(passengerService.getPassengerById(passengerId)).thenReturn(passengerResponse);
@@ -138,7 +138,7 @@ public class PassengerControllerImplTest {
 
     @Test
     public void updatePassenger_shouldReturnPassengerResponse() throws Exception {
-        Long passengerId = UnitTestDataProvider.TEST_ID;
+        Long passengerId = UnitTestDataProvider.TEST_PASSENGER_ID;
         PassengerRequest passengerRequest = UnitTestDataProvider.passengerUpdateRequest();
         PassengerResponse passengerResponse = UnitTestDataProvider.passengerUpdateResponse();
 
@@ -156,7 +156,7 @@ public class PassengerControllerImplTest {
 
     @Test
     public void deletePassenger_shouldReturnTrue() throws Exception {
-        Long passengerId = UnitTestDataProvider.TEST_ID;
+        Long passengerId = UnitTestDataProvider.TEST_PASSENGER_ID;
 
         when(passengerService.deletePassengerById(passengerId)).thenReturn(true);
 

@@ -27,8 +27,8 @@ class PassengerValidatorTest {
     @InjectMocks
     private PassengerValidator passengerValidator;
 
-    private final String passengerRequestEmail = UnitTestDataProvider.TEST_EMAIL;
-    private final String passengerRequestPhone = UnitTestDataProvider.TEST_PHONE;
+    private final String passengerRequestEmail = UnitTestDataProvider.TEST_PASSENGER_EMAIL;
+    private final String passengerRequestPhone = UnitTestDataProvider.TEST_PASSENGER_PHONE;
 
     @Test
     void validatePassengerEmailAndPhone_shouldThrowConflictExceptionByEmail() {

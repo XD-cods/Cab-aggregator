@@ -31,7 +31,7 @@ public class DriverProcessor {
         );
     }
 
-    public Driver getDriverById(Long driverId) {
+    private Driver getDriverById(Long driverId) {
         log.debug("getDriverById: Attempting to find driver. Driver id: {}", driverId);
 
         return driverRepository.findById(driverId)

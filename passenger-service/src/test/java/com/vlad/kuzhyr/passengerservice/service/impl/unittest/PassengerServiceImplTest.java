@@ -135,8 +135,8 @@ public class PassengerServiceImplTest {
     void createPassenger_shouldReturnPassengerResponse() {
         PassengerRequest passengerRequest = UnitTestDataProvider.passengerCreateRequest();
         PassengerResponse passengerCreateResponse = UnitTestDataProvider.passengerCreateResponse();
-        String passengerRequestEmail = UnitTestDataProvider.TEST_EMAIL;
-        String passengerRequestPhone = UnitTestDataProvider.TEST_PHONE;
+        String passengerRequestEmail = UnitTestDataProvider.TEST_PASSENGER_EMAIL;
+        String passengerRequestPhone = UnitTestDataProvider.TEST_PASSENGER_PHONE;
 
         when(passengerMapper.toEntity(passengerRequest)).thenReturn(passenger);
         when(passengerRepository.save(passenger)).thenReturn(passenger);

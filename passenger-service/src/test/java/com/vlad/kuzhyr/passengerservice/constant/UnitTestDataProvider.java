@@ -6,29 +6,29 @@ import com.vlad.kuzhyr.passengerservice.web.dto.response.PassengerResponse;
 
 public class UnitTestDataProvider {
 
-    public static final Long TEST_ID = 1L;
-    public static final String TEST_EMAIL = "test@vlad.com";
-    public static final String TEST_PHONE = "+375337305271";
-    public static final String TEST_FIRST_NAME = "John";
-    public static final String TEST_LAST_NAME = "Doe";
+    public static final Long TEST_PASSENGER_ID = 1L;
+    public static final String TEST_PASSENGER_EMAIL = "test@vlad.com";
+    public static final String TEST_PASSENGER_PHONE = "+375337305271";
+    public static final String TEST_PASSENGER_FIRST_NAME = "John";
+    public static final String TEST_PASSENGER_LAST_NAME = "Doe";
 
     public static Passenger passenger() {
         return Passenger.builder()
-            .id(TEST_ID)
-            .phone(TEST_PHONE)
-            .email(TEST_EMAIL)
-            .firstName(TEST_FIRST_NAME)
-            .lastName(TEST_LAST_NAME)
+            .id(TEST_PASSENGER_ID)
+            .phone(TEST_PASSENGER_PHONE)
+            .email(TEST_PASSENGER_EMAIL)
+            .firstName(TEST_PASSENGER_FIRST_NAME)
+            .lastName(TEST_PASSENGER_LAST_NAME)
             .isEnabled(true)
             .build();
     }
 
     public static PassengerRequest passengerCreateRequest() {
         return PassengerRequest.builder()
-            .phone(TEST_PHONE)
-            .email(TEST_EMAIL)
-            .firstName(TEST_FIRST_NAME)
-            .lastName(TEST_LAST_NAME)
+            .phone(TEST_PASSENGER_PHONE)
+            .email(TEST_PASSENGER_EMAIL)
+            .firstName(TEST_PASSENGER_FIRST_NAME)
+            .lastName(TEST_PASSENGER_LAST_NAME)
             .build();
     }
 
@@ -52,29 +52,29 @@ public class UnitTestDataProvider {
 
     public static PassengerResponse passengerResponse() {
         return PassengerResponse.builder()
-            .id(TEST_ID)
-            .phone(TEST_PHONE)
-            .email(TEST_EMAIL)
-            .firstName(TEST_FIRST_NAME)
-            .lastName(TEST_LAST_NAME)
+            .id(TEST_PASSENGER_ID)
+            .phone(TEST_PASSENGER_PHONE)
+            .email(TEST_PASSENGER_EMAIL)
+            .firstName(TEST_PASSENGER_FIRST_NAME)
+            .lastName(TEST_PASSENGER_LAST_NAME)
             .isEnabled(true)
             .build();
     }
 
     public static PassengerResponse passengerCreateResponse() {
         return PassengerResponse.builder()
-            .id(TEST_ID)
-            .phone(TEST_PHONE)
-            .email(TEST_EMAIL)
-            .firstName(TEST_FIRST_NAME)
-            .lastName(TEST_LAST_NAME)
+            .id(TEST_PASSENGER_ID)
+            .phone(TEST_PASSENGER_PHONE)
+            .email(TEST_PASSENGER_EMAIL)
+            .firstName(TEST_PASSENGER_FIRST_NAME)
+            .lastName(TEST_PASSENGER_LAST_NAME)
             .isEnabled(true)
             .build();
     }
 
     public static PassengerResponse passengerUpdateResponse() {
         return PassengerResponse.builder()
-            .id(TEST_ID)
+            .id(TEST_PASSENGER_ID)
             .phone("+375337305272")
             .email("updated@vlad.com")
             .firstName("Jane")
@@ -84,11 +84,11 @@ public class UnitTestDataProvider {
 
     public static Passenger passengerDisabled() {
         return Passenger.builder()
-            .id(TEST_ID)
-            .phone(TEST_PHONE)
-            .email(TEST_EMAIL)
-            .firstName(TEST_FIRST_NAME)
-            .lastName(TEST_LAST_NAME)
+            .id(TEST_PASSENGER_ID)
+            .phone(TEST_PASSENGER_PHONE)
+            .email(TEST_PASSENGER_EMAIL)
+            .firstName(TEST_PASSENGER_FIRST_NAME)
+            .lastName(TEST_PASSENGER_LAST_NAME)
             .isEnabled(false)
             .build();
     }
