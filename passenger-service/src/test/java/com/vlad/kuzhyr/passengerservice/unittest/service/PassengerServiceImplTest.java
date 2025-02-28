@@ -1,31 +1,39 @@
-package com.vlad.kuzhyr.passengerservice.unittest;
+package com.vlad.kuzhyr.passengerservice.unittest.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
-
-import com.vlad.kuzhyr.passengerservice.exception.PassengerAlreadyExistsException;
+import com.vlad.kuzhyr.passengerservice.constant.TestDataProvider;
 import com.vlad.kuzhyr.passengerservice.exception.PassengerNotFoundException;
 import com.vlad.kuzhyr.passengerservice.persistence.entity.Passenger;
 import com.vlad.kuzhyr.passengerservice.persistence.repository.PassengerRepository;
 import com.vlad.kuzhyr.passengerservice.service.impl.PassengerServiceImpl;
 import com.vlad.kuzhyr.passengerservice.utility.constant.ExceptionMessageConstant;
+import com.vlad.kuzhyr.passengerservice.utility.mapper.PageResponseMapper;
 import com.vlad.kuzhyr.passengerservice.utility.mapper.PassengerMapper;
+import com.vlad.kuzhyr.passengerservice.utility.validator.PassengerValidator;
 import com.vlad.kuzhyr.passengerservice.web.dto.request.PassengerRequest;
+import com.vlad.kuzhyr.passengerservice.web.dto.response.PageResponse;
 import com.vlad.kuzhyr.passengerservice.web.dto.response.PassengerResponse;
+import java.util.List;
 import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 @ExtendWith(MockitoExtension.class)
 public class PassengerServiceImplTest {
@@ -33,7 +41,13 @@ public class PassengerServiceImplTest {
     @Mock
     private PassengerRepository passengerRepository;
 
-    @Spy
+    @Mock
+    private PassengerValidator passengerValidator;
+
+    @Mock
+    private PageResponseMapper pageResponseMapper;
+
+    @Mock
     private PassengerMapper passengerMapper;
 
     @InjectMocks
@@ -63,8 +77,7 @@ public class PassengerServiceImplTest {
         assertNotNull(result);
         assertEquals(passengerResponse, result);
 
-        verify(passengerRepository)
-            .findPassengerByIdAndIsEnabledTrue(existingPassengerId);
+        verify(passengerRepository).findPassengerByIdAndIsEnabledTrue(existingPassengerId);
         verify(passengerMapper).toResponse(passenger);
     }
 
@@ -85,20 +98,43 @@ public class PassengerServiceImplTest {
             exception.getMessage()
         );
 
-        verify(passengerRepository)
-            .findPassengerByIdAndIsEnabledTrue(nonExistingPassengerId);
+        verify(passengerRepository).findPassengerByIdAndIsEnabledTrue(nonExistingPassengerId);
         verifyNoInteractions(passengerMapper);
     }
+
+    @Test
+    void getPassengers_shouldReturnPageResponse() {
+        int currentPage = TestDataProvider.CURRENT_PAGE;
+        int limit = TestDataProvider.LIMIT;
+        PageRequest pageRequest = PageRequest.of(currentPage, limit);
+
+        List<Passenger> passengers = List.of(passenger);
+        Page<Passenger> passengerPage = new PageImpl<>(passengers, pageRequest, passengers.size());
+
+        when(passengerRepository.findAll(pageRequest)).thenReturn(passengerPage);
+        when(pageResponseMapper.toPageResponse(eq(passengerPage), eq(currentPage), any()))
+            .thenReturn(
+                new PageResponse<>(List.of(passengerResponse), currentPage, passengerPage.getTotalElements(),
+                    passengerPage.getTotalPages()));
+
+        PageResponse<PassengerResponse> result = passengerServiceImpl.getPassengers(currentPage, limit);
+
+        assertNotNull(result);
+        assertEquals(1, result.content().size());
+        assertEquals(currentPage, result.currentPage());
+        assertEquals(passengerPage.getTotalPages(), result.totalPages());
+        assertEquals(passengerPage.getTotalElements(), result.totalElements());
+
+        verify(passengerRepository).findAll(pageRequest);
+        verify(pageResponseMapper).toPageResponse(eq(passengerPage), eq(currentPage), any());
+    }
+
 
     @Test
     void createPassenger_shouldReturnPassengerResponse() {
         String passengerRequestEmail = passengerRequest.email();
         String passengerRequestPhone = passengerRequest.phone();
 
-        when(passengerRepository.existsPassengerByEmailAndIsEnabledTrue(passengerRequestEmail))
-            .thenReturn(false);
-        when(passengerRepository.existsPassengerByPhoneAndIsEnabledTrue(passengerRequestPhone))
-            .thenReturn(false);
         when(passengerMapper.toEntity(passengerRequest)).thenReturn(passenger);
         when(passengerRepository.save(passenger)).thenReturn(passenger);
         when(passengerMapper.toResponse(passenger)).thenReturn(passengerResponse);
@@ -108,61 +144,10 @@ public class PassengerServiceImplTest {
         assertNotNull(result);
         assertEquals(passengerResponse, result);
 
-        verify(passengerRepository)
-            .existsPassengerByEmailAndIsEnabledTrue(passengerRequestEmail);
-        verify(passengerRepository)
-            .existsPassengerByPhoneAndIsEnabledTrue(passengerRequestPhone);
+        verify(passengerValidator).validatePassengerEmailAndPhone(passengerRequestEmail, passengerRequestPhone);
         verify(passengerMapper).toEntity(passengerRequest);
         verify(passengerRepository).save(passenger);
         verify(passengerMapper).toResponse(passenger);
-    }
-
-    @Test
-    void createPassenger_shouldThrowConflictExceptionByEmail() {
-        String passengerRequestEmail = passengerRequest.email();
-
-        when(passengerRepository.existsPassengerByEmailAndIsEnabledTrue(passengerRequestEmail))
-            .thenReturn(true);
-
-        PassengerAlreadyExistsException exception = assertThrows(
-            PassengerAlreadyExistsException.class,
-            () -> passengerServiceImpl.createPassenger(passengerRequest)
-        );
-
-        assertEquals(
-            ExceptionMessageConstant.PASSENGER_ALREADY_EXISTS_BY_EMAIL_MESSAGE.formatted(passengerRequestEmail),
-            exception.getMessage()
-        );
-
-        verify(passengerRepository)
-            .existsPassengerByEmailAndIsEnabledTrue(passengerRequestEmail);
-        verifyNoInteractions(passengerMapper);
-        verify(passengerRepository, times(0)).save(passenger);
-    }
-
-    @Test
-    void createPassenger_shouldThrowConflictExceptionByPhone() {
-        String passengerRequestPhone = passengerRequest.phone();
-
-        when(passengerRepository.existsPassengerByPhoneAndIsEnabledTrue(passengerRequestPhone))
-            .thenReturn(true);
-
-        PassengerAlreadyExistsException exception = assertThrows(
-            PassengerAlreadyExistsException.class,
-            () -> passengerServiceImpl.createPassenger(passengerRequest)
-        );
-
-        assertEquals(
-            ExceptionMessageConstant.PASSENGER_ALREADY_EXISTS_BY_PHONE_MESSAGE.formatted(passengerRequestPhone),
-            exception.getMessage()
-        );
-
-        verify(passengerRepository)
-            .existsPassengerByEmailAndIsEnabledTrue(passengerRequest.email());
-        verify(passengerRepository)
-            .existsPassengerByPhoneAndIsEnabledTrue(passengerRequestPhone);
-        verifyNoInteractions(passengerMapper);
-        verify(passengerRepository, times(0)).save(passenger);
     }
 
     @Test
@@ -171,6 +156,7 @@ public class PassengerServiceImplTest {
 
         when(passengerRepository.findPassengerByIdAndIsEnabledTrue(existingPassengerId))
             .thenReturn(Optional.of(passenger));
+        when(passengerRepository.save(passenger)).thenReturn(passenger);
         when(passengerMapper.toResponse(passenger)).thenReturn(passengerResponse);
 
         PassengerResponse result = passengerServiceImpl.updatePassenger(existingPassengerId, passengerRequest);
@@ -178,8 +164,7 @@ public class PassengerServiceImplTest {
         assertNotNull(result);
         assertEquals(passengerResponse, result);
 
-        verify(passengerRepository)
-            .findPassengerByIdAndIsEnabledTrue(existingPassengerId);
+        verify(passengerRepository).findPassengerByIdAndIsEnabledTrue(existingPassengerId);
         verify(passengerMapper).updateFromRequest(passengerRequest, passenger);
         verify(passengerRepository).save(passenger);
         verify(passengerMapper).toResponse(passenger);
@@ -202,10 +187,9 @@ public class PassengerServiceImplTest {
             exception.getMessage()
         );
 
-        verify(passengerRepository)
-            .findPassengerByIdAndIsEnabledTrue(nonExistingPassengerId);
+        verify(passengerRepository).findPassengerByIdAndIsEnabledTrue(nonExistingPassengerId);
         verifyNoInteractions(passengerMapper);
-        verify(passengerRepository, times(0)).save(passenger);
+        verify(passengerRepository, never()).save(passenger);
     }
 
     @Test
@@ -218,10 +202,11 @@ public class PassengerServiceImplTest {
         Boolean result = passengerServiceImpl.deletePassengerById(existingPassengerId);
 
         assertTrue(result);
+        assertFalse(passenger.getIsEnabled());
 
-        verify(passengerRepository)
-            .findPassengerByIdAndIsEnabledTrue(existingPassengerId);
+        verify(passengerRepository).findPassengerByIdAndIsEnabledTrue(existingPassengerId);
         verify(passengerRepository).save(passenger);
+        assertFalse(passenger.getIsEnabled());
     }
 
     @Test
@@ -241,9 +226,8 @@ public class PassengerServiceImplTest {
             exception.getMessage()
         );
 
-        verify(passengerRepository)
-            .findPassengerByIdAndIsEnabledTrue(nonExistingPassengerId);
+        verify(passengerRepository).findPassengerByIdAndIsEnabledTrue(nonExistingPassengerId);
         verifyNoInteractions(passengerMapper);
-        verify(passengerRepository, times(0)).save(passenger);
+        verify(passengerRepository, never()).save(passenger);
     }
 }
