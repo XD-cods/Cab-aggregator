@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,8 +39,9 @@ public class RideInfo {
     @Column(name = "passenger_id", nullable = false)
     private Long passengerId;
 
+    @Builder.Default
     @OneToMany(mappedBy = "rideInfo", cascade = CascadeType.ALL)
-    private List<Rating> rating;
+    private List<Rating> rating = new ArrayList<>();
 
     @Override
     public String toString() {

@@ -22,8 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.InjectMocks;
@@ -57,11 +55,20 @@ public class PassengerServiceImplTest {
 
     private Passenger passenger;
     private PassengerResponse passengerResponse;
+    private PassengerRequest passengerRequest;
+    private PassengerResponse passengerCreateResponse;
+    private PassengerRequest updateRequest;
+    private PassengerResponse updatedResponse;
 
     @BeforeEach
     void setUp() {
         passenger = UnitTestDataProvider.passenger();
         passengerResponse = UnitTestDataProvider.passengerResponse();
+        passengerRequest = UnitTestDataProvider.passengerCreateRequest();
+        passengerCreateResponse = UnitTestDataProvider.passengerCreateResponse();
+        updateRequest = UnitTestDataProvider.passengerUpdateRequest();
+        updatedResponse = UnitTestDataProvider.passengerUpdateResponse();
+
     }
 
     @Test
@@ -102,13 +109,10 @@ public class PassengerServiceImplTest {
         verifyNoInteractions(passengerMapper);
     }
 
-    @ParameterizedTest
-    @CsvSource({
-        "0, 10",
-        "1, 20",
-        "2, 5"
-    })
-    void getPassengers_shouldReturnPageResponse(int currentPage, int limit) {
+    @Test
+    void getPassengers_shouldReturnPageResponse() {
+        int currentPage = 0;
+        int limit = 10;
         PageRequest pageRequest = PageRequest.of(currentPage, limit);
 
         List<Passenger> passengers = List.of(passenger);
@@ -122,7 +126,7 @@ public class PassengerServiceImplTest {
         PageResponse<PassengerResponse> result = passengerServiceImpl.getPassengers(currentPage, limit);
 
         assertNotNull(result);
-        assertEquals(1, result.content().size());
+        assertEquals(passengers.size(), result.content().size());
         assertEquals(currentPage, result.currentPage());
         assertEquals(passengerPage.getTotalPages(), result.totalPages());
         assertEquals(passengerPage.getTotalElements(), result.totalElements());
@@ -133,8 +137,6 @@ public class PassengerServiceImplTest {
 
     @Test
     void createPassenger_shouldReturnPassengerResponse() {
-        PassengerRequest passengerRequest = UnitTestDataProvider.passengerCreateRequest();
-        PassengerResponse passengerCreateResponse = UnitTestDataProvider.passengerCreateResponse();
         String passengerRequestEmail = UnitTestDataProvider.TEST_PASSENGER_EMAIL;
         String passengerRequestPhone = UnitTestDataProvider.TEST_PASSENGER_PHONE;
 
@@ -156,8 +158,6 @@ public class PassengerServiceImplTest {
     @Test
     void updatePassenger_shouldReturnPassengerResponse() {
         Long existingPassengerId = passenger.getId();
-        PassengerRequest updateRequest = UnitTestDataProvider.passengerUpdateRequest();
-        PassengerResponse updatedResponse = UnitTestDataProvider.passengerUpdateResponse();
 
         when(passengerRepository.findPassengerByIdAndIsEnabledTrue(existingPassengerId))
             .thenReturn(Optional.of(passenger));

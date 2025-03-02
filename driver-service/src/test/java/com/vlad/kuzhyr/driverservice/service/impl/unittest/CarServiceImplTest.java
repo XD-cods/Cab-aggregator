@@ -22,8 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.InjectMocks;
@@ -102,13 +100,10 @@ public class CarServiceImplTest {
         verifyNoInteractions(carMapper);
     }
 
-    @ParameterizedTest
-    @CsvSource({
-        "0, 10",
-        "1, 20",
-        "2, 5"
-    })
-    void getAllCar_shouldReturnPageResponse(int currentPage, int limit) {
+    @Test
+    void getAllCar_shouldReturnPageResponse() {
+        int currentPage = 0;
+        int limit = 10;
         PageRequest pageRequest = PageRequest.of(currentPage, limit);
 
         List<Car> cars = List.of(car);

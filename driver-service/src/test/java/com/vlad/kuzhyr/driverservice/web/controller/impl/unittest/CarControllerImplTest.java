@@ -1,4 +1,4 @@
-package com.vlad.kuzhyr.driverservice.web.controller.impl;
+package com.vlad.kuzhyr.driverservice.web.controller.impl.unittest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vlad.kuzhyr.driverservice.constant.ControllerRouteConstant;
@@ -7,6 +7,7 @@ import com.vlad.kuzhyr.driverservice.exception.CarNotFoundException;
 import com.vlad.kuzhyr.driverservice.exception.ControllerAdvice;
 import com.vlad.kuzhyr.driverservice.service.CarService;
 import com.vlad.kuzhyr.driverservice.utility.constant.ExceptionMessageConstant;
+import com.vlad.kuzhyr.driverservice.web.controller.impl.CarControllerImpl;
 import com.vlad.kuzhyr.driverservice.web.dto.request.CarRequest;
 import com.vlad.kuzhyr.driverservice.web.dto.response.CarResponse;
 import com.vlad.kuzhyr.driverservice.web.dto.response.PageResponse;
