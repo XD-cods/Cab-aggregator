@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven 3.x.x'
+    }
+
     environment {
         EMAIL_SUBJECT = 'Результат сборки проекта'
     }
@@ -36,43 +40,43 @@ pipeline {
 
     post {
         success {
-            echo 'Сборка успешно завершена!'
             script {
-                def recipients = getGitCommitAuthors()
+                echo 'Сборка успешно завершена!'
+                def commiters = sh(script: 'git log --pretty=format:"%ae"', returnStdout: true).trim().split("\n").unique()
+                def emailRecipients = commiters.join(', ')
+
                 emailext (
                     subject: "${EMAIL_SUBJECT} - УСПЕХ",
                     body: 'Сборка и деплой прошли успешно. Детали: ${BUILD_URL}',
-                    to: recipients
+                    to: emailRecipients
                 )
             }
         }
         failure {
-            echo 'Сборка завершена с ошибками!'
             script {
-                def recipients = getGitCommitAuthors()
+                echo 'Сборка завершена с ошибками!'
+                def commiters = sh(script: 'git log --pretty=format:"%ae"', returnStdout: true).trim().split("\n").unique()
+                def emailRecipients = commiters.join(', ')
+
                 emailext (
                     subject: "${EMAIL_SUBJECT} - ОШИБКА",
                     body: 'Сборка завершена с ошибками. Детали: ${BUILD_URL}',
-                    to: recipients
+                    to: emailRecipients
                 )
             }
         }
         unstable {
-            echo 'Сборка нестабильна (например, тесты провалились).'
             script {
-                def recipients = getGitCommitAuthors()
+                echo 'Сборка нестабильна (например, тесты провалились).'
+                def commiters = sh(script: 'git log --pretty=format:"%ae"', returnStdout: true).trim().split("\n").unique()
+                def emailRecipients = commiters.join(', ')
+
                 emailext (
                     subject: "${EMAIL_SUBJECT} - НЕСТАБИЛЬНО",
                     body: 'Сборка нестабильна. Детали: ${BUILD_URL}',
-                    to: recipients
+                    to: emailRecipients
                 )
             }
         }
     }
-}
-
-def getGitCommitAuthors() {
-    def commitAuthors = sh(script: 'git log --pretty="%ae"', returnStdout: true).trim().split("\n").unique()
-
-    return commitAuthors.join(',')
 }
