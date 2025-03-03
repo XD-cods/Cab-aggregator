@@ -6,6 +6,7 @@ pipeline {
     }
 
     environment {
+        EMAIL_RECIPIENTS = 'vkuzir7@gmail.com'
         EMAIL_SUBJECT = 'Результат сборки проекта'
     }
 
@@ -40,43 +41,28 @@ pipeline {
 
     post {
         success {
-            script {
-                echo 'Сборка успешно завершена!'
-                def commiters = sh(script: 'git log --pretty=format:"%ae"', returnStdout: true).trim().split("\n").unique()
-                def emailRecipients = commiters.join(', ')
-
-                emailext (
-                    subject: "${EMAIL_SUBJECT} - УСПЕХ",
-                    body: 'Сборка и деплой прошли успешно. Детали: ${BUILD_URL}',
-                    to: emailRecipients
-                )
-            }
+            echo 'Сборка успешно завершена!'
+            emailext (
+                subject: "${EMAIL_SUBJECT} - УСПЕХ",
+                body: 'Сборка и деплой прошли успешно. Детали: ${BUILD_URL}',
+                to: "${EMAIL_RECIPIENTS}"
+            )
         }
         failure {
-            script {
-                echo 'Сборка завершена с ошибками!'
-                def commiters = sh(script: 'git log --pretty=format:"%ae"', returnStdout: true).trim().split("\n").unique()
-                def emailRecipients = commiters.join(', ')
-
-                emailext (
-                    subject: "${EMAIL_SUBJECT} - ОШИБКА",
-                    body: 'Сборка завершена с ошибками. Детали: ${BUILD_URL}',
-                    to: emailRecipients
-                )
-            }
+            echo 'Сборка завершена с ошибками!'
+            emailext (
+                subject: "${EMAIL_SUBJECT} - ОШИБКА",
+                body: 'Сборка завершена с ошибками. Детали: ${BUILD_URL}',
+                to: "${EMAIL_RECIPIENTS}"
+            )
         }
         unstable {
-            script {
-                echo 'Сборка нестабильна (например, тесты провалились).'
-                def commiters = sh(script: 'git log --pretty=format:"%ae"', returnStdout: true).trim().split("\n").unique()
-                def emailRecipients = commiters.join(', ')
-
-                emailext (
-                    subject: "${EMAIL_SUBJECT} - НЕСТАБИЛЬНО",
-                    body: 'Сборка нестабильна. Детали: ${BUILD_URL}',
-                    to: emailRecipients
-                )
-            }
+            echo 'Сборка нестабильна (например, тесты провалились).'
+            emailext (
+                subject: "${EMAIL_SUBJECT} - НЕСТАБИЛЬНО",
+                body: 'Сборка нестабильна. Детали: ${BUILD_URL}',
+                to: "${EMAIL_RECIPIENTS}"
+            )
         }
     }
 }
