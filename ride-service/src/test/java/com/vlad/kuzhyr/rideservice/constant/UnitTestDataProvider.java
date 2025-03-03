@@ -1,6 +1,7 @@
 package com.vlad.kuzhyr.rideservice.constant;
 
 import com.vlad.kuzhyr.rideservice.persistence.entity.Address;
+import com.vlad.kuzhyr.rideservice.persistence.entity.KafkaMessage;
 import com.vlad.kuzhyr.rideservice.persistence.entity.Ride;
 import com.vlad.kuzhyr.rideservice.persistence.entity.RideStatus;
 import com.vlad.kuzhyr.rideservice.web.dto.external.DriverResponse;
@@ -35,8 +36,16 @@ public class UnitTestDataProvider {
     private static final Double TEST_LONGITUDE1 = -74.0060;
 
     private static final String TEST_ADDRESS2_NAME = "456 Elm St, CityB";
-    private static final Double TEST_LATITUDE2 = 34.0522;
-    private static final Double TEST_LONGITUDE2 = -118.2437;
+    private static final Double TEST_LATITUDE2 = 53.0522;
+    private static final Double TEST_LONGITUDE2 = -113.2437;
+
+    private static final String TEST_ADDRESS3_NAME = "318 Min St, CityC";
+    private static final Double TEST_LATITUDE3 = 46.2128;
+    private static final Double TEST_LONGITUDE3 = -44.3060;
+
+    private static final String TEST_ADDRESS4_NAME = "283 Alb St, CityD";
+    private static final Double TEST_LATITUDE4 = 44.0522;
+    private static final Double TEST_LONGITUDE4 = -128.2437;
 
     public static Address address1() {
         return Address.builder()
@@ -51,6 +60,22 @@ public class UnitTestDataProvider {
             .addressName(TEST_ADDRESS2_NAME)
             .latitude(TEST_LATITUDE2)
             .longitude(TEST_LONGITUDE2)
+            .build();
+    }
+
+    public static Address newAddress1() {
+        return Address.builder()
+            .addressName(TEST_ADDRESS3_NAME)
+            .latitude(TEST_LATITUDE3)
+            .longitude(TEST_LONGITUDE3)
+            .build();
+    }
+
+    public static Address newAddress2() {
+        return Address.builder()
+            .addressName(TEST_ADDRESS4_NAME)
+            .latitude(TEST_LATITUDE4)
+            .longitude(TEST_LONGITUDE4)
             .build();
     }
 
@@ -80,13 +105,6 @@ public class UnitTestDataProvider {
         return UpdateRideRequest.builder()
             .departureAddress(address1().getAddressName())
             .destinationAddress(address2().getAddressName())
-            .build();
-    }
-
-    public static UpdateRideRequest updateRideRequestWithSameAddresses() {
-        return UpdateRideRequest.builder()
-            .departureAddress(address1().getAddressName())
-            .destinationAddress(address1().getAddressName())
             .build();
     }
 
@@ -167,6 +185,16 @@ public class UnitTestDataProvider {
             .phone(TEST_DRIVER_PHONE)
             .gender(TEST_GENDER)
             .isBusy(false)
+            .build();
+    }
+
+    public static KafkaMessage kafkaMessage() {
+        return KafkaMessage.builder()
+            .id(1L)
+            .topic("test-topic")
+            .key(1L)
+            .message("test-message")
+            .isSent(false)
             .build();
     }
 }

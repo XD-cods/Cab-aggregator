@@ -156,16 +156,11 @@ public class RideServiceImpl implements RideService {
     }
 
     private void updateRideAddressIfNeeded(Ride ride, UpdateRideRequest rideRequest) {
-        String currentDepartureAddress = ride.getDepartureAddress().getAddressName().trim();
-        String currentDestinationAddress = ride.getDestinationAddress().getAddressName().trim();
         String rideRequestDepartureAddress = rideRequest.departureAddress().trim();
         String rideRequestDestinationAddress = rideRequest.destinationAddress().trim();
 
-        if (!currentDepartureAddress.equals(rideRequestDepartureAddress)
-            || !currentDestinationAddress.equals(rideRequestDestinationAddress)) {
-            log.debug("updateRideAddressIfNeeded: Updating ride address. Ride id: {}", ride.getId());
-            addressService.updateRideAddress(ride, rideRequestDepartureAddress, rideRequestDestinationAddress);
-        }
+        log.debug("updateRideAddressIfNeeded: Updating ride address. Ride id: {}", ride.getId());
+        addressService.updateRideAddress(ride, rideRequestDepartureAddress, rideRequestDestinationAddress);
     }
 
     private Ride createRideFromRideRequest(RideRequest rideRequest) {
@@ -177,7 +172,7 @@ public class RideServiceImpl implements RideService {
         String departureAddress = rideRequest.departureAddress();
         String destinationAddress = rideRequest.destinationAddress();
 
-        addressService.validateDifferentAddresses(departureAddress, destinationAddress);
+        addressService.validateDepartureAndDestinationDifferentAddresses(departureAddress, destinationAddress);
 
         Ride ride = rideMapper.toEntity(rideRequest);
         addressService.updateRideAddress(ride, departureAddress, destinationAddress);
