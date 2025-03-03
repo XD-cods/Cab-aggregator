@@ -1,6 +1,7 @@
 package com.vlad.kuzhyr.rideservice.service.impl;
 
 import com.vlad.kuzhyr.rideservice.exception.DepartureAndDestinationAddressesSameException;
+import com.vlad.kuzhyr.rideservice.exception.NewAddressAndCurrentAddressSameException;
 import com.vlad.kuzhyr.rideservice.persistence.entity.Address;
 import com.vlad.kuzhyr.rideservice.persistence.entity.Ride;
 import com.vlad.kuzhyr.rideservice.service.impl.cache.AddressCacheService;
@@ -21,8 +22,9 @@ public class AddressService {
     private final MapboxClient mapboxClient;
     private final PriceCalculator priceCalculator;
 
-    public void validateDifferentAddresses(String departureAddress, String destinationAddress) {
-        log.debug("validateDifferentAddresses: Entering method. Departure: {}, Destination: {}", departureAddress,
+    public void validateDepartureAndDestinationDifferentAddresses(String departureAddress, String destinationAddress) {
+        log.debug("validateDepartureAndDestinationDifferentAddresses: Entering method. Departure: {}, Destination: {}",
+            departureAddress,
             destinationAddress);
 
         departureAddress = departureAddress.trim();
@@ -30,7 +32,9 @@ public class AddressService {
 
         if (departureAddress.equalsIgnoreCase(destinationAddress)) {
             log.error(
-                "validateDifferentAddresses: Departure and destination addresses are the same. Departure: {}, " +
+                "validateDepartureAndDestinationDifferentAddresses: " +
+                "Departure and destination addresses are the same. " +
+                "Departure: {}, " +
                 "Destination: {}",
                 departureAddress, destinationAddress);
             throw new DepartureAndDestinationAddressesSameException(
@@ -48,6 +52,12 @@ public class AddressService {
 
         Address departureAddress = addressCacheService.findOrCreateAddress(newDepartureAddress);
         Address destinationAddress = addressCacheService.findOrCreateAddress(newDestinationAddress);
+
+        validateCurrentAddressAndNewAddressDifferent(ride.getDepartureAddress().getAddressName(),
+            newDepartureAddress.trim());
+        validateCurrentAddressAndNewAddressDifferent(ride.getDestinationAddress().getAddressName(),
+            newDestinationAddress.trim());
+
         double distance = mapboxClient.calculateDistance(departureAddress, destinationAddress);
         BigDecimal price = priceCalculator.calculatePrice(distance);
 
@@ -58,5 +68,35 @@ public class AddressService {
 
         log.debug("updateRideAddress: Ride address updated. Ride id: {}, New Departure: {}, New Destination: {}",
             ride.getId(), newDepartureAddress, newDestinationAddress);
+    }
+
+    public void validateCurrentAddressAndNewAddressDifferent(String currentAddress, String newAddress) {
+        log.debug("validateCurrentAddressAndNewAddressDifferent: Entering method. Current address: {}, new address: {}",
+            currentAddress,
+            newAddress);
+
+        if (currentAddress.equalsIgnoreCase(newAddress)) {
+
+            log.error(
+                "validateDepartureAndDestinationDifferentAddresses: " +
+                "Current address and new address are the same. " +
+                "Current address: {}, " +
+                "new address: {}",
+                currentAddress,
+                newAddress);
+
+            throw new NewAddressAndCurrentAddressSameException(
+                ExceptionMessageConstant.NEW_ADDRESS_AND_CURRENT_ADDRESS_SAME
+            );
+        }
+
+        log.debug(
+            "validateDepartureAndDestinationDifferentAddresses: " +
+            "Departure and destination addresses are the different. " +
+            "Current address: {}, " +
+            "new address: {}",
+            currentAddress,
+            newAddress);
+
     }
 }

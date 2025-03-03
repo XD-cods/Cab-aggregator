@@ -94,6 +94,7 @@ public class ControllerAdvice {
         DriverIsBusyException.class,
         PassengerIsBusyException.class,
         DriverHasNotCarException.class,
+        NewAddressAndCurrentAddressSameException.class
     })
     public ResponseEntity<ErrorResponse> requestValidationException(Exception exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.builder()

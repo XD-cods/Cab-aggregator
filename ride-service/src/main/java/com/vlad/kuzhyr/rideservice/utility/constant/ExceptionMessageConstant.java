@@ -30,4 +30,6 @@ public final class ExceptionMessageConstant {
 
     public static final String DRIVER_HAS_NO_CAR = "driver with ID %d has no car assigned.";
 
+    public static final String NEW_ADDRESS_AND_CURRENT_ADDRESS_SAME =
+        "new address and current address will be different";
 }

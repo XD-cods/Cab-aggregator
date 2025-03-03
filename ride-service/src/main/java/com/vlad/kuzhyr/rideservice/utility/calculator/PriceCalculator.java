@@ -16,6 +16,10 @@ public class PriceCalculator {
 
     public BigDecimal calculatePrice(double distanceInMeters) {
         log.debug("calculatePrice: Entering method. Distance: {} meters", distanceInMeters);
+        if (distanceInMeters <= 0) {
+            return BigDecimal.ZERO;
+        }
+
         BigDecimal price =
             RATE_PER_KM.multiply(BigDecimal.valueOf(distanceInMeters)).divide(METERS_IN_KM, RoundingMode.HALF_EVEN);
         log.debug("calculatePrice: Calculated price. Distance: {} meters, Price: {}", distanceInMeters, price);
