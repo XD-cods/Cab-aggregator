@@ -98,6 +98,9 @@ public class DriverServiceImpl implements DriverService {
 
         Driver existingDriver = getDriverOrElseThrow(id);
         List<Car> cars = carRepository.findAllById(driverUpdateCarsRequest.carIds());
+        if (cars.isEmpty()) {
+            return driverMapper.toResponse(existingDriver);
+        }
         setCarsDriver(existingDriver, cars);
         Driver savedDriver = driverRepository.save(existingDriver);
 
@@ -122,7 +125,8 @@ public class DriverServiceImpl implements DriverService {
 
     private void setCarsDriver(Driver existingDriver, List<Car> cars) {
         log.debug("setCarsDriver: Setting cars for driver. Driver id: {}", existingDriver.getId());
-        existingDriver.setCars(cars);
+        existingDriver.getCars().clear();
+        existingDriver.getCars().addAll(cars);
         cars.forEach(car -> car.setDriver(existingDriver));
     }
 
@@ -130,7 +134,7 @@ public class DriverServiceImpl implements DriverService {
         log.debug("deleteCarsFromDriver: Deleting cars from driver. Driver id: {}", existingDriver.getId());
         List<Car> cars = existingDriver.getCars();
         cars.forEach(car -> car.setDriver(null));
-        existingDriver.setCars(null);
+        existingDriver.getCars().clear();
     }
 
     private Driver getDriverOrElseThrow(Long id) {

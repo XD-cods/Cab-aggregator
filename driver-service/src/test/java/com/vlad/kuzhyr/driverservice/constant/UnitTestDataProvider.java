@@ -10,7 +10,7 @@ import com.vlad.kuzhyr.driverservice.web.dto.response.CarResponse;
 import com.vlad.kuzhyr.driverservice.web.dto.response.DriverResponse;
 import java.util.List;
 
-public class UnitTestDataProvider {
+public final class UnitTestDataProvider {
 
     public static final Long TEST_ID = 1L;
     public static final String TEST_DRIVER_EMAIL = "test@vlad.com";
