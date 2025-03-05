@@ -1,4 +1,4 @@
-package com.vlad.kuzhyr.driverservice.web.controller.impl.unittest;
+package com.vlad.kuzhyr.driverservice.unit.web.controller.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vlad.kuzhyr.driverservice.constant.ControllerRouteConstant;

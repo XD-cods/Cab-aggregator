@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:${DB_PORT:5432}/postgres
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:1111}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+logging:
+  level:
+    root: INFO
+    org.springframework: INFO
+    com.vlad.kuzhyr.driverservice: DEBUG

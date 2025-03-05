@@ -1,4 +1,4 @@
-package com.vlad.kuzhyr.driverservice.web.controller.impl.unittest;
+package com.vlad.kuzhyr.driverservice.unit.web.controller.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vlad.kuzhyr.driverservice.constant.ControllerRouteConstant;
@@ -35,7 +35,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 @ExtendWith(MockitoExtension.class)
-public class CarControllerImplTest {
+public class CarControllerImplIntegrationTest {
 
     @Mock
     private CarService carService;

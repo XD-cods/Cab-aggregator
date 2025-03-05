@@ -1,4 +1,4 @@
-package com.vlad.kuzhyr.driverservice.utility.validator.unittest;
+package com.vlad.kuzhyr.driverservice.unit.utility.validator;
 
 import com.vlad.kuzhyr.driverservice.constant.UnitTestDataProvider;
 import com.vlad.kuzhyr.driverservice.exception.CarAlreadyExistException;

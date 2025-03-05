@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,14 +49,14 @@ public class CarControllerImpl implements CarController {
 
     @Override
     @PostMapping
-    public ResponseEntity<CarResponse> createCar(@Valid CarRequest carRequest) {
+    public ResponseEntity<CarResponse> createCar(@Valid @RequestBody CarRequest carRequest) {
         CarResponse createdCar = carService.createCar(carRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCar);
     }
 
     @Override
     @PutMapping("/{id}")
-    public ResponseEntity<CarResponse> updateCar(@PathVariable Long id, @Valid CarRequest carRequest) {
+    public ResponseEntity<CarResponse> updateCar(@PathVariable Long id, @Valid @RequestBody CarRequest carRequest) {
         CarResponse updatedCar = carService.updateCar(id, carRequest);
         return ResponseEntity.ok(updatedCar);
     }

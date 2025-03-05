@@ -1,4 +1,4 @@
-package com.vlad.kuzhyr.driverservice.service.impl.unittest;
+package com.vlad.kuzhyr.driverservice.unit.service.impl;
 
 import com.vlad.kuzhyr.driverservice.constant.UnitTestDataProvider;
 import com.vlad.kuzhyr.driverservice.exception.DriverNotFoundException;
