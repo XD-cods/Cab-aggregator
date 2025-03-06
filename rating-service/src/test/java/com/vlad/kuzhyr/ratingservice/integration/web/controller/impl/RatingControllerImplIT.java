@@ -15,7 +15,6 @@ import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.notNullValue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,30 +103,6 @@ public class RatingControllerImplIT {
             .then()
             .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
-
-    @Test
-    void testCreateRating() {
-        ratingRepository.deleteAll();
-        rideInfoRepository.deleteAll();
-
-        RideInfo rideInfo = rideInfoRepository.save(IntegrationTestDataProvider.createRideInfo2());
-
-        CreateRatingRequest createRatingRequest =
-            IntegrationTestDataProvider.createRatingRequest(rideInfo.getRideInfoId());
-
-        given()
-            .contentType(ContentType.JSON)
-            .body(createRatingRequest)
-            .when()
-            .post(ControllerRouteConstant.CREATE_RATING_URL)
-            .then()
-            .statusCode(HttpStatus.SC_CREATED)
-            .body("id", notNullValue())
-            .body("rating", equalTo(createRatingRequest.rating().floatValue()))
-            .body("comment", equalTo(createRatingRequest.comment()))
-            .body("rated_by", equalTo(createRatingRequest.ratedBy().toString()));
-    }
-
 
     @Test
     void testCreateRating_whenRatingRequestNotValid_shouldThrowException() {

@@ -207,6 +207,27 @@ public class DriverServiceImplTest {
     }
 
     @Test
+    void updateDriverCarsById_whenCarIsNotValid_shouldReturnDriverResponse() {
+        Long existingDriverId = driver.getId();
+        DriverUpdateCarsRequest updateCarsRequest = UnitTestDataProvider.driverUpdateCarsRequestNotValid();
+        DriverResponse updatedResponse = UnitTestDataProvider.driverUpdateResponse();
+
+        when(driverRepository.findDriverByIdAndIsEnabledTrue(existingDriverId))
+            .thenReturn(Optional.of(driver));
+        when(carRepository.findAllById(updateCarsRequest.carIds())).thenReturn(List.of());
+        when(driverMapper.toResponse(driver)).thenReturn(updatedResponse);
+
+        DriverResponse result = driverServiceImpl.updateDriverCarsById(existingDriverId, updateCarsRequest);
+
+        assertNotNull(result);
+        assertEquals(updatedResponse, result);
+
+        verify(driverRepository).findDriverByIdAndIsEnabledTrue(existingDriverId);
+        verify(carRepository).findAllById(updateCarsRequest.carIds());
+        verify(driverMapper).toResponse(driver);
+    }
+
+    @Test
     void deleteDriverById_shouldReturnTrue() {
         Long existingDriverId = driver.getId();
 

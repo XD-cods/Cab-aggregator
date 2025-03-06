@@ -145,6 +145,12 @@ public final class UnitTestDataProvider {
             .build();
     }
 
+    public static DriverUpdateCarsRequest driverUpdateCarsRequestNotValid() {
+        return DriverUpdateCarsRequest.builder()
+            .carIds(List.of(999L))
+            .build();
+    }
+
     public static DriverResponse driverUpdateCarsResponse() {
         return DriverResponse.builder()
             .id(TEST_ID)

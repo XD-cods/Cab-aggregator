@@ -8,6 +8,7 @@ import com.vlad.kuzhyr.rideservice.persistence.entity.Address;
 import com.vlad.kuzhyr.rideservice.persistence.entity.RideStatus;
 import com.vlad.kuzhyr.rideservice.persistence.repository.AddressRepository;
 import com.vlad.kuzhyr.rideservice.persistence.repository.RideRepository;
+import com.vlad.kuzhyr.rideservice.utility.client.MapboxClient;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
 import io.restassured.http.ContentType;
@@ -23,6 +24,7 @@ import org.springframework.boot.testcontainers.context.ImportTestcontainers;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -45,6 +47,9 @@ public class RideControllerImplIT {
     private AddressRepository addressRepository;
 
     private Long rideId;
+
+    @MockitoBean
+    private MapboxClient mapboxClient;
 
     @BeforeEach
     public void setUp() {
