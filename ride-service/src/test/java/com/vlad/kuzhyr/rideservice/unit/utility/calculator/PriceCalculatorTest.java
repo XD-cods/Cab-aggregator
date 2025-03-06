@@ -1,4 +1,4 @@
-package com.vlad.kuzhyr.rideservice.utility.calculator.unittest;
+package com.vlad.kuzhyr.rideservice.unit.utility.calculator;
 
 import com.vlad.kuzhyr.rideservice.utility.calculator.PriceCalculator;
 import java.math.BigDecimal;

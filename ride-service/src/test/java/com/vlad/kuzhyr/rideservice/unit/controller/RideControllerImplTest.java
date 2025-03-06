@@ -1,4 +1,4 @@
-package com.vlad.kuzhyr.rideservice.controller.unittest;
+package com.vlad.kuzhyr.rideservice.unit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vlad.kuzhyr.rideservice.constant.ControllerRouteConstant;

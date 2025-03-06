@@ -1,4 +1,4 @@
-package com.vlad.kuzhyr.rideservice.service.imp.unittest;
+package com.vlad.kuzhyr.rideservice.unit.service.imp;
 
 import com.vlad.kuzhyr.rideservice.constant.UnitTestDataProvider;
 import com.vlad.kuzhyr.rideservice.exception.DepartureAndDestinationAddressesSameException;

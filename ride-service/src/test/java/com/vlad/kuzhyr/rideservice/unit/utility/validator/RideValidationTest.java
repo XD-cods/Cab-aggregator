@@ -1,4 +1,4 @@
-package com.vlad.kuzhyr.rideservice.utility.validator.unittest;
+package com.vlad.kuzhyr.rideservice.unit.utility.validator;
 
 import com.vlad.kuzhyr.rideservice.constant.UnitTestDataProvider;
 import com.vlad.kuzhyr.rideservice.exception.DriverHasNotCarException;

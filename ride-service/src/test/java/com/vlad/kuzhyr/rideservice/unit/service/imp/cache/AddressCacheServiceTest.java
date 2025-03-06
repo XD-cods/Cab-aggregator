@@ -1,4 +1,4 @@
-package com.vlad.kuzhyr.rideservice.service.imp.cache.unittest;
+package com.vlad.kuzhyr.rideservice.unit.service.imp.cache;
 
 import com.vlad.kuzhyr.rideservice.constant.UnitTestDataProvider;
 import com.vlad.kuzhyr.rideservice.persistence.entity.Address;

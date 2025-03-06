@@ -1,4 +1,4 @@
-package com.vlad.kuzhyr.rideservice.utility.client.unittest;
+package com.vlad.kuzhyr.rideservice.unit.utility.client;
 
 import com.vlad.kuzhyr.rideservice.constant.UnitTestDataProvider;
 import com.vlad.kuzhyr.rideservice.persistence.entity.Address;
