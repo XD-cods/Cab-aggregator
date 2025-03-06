@@ -1,4 +1,4 @@
-package com.vlad.kuzhyr.passengerservice.utility.broker.unittest;
+package com.vlad.kuzhyr.passengerservice.unit.utility.broker;
 
 import com.vlad.kuzhyr.passengerservice.constant.UnitTestDataProvider;
 import com.vlad.kuzhyr.passengerservice.exception.PassengerNotFoundException;

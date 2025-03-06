@@ -1,4 +1,4 @@
-package com.vlad.kuzhyr.passengerservice.utility.validator.unittest;
+package com.vlad.kuzhyr.passengerservice.unit.utility.validator;
 
 import com.vlad.kuzhyr.passengerservice.constant.UnitTestDataProvider;
 import com.vlad.kuzhyr.passengerservice.exception.PassengerAlreadyExistsException;

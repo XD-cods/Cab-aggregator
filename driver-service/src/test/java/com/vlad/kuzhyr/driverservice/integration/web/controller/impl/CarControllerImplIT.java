@@ -1,5 +1,6 @@
 package com.vlad.kuzhyr.driverservice.integration.web.controller.impl;
 
+import com.vlad.kuzhyr.driverservice.config.TestContainerConfig;
 import com.vlad.kuzhyr.driverservice.constant.ControllerRouteConstant;
 import com.vlad.kuzhyr.driverservice.constant.IntegrationTestDataProvider;
 import com.vlad.kuzhyr.driverservice.persistence.repository.CarRepository;
@@ -16,21 +17,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.boot.testcontainers.context.ImportTestcontainers;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.ActiveProfiles;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Testcontainers
+@EmbeddedKafka
 @ActiveProfiles("test")
-public class CarControllerImplIntegrationTest {
-
-    @Container
-    public static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17-alpine")
-        .withUsername("postgres")
-        .withPassword("1111");
+@ImportTestcontainers(TestContainerConfig.class)
+public class CarControllerImplIT {
 
     @LocalServerPort
     private int port;
@@ -41,17 +37,12 @@ public class CarControllerImplIntegrationTest {
     Long carId;
 
     @BeforeEach
-    void setUpDatabase() {
+    void setUp() {
         carRepository.deleteAll();
         carId = carRepository.save(IntegrationTestDataProvider.createCar()).getId();
-    }
 
-    @BeforeEach
-    void setUp() {
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = port;
-
-        System.setProperty("DB_PORT", String.valueOf(postgres.getFirstMappedPort()));
     }
 
     @Test

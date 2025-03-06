@@ -1,4 +1,4 @@
-package com.vlad.kuzhyr.passengerservice.web.controller.impl.unittest;
+package com.vlad.kuzhyr.passengerservice.unit.web.controller.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vlad.kuzhyr.passengerservice.constant.ControllerRouteConstant;
