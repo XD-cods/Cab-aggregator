@@ -1,4 +1,4 @@
-package com.vlad.kuzhyr.ratingservice.utility.validator.unittest;
+package com.vlad.kuzhyr.ratingservice.unit.utility.validator;
 
 import com.vlad.kuzhyr.ratingservice.exception.RatingAlreadyExistsException;
 import com.vlad.kuzhyr.ratingservice.persistence.entity.RatedBy;

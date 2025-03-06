@@ -1,4 +1,4 @@
-package com.vlad.kuzhyr.ratingservice.web.controller.impl.unittest;
+package com.vlad.kuzhyr.ratingservice.unit.web.controller.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vlad.kuzhyr.ratingservice.constant.ControllerRouteConstant;

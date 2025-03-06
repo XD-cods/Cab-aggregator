@@ -1,4 +1,4 @@
-package com.vlad.kuzhyr.ratingservice.service.impl.unittest;
+package com.vlad.kuzhyr.ratingservice.unit.service.impl;
 
 import com.vlad.kuzhyr.ratingservice.constant.UnitTestDataProvider;
 import com.vlad.kuzhyr.ratingservice.exception.RatingNotFoundException;
