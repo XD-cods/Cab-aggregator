@@ -14,6 +14,7 @@ import com.vlad.kuzhyr.rideservice.utility.client.PassengerFeignClient;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
 import io.restassured.http.ContentType;
+import io.restassured.specification.RequestSpecification;
 import static org.hamcrest.Matchers.equalTo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,11 +54,15 @@ public class RideControllerImplIT {
     private AddressRepository addressRepository;
 
     private Long rideId;
+    private RequestSpecification request;
 
     @BeforeEach
     public void setUp() {
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = port;
+
+        request = RestAssured.given()
+            .contentType(ContentType.JSON);
 
         WireMock.reset();
 
@@ -84,8 +89,7 @@ public class RideControllerImplIT {
 
     @Test
     public void testCreateRide() {
-        given()
-            .contentType(ContentType.JSON)
+        request
             .body(IntegrationTestDataProvider.createRideRequest2())
             .when()
             .post(ControllerRouteConstant.CREATE_RIDE_URL)
@@ -97,8 +101,7 @@ public class RideControllerImplIT {
 
     @Test
     public void testGetRideById() {
-        given()
-            .contentType(ContentType.JSON)
+        request
             .when()
             .get(ControllerRouteConstant.GET_RIDE_BY_ID_URL.formatted(rideId))
             .then()
@@ -107,8 +110,7 @@ public class RideControllerImplIT {
 
     @Test
     public void testUpdateRide() {
-        given()
-            .contentType(ContentType.JSON)
+        request
             .body(IntegrationTestDataProvider.createUpdateRideRequest())
             .when()
             .put(ControllerRouteConstant.UPDATE_RIDE_URL.formatted(rideId))
@@ -120,8 +122,7 @@ public class RideControllerImplIT {
 
     @Test
     public void testUpdateRideStatus() {
-        given()
-            .contentType(ContentType.JSON)
+        request
             .body(IntegrationTestDataProvider.createUpdateRideStatusRequest())
             .when()
             .patch(ControllerRouteConstant.UPDATE_RIDE_STATUS_URL.formatted(rideId))
@@ -132,10 +133,9 @@ public class RideControllerImplIT {
 
     @Test
     public void testGetAllRidesByDriverId() {
-        given()
+        request
             .queryParam("current_page", 0)
             .queryParam("limit", 1)
-            .contentType(ContentType.JSON)
             .when()
             .get(ControllerRouteConstant.GET_ALL_RIDES_BY_DRIVER_ID_URL.formatted(
                 IntegrationTestDataProvider.BASE_DRIVER_ID))
@@ -146,10 +146,9 @@ public class RideControllerImplIT {
 
     @Test
     public void testGetAllRidesByPassengerId() {
-        given()
+        request
             .queryParam("current_page", 0)
             .queryParam("limit", 1)
-            .contentType(ContentType.JSON)
             .when()
             .get(ControllerRouteConstant.GET_ALL_RIDES_BY_PASSENGER_ID_URL.formatted(
                 IntegrationTestDataProvider.BASE_PASSENGER_ID))
@@ -160,10 +159,9 @@ public class RideControllerImplIT {
 
     @Test
     public void testGetAllRides() {
-        given()
+        request
             .queryParam("current_page", 0)
             .queryParam("limit", 1)
-            .contentType(ContentType.JSON)
             .when()
             .get(ControllerRouteConstant.GET_ALL_RIDES_URL)
             .then()

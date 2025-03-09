@@ -30,3 +30,4 @@ mapbox:
 routes:
   passenger-service: http://localhost:9090/api/v1/passengers
   driver-service: http://localhost:9090/api/v1/drivers
+
