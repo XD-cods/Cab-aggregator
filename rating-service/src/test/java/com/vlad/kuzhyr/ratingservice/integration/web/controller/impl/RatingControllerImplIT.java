@@ -39,11 +39,14 @@ public class RatingControllerImplIT {
     @Autowired
     private RideInfoRepository rideInfoRepository;
 
-    Long ratingId;
-    Long rideInfoId;
+    private Long ratingId;
+    private Long rideInfoId;
 
     @BeforeEach
     void setUp() {
+        RestAssured.baseURI = "http://localhost";
+        RestAssured.port = port;
+
         ratingRepository.deleteAll();
         rideInfoRepository.deleteAll();
 
@@ -53,8 +56,6 @@ public class RatingControllerImplIT {
         Rating rating = ratingRepository.save(IntegrationTestDataProvider.createRating(rideInfo));
         ratingId = rating.getId();
 
-        RestAssured.baseURI = "http://localhost";
-        RestAssured.port = port;
     }
 
     @Test
