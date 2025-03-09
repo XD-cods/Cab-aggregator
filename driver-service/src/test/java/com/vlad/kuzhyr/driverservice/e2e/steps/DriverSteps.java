@@ -1,6 +1,6 @@
 package com.vlad.kuzhyr.driverservice.e2e.steps;
 
-import com.vlad.kuzhyr.driverservice.constant.E2EConstant;
+import com.vlad.kuzhyr.driverservice.constant.E2eConstant;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -36,13 +36,13 @@ public class DriverSteps {
         response = RestAssured.given()
             .contentType(ContentType.JSON)
             .body(requestBody)
-            .post(E2EConstant.DRIVERS_URL);
+            .post(E2eConstant.DRIVERS_URL);
     }
 
     @When("I send a request to get the driver by ID")
     public void getDriverById() {
         response = RestAssured.given()
-            .get(E2EConstant.DRIVERS_URL + "/" + driverId);
+            .get(E2eConstant.DRIVERS_URL + "/" + driverId);
     }
 
     @When("I send a request to update the driver details")
@@ -50,13 +50,13 @@ public class DriverSteps {
         response = RestAssured.given()
             .contentType(ContentType.JSON)
             .body(requestBody)
-            .put(E2EConstant.DRIVERS_URL + "/" + driverId);
+            .put(E2eConstant.DRIVERS_URL + "/" + driverId);
     }
 
     @When("I send a request to delete the driver")
     public void deleteDriver() {
         response = RestAssured.given()
-            .delete(E2EConstant.DRIVERS_URL + "/" + driverId);
+            .delete(E2eConstant.DRIVERS_URL + "/" + driverId);
     }
 
     @Then("I should get the driver details in the response")

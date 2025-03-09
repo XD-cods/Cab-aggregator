@@ -4,41 +4,47 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.vlad.kuzhyr.rideservice.config.TestContainerConfig;
 import com.vlad.kuzhyr.rideservice.constant.ControllerRouteConstant;
 import com.vlad.kuzhyr.rideservice.constant.IntegrationTestDataProvider;
-import com.vlad.kuzhyr.rideservice.persistence.entity.Address;
+import com.vlad.kuzhyr.rideservice.constant.WireMockStubs;
 import com.vlad.kuzhyr.rideservice.persistence.entity.RideStatus;
 import com.vlad.kuzhyr.rideservice.persistence.repository.AddressRepository;
 import com.vlad.kuzhyr.rideservice.persistence.repository.RideRepository;
+import com.vlad.kuzhyr.rideservice.utility.client.DriverFeignClient;
 import com.vlad.kuzhyr.rideservice.utility.client.MapboxClient;
+import com.vlad.kuzhyr.rideservice.utility.client.PassengerFeignClient;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
 import io.restassured.http.ContentType;
-import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import static org.hamcrest.Matchers.equalTo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.context.ImportTestcontainers;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.test.context.EmbeddedKafka;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.context.ActiveProfiles;
+
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
-@AutoConfigureWireMock(port = 0)
 @ImportTestcontainers(TestContainerConfig.class)
 @EmbeddedKafka
+@AutoConfigureWireMock(port = 9090)
+@ActiveProfiles("test")
 public class RideControllerImplIT {
 
     @LocalServerPort
     private int port;
 
     @Autowired
-    private MockMvc mockMvc;
+    private MapboxClient mapboxClient;
+
+    @Autowired
+    private DriverFeignClient driverFeignClient;
+
+    @Autowired
+    private PassengerFeignClient passengerFeignClient;
 
     @Autowired
     private RideRepository rideRepository;
@@ -48,88 +54,36 @@ public class RideControllerImplIT {
 
     private Long rideId;
 
-    @MockitoBean
-    private MapboxClient mapboxClient;
-
     @BeforeEach
     public void setUp() {
-        RestAssuredMockMvc.mockMvc(mockMvc);
-
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = port;
 
-        mockDriverService();
-        mockPassengerService();
+        WireMock.reset();
+
+        WireMockStubs.mockDriverService();
+        WireMockStubs.mockPassengerService();
+        WireMockStubs.mockMapboxDistance();
+        WireMockStubs.mockMapboxGeocode();
 
         rideRepository.deleteAll();
-        addressRepository.deleteAll();
 
-        addressRepository.save(
-            new Address(1L, IntegrationTestDataProvider.BASE_DEPARTURE_ADDRESS, 40.7128,
-                -74.0060));
-        addressRepository.save(
-            new Address(2L, IntegrationTestDataProvider.BASE_DESTINATION_ADDRESS, 34.0522,
-                -118.2437));
-
-        rideId = given()
+        Integer id = given()
             .contentType(ContentType.JSON)
             .body(IntegrationTestDataProvider.createRideRequest())
             .when()
             .post(ControllerRouteConstant.CREATE_RIDE_URL)
             .then()
+            .assertThat()
+            .statusCode(201)
             .extract()
             .path("id");
-    }
 
-    private void mockDriverService() {
-        String driverResponse = """
-            {
-                "id": 1,
-                "first_name": "John",
-                "last_name": "Doe",
-                "email": "john.doe@example.com",
-                "gender": "MALE",
-                "phone": "+375335184521",
-                "car_ids": [1, 2],
-                "is_enabled": true,
-                "is_busy": false
-            }
-            """;
-        WireMock.stubFor(WireMock.get("/api/v1/drivers/1")
-            .willReturn(WireMock.aResponse()
-                .withStatus(200)
-                .withHeader("Content-Type", "application/json")
-                .withBody(driverResponse)));
-    }
-
-    private void mockPassengerService() {
-        String passengerResponse = """
-            {
-                "id": 1,
-                "first_name": "Jane",
-                "last_name": "Doe",
-                "email": "jane.doe@example.com",
-                "phone": "+375295162318",
-                "is_enabled": true,
-                "is_busy": false
-            }
-            """;
-        WireMock.stubFor(WireMock.get("/api/v1/passengers/1")
-            .willReturn(WireMock.aResponse()
-                .withStatus(200)
-                .withHeader("Content-Type", "application/json")
-                .withBody(passengerResponse)));
+        rideId = Long.valueOf(id);
     }
 
     @Test
     public void testCreateRide() {
-        addressRepository.save(
-            new Address(1L, IntegrationTestDataProvider.BASE_DEPARTURE_ADDRESS2, 42.7128,
-                -73.0060));
-        addressRepository.save(
-            new Address(2L, IntegrationTestDataProvider.BASE_DESTINATION_ADDRESS2, 36.0522,
-                -128.2437));
-
         given()
             .contentType(ContentType.JSON)
             .body(IntegrationTestDataProvider.createRideRequest2())
@@ -142,16 +96,26 @@ public class RideControllerImplIT {
     }
 
     @Test
+    public void testGetRideById() {
+        given()
+            .contentType(ContentType.JSON)
+            .when()
+            .get(ControllerRouteConstant.GET_RIDE_BY_ID_URL.formatted(rideId))
+            .then()
+            .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
     public void testUpdateRide() {
         given()
             .contentType(ContentType.JSON)
             .body(IntegrationTestDataProvider.createUpdateRideRequest())
             .when()
-            .put(String.format(ControllerRouteConstant.UPDATE_RIDE_URL, rideId))
+            .put(ControllerRouteConstant.UPDATE_RIDE_URL.formatted(rideId))
             .then()
             .statusCode(HttpStatus.OK.value())
-            .body("departureAddress.addressName", equalTo("улица Воровского, 20, Брест, Беларусь"))
-            .body("destinationAddress.addressName", equalTo("проспект Машерова, 67, Брест, Беларусь"));
+            .body("departure_address", equalTo("улица Воровского, 20, Брест, Беларусь"))
+            .body("destination_address", equalTo("проспект Машерова, 67, Брест, Беларусь"));
     }
 
     @Test
@@ -160,30 +124,21 @@ public class RideControllerImplIT {
             .contentType(ContentType.JSON)
             .body(IntegrationTestDataProvider.createUpdateRideStatusRequest())
             .when()
-            .patch(String.format(ControllerRouteConstant.UPDATE_RIDE_STATUS_URL, rideId))
+            .patch(ControllerRouteConstant.UPDATE_RIDE_STATUS_URL.formatted(rideId))
             .then()
             .statusCode(HttpStatus.OK.value())
             .body("ride_status", equalTo(RideStatus.WAITING_FOR_DRIVER.toString()));
     }
 
     @Test
-    public void testGetRideById() {
-        given()
-            .contentType(ContentType.JSON)
-            .when()
-            .get(String.format(ControllerRouteConstant.GET_RIDE_BY_ID_URL, rideId))
-            .then()
-            .statusCode(HttpStatus.OK.value())
-            .body("id", equalTo(rideId.intValue()));
-    }
-
-    @Test
     public void testGetAllRidesByDriverId() {
         given()
+            .queryParam("current_page", 0)
+            .queryParam("limit", 1)
             .contentType(ContentType.JSON)
             .when()
-            .get(String.format(ControllerRouteConstant.GET_ALL_RIDES_BY_DRIVER_ID_URL,
-                IntegrationTestDataProvider.BASE_DRIVER_ID) + "?current_page=0&limit=10")
+            .get(ControllerRouteConstant.GET_ALL_RIDES_BY_DRIVER_ID_URL.formatted(
+                IntegrationTestDataProvider.BASE_DRIVER_ID))
             .then()
             .statusCode(HttpStatus.OK.value())
             .body("content.size()", equalTo(1));
@@ -192,10 +147,12 @@ public class RideControllerImplIT {
     @Test
     public void testGetAllRidesByPassengerId() {
         given()
+            .queryParam("current_page", 0)
+            .queryParam("limit", 1)
             .contentType(ContentType.JSON)
             .when()
-            .get(String.format(ControllerRouteConstant.GET_ALL_RIDES_BY_PASSENGER_ID_URL,
-                IntegrationTestDataProvider.BASE_PASSENGER_ID) + "?current_page=0&limit=10")
+            .get(ControllerRouteConstant.GET_ALL_RIDES_BY_PASSENGER_ID_URL.formatted(
+                IntegrationTestDataProvider.BASE_PASSENGER_ID))
             .then()
             .statusCode(HttpStatus.OK.value())
             .body("content.size()", equalTo(1));
@@ -204,11 +161,14 @@ public class RideControllerImplIT {
     @Test
     public void testGetAllRides() {
         given()
+            .queryParam("current_page", 0)
+            .queryParam("limit", 1)
             .contentType(ContentType.JSON)
             .when()
-            .get(ControllerRouteConstant.GET_ALL_RIDES_URL + "?current_page=0&limit=10")
+            .get(ControllerRouteConstant.GET_ALL_RIDES_URL)
             .then()
             .statusCode(HttpStatus.OK.value())
             .body("content.size()", equalTo(1));
     }
+
 }

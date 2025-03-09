@@ -53,10 +53,12 @@ public class AddressService {
         Address departureAddress = addressCacheService.findOrCreateAddress(newDepartureAddress);
         Address destinationAddress = addressCacheService.findOrCreateAddress(newDestinationAddress);
 
-        validateCurrentAddressAndNewAddressDifferent(ride.getDepartureAddress().getAddressName(),
-            newDepartureAddress.trim());
-        validateCurrentAddressAndNewAddressDifferent(ride.getDestinationAddress().getAddressName(),
-            newDestinationAddress.trim());
+        if (ride.getDepartureAddress() != null && ride.getDestinationAddress() != null) {
+            validateCurrentAddressAndNewAddressDifferent(ride.getDepartureAddress().getAddressName(),
+                newDepartureAddress.trim());
+            validateCurrentAddressAndNewAddressDifferent(ride.getDestinationAddress().getAddressName(),
+                newDestinationAddress.trim());
+        }
 
         double distance = mapboxClient.calculateDistance(departureAddress, destinationAddress);
         BigDecimal price = priceCalculator.calculatePrice(distance);

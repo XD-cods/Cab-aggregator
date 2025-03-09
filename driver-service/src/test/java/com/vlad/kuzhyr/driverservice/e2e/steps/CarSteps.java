@@ -1,6 +1,6 @@
 package com.vlad.kuzhyr.driverservice.e2e.steps;
 
-import com.vlad.kuzhyr.driverservice.constant.E2EConstant;
+import com.vlad.kuzhyr.driverservice.constant.E2eConstant;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -34,13 +34,13 @@ public class CarSteps {
         response = RestAssured.given()
             .contentType(ContentType.JSON)
             .body(requestBody)
-            .post(E2EConstant.CARS_URL);
+            .post(E2eConstant.CARS_URL);
     }
 
     @When("I send a request to get the car by ID")
     public void getCarById() {
         response = RestAssured.given()
-            .get(E2EConstant.CARS_URL + "/" + carId);
+            .get(E2eConstant.CARS_URL + "/" + carId);
     }
 
     @When("I send a request to update the car details")
@@ -48,13 +48,13 @@ public class CarSteps {
         response = RestAssured.given()
             .contentType(ContentType.JSON)
             .body(requestBody)
-            .put(E2EConstant.CARS_URL + "/" + carId);
+            .put(E2eConstant.CARS_URL + "/" + carId);
     }
 
     @When("I send a request to delete the car")
     public void deleteCar() {
         response = RestAssured.given()
-            .delete(E2EConstant.CARS_URL + "/" + carId);
+            .delete(E2eConstant.CARS_URL + "/" + carId);
     }
 
     @Then("I should get the car details in the response")

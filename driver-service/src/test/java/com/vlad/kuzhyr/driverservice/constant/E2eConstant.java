@@ -1,6 +1,6 @@
 package com.vlad.kuzhyr.driverservice.constant;
 
-public class E2EConstant {
+public class E2eConstant {
 
     public static final String BASE_URL = "http://localhost:5003/api/v1";
     public static final String DRIVERS_URL = BASE_URL + "/drivers";

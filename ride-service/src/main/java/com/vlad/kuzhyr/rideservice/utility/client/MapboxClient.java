@@ -2,7 +2,6 @@ package com.vlad.kuzhyr.rideservice.utility.client;
 
 import com.vlad.kuzhyr.rideservice.persistence.entity.Address;
 import com.vlad.kuzhyr.rideservice.utility.constant.ArrayIndexConstant;
-import com.vlad.kuzhyr.rideservice.utility.constant.MapBoxConstant;
 import com.vlad.kuzhyr.rideservice.utility.mapper.MapboxMapper;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -28,12 +27,18 @@ public class MapboxClient {
     @Value("${mapbox.api.secret-key}")
     private String mapboxAccessToken;
 
+    @Value("${mapbox.api.routes.geocode}")
+    private String mapboxGeocodeUrl;
+
+    @Value("${mapbox.api.routes.distance}")
+    private String mapboxDistanceUrl;
+
     @Cacheable(value = "geocode", key = "#address.trim().toLowerCase()")
     public double[] geocodeAddress(String address) {
         log.debug("geocodeAddress: Entering method. Address: {}", address);
 
         URI url = UriComponentsBuilder
-            .fromUriString(MapBoxConstant.GEOCODE_URL)
+            .fromUriString(mapboxGeocodeUrl)
             .queryParam("q", address)
             .queryParam("access_token", mapboxAccessToken)
             .buildAndExpand()
@@ -63,7 +68,7 @@ public class MapboxClient {
                              destination.getLongitude() + "," + destination.getLatitude();
 
         URI url = UriComponentsBuilder
-            .fromUriString(MapBoxConstant.ROUTE_URL)
+            .fromUriString(mapboxDistanceUrl)
             .queryParam("access_token", mapboxAccessToken)
             .buildAndExpand(coordinates)
             .toUri();
