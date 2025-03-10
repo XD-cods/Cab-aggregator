@@ -42,7 +42,7 @@ public class RideStep {
     private RequestSpecification request;
     private Long rideId;
 
-    @Given("configurator server")
+    @Given("a configured service")
     public void configuratorServer() {
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = port;

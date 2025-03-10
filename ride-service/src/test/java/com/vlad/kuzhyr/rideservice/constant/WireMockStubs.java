@@ -2,7 +2,10 @@ package com.vlad.kuzhyr.rideservice.constant;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class WireMockStubs {
 
     public static void mockDriverService() {

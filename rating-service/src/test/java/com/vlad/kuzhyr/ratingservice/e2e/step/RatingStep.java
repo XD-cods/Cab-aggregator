@@ -1,6 +1,6 @@
 package com.vlad.kuzhyr.ratingservice.e2e.step;
 
-import com.vlad.kuzhyr.ratingservice.config.E2EConstant;
+import com.vlad.kuzhyr.ratingservice.constant.ControllerRouteConstant;
 import com.vlad.kuzhyr.ratingservice.persistence.entity.RatedBy;
 import com.vlad.kuzhyr.ratingservice.persistence.entity.Rating;
 import com.vlad.kuzhyr.ratingservice.persistence.entity.RideInfo;
@@ -15,10 +15,14 @@ import io.restassured.response.Response;
 import lombok.RequiredArgsConstructor;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
 @RequiredArgsConstructor
 public class RatingStep {
+
+    @LocalServerPort
+    private int port;
 
     private final RideInfoRepository rideInfoRepository;
     private final RatingRepository ratingRepository;
@@ -27,6 +31,12 @@ public class RatingStep {
     private Long ratingId;
     private String requestBody;
     private RideInfo rideInfo;
+
+    @Given("a configured service")
+    public void aConfiguredService() {
+        RestAssured.baseURI = "http://localhost";
+        RestAssured.port = port;
+    }
 
     @Given("a rating request body:")
     public void iHaveARatingRequestBody(String body) {
@@ -66,7 +76,7 @@ public class RatingStep {
 
     @Given("a rating exists for passenger {long} with id {long}")
     public void ratingExistsForPassenger(long passengerId, long ratingId) {
-        if(!rideInfoRepository.existsById(2L)) {
+        if (!rideInfoRepository.existsById(2L)) {
             RideInfo rideInfo = new RideInfo();
             rideInfo.setRideId(2L);
             rideInfo.setPassengerId(passengerId);
@@ -85,7 +95,7 @@ public class RatingStep {
 
     @Given("a rating exists for driver {long} with id {long} and rating {double}")
     public void ratingExistsForDriver(long driverId, long ratingId, double ratingValue) {
-        if(rideInfoRepository.existsById(3L)) {
+        if (rideInfoRepository.existsById(3L)) {
             RideInfo rideInfo = new RideInfo();
             rideInfo.setRideId(3L);
             rideInfo.setPassengerId(3L);
@@ -107,7 +117,7 @@ public class RatingStep {
         response = RestAssured.given()
             .contentType(ContentType.JSON)
             .body(requestBody)
-            .post(E2EConstant.RATINGS_URL);
+            .post(ControllerRouteConstant.CREATE_RATING_URL);
     }
 
     @When("I send a request to get the rating by ID")
@@ -117,7 +127,7 @@ public class RatingStep {
         }
 
         response = RestAssured.given()
-            .get(E2EConstant.RATINGS_URL + "/" + ratingId);
+            .get(ControllerRouteConstant.GET_RATING_BY_ID_URL.formatted(ratingId));
     }
 
     @When("I send a request to update the rating")
@@ -125,19 +135,19 @@ public class RatingStep {
         response = RestAssured.given()
             .contentType(ContentType.JSON)
             .body(requestBody)
-            .put(E2EConstant.RATINGS_URL + "/" + ratingId);
+            .put(ControllerRouteConstant.UPDATE_RATING_URL.formatted(ratingId));
     }
 
     @When("I send a request to get the average rating by passenger ID: {int}")
     public void getAverageRatingByPassengerId(int passengerId) {
         response = RestAssured.given()
-            .get(E2EConstant.RATINGS_URL + "/passenger/" + (long) passengerId);
+            .get(ControllerRouteConstant.GET_AVERAGE_RATING_BY_PASSENGER_ID_URL.formatted((long) passengerId));
     }
 
     @When("I send a request to get the average rating by driver ID: {int}")
     public void getAverageRatingByDriverId(int driverId) {
         response = RestAssured.given()
-            .get(E2EConstant.RATINGS_URL + "/driver/" + (long) driverId);
+            .get(ControllerRouteConstant.GET_AVERAGE_RATING_BY_DRIVER_ID_URL.formatted((long) driverId));
     }
 
     @When("I send a request to get all ratings with page {int} and limit {int}")
@@ -145,7 +155,7 @@ public class RatingStep {
         response = RestAssured.given()
             .queryParam("current_page", page)
             .queryParam("limit", limit)
-            .get(E2EConstant.RATINGS_URL);
+            .get(ControllerRouteConstant.GET_RATINGS_URL);
     }
 
     @Then("I should get the rating details in the response")

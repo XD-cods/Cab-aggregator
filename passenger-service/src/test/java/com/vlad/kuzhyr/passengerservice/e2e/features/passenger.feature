@@ -1,6 +1,7 @@
 Feature: Passenger API
 
   Scenario: Create a new passenger
+    Given a configured service
     Given a passenger request body:
     """
     {
@@ -14,6 +15,7 @@ Feature: Passenger API
     Then I should get a passenger response with status 201
 
   Scenario: Create a new passenger, passenger already exists by email
+    Given a configured service
     Given a passenger request body:
     """
     {
@@ -27,6 +29,7 @@ Feature: Passenger API
     Then I should get a passenger response with status 409
 
   Scenario: Create a new passenger, passenger request not valid
+    Given a configured service
     Given a passenger request body:
     """
     {
@@ -40,17 +43,20 @@ Feature: Passenger API
     Then I should get a passenger response with status 400
 
   Scenario: Get passenger by ID
+    Given a configured service
     Given a passenger by id: 1
     When I send a request to get the passenger by ID
     Then I should get the passenger details in the response
     And I should get a passenger response with status 200
 
   Scenario: Get passenger by ID, passenger not found
+    Given a configured service
     Given a passenger by id: 0
     When I send a request to get the passenger by ID
     Then I should get a passenger response with status 404
 
   Scenario: Update passenger details
+    Given a configured service
     Given a passenger by id: 1
     Given a passenger request body:
     """
@@ -66,11 +72,13 @@ Feature: Passenger API
     And I should get a passenger response with status 200
 
   Scenario: Delete passenger
+    Given a configured service
     Given a passenger by id: 1
     When I send a request to delete the passenger
     Then I should get a passenger response with status 200
 
   Scenario: Delete passenger, passenger not found
+    Given a configured service
     Given a passenger by id: 0
     When I send a request to delete the passenger
     Then I should get a passenger response with status 404

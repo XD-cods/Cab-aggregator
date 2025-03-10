@@ -6,7 +6,10 @@ import com.vlad.kuzhyr.driverservice.persistence.entity.Gender;
 import com.vlad.kuzhyr.driverservice.web.dto.request.CarRequest;
 import com.vlad.kuzhyr.driverservice.web.dto.request.DriverRequest;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class IntegrationTestDataProvider {
 
     public static final String BASE_FIRSTNAME = "Vlad";

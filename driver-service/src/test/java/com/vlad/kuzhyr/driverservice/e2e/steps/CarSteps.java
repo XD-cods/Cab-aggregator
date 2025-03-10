@@ -1,6 +1,6 @@
 package com.vlad.kuzhyr.driverservice.e2e.steps;
 
-import com.vlad.kuzhyr.driverservice.constant.E2eConstant;
+import com.vlad.kuzhyr.driverservice.constant.ControllerRouteConstant;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -9,15 +9,25 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class CarSteps {
 
+    @LocalServerPort
+    private int port;
+
     private Response response;
     private Long carId;
     private String requestBody;
+
+    @Given("a configured car service")
+    public void aConfiguredService() {
+        RestAssured.baseURI = "http://localhost";
+        RestAssured.port = port;
+    }
 
     @Given("a car request body:")
     public void iHaveACarRequestBody(String body) {
@@ -34,13 +44,13 @@ public class CarSteps {
         response = RestAssured.given()
             .contentType(ContentType.JSON)
             .body(requestBody)
-            .post(E2eConstant.CARS_URL);
+            .post(ControllerRouteConstant.CREATE_CAR_URL);
     }
 
     @When("I send a request to get the car by ID")
     public void getCarById() {
         response = RestAssured.given()
-            .get(E2eConstant.CARS_URL + "/" + carId);
+            .get(ControllerRouteConstant.GET_CAR_BY_ID_URL.formatted(carId));
     }
 
     @When("I send a request to update the car details")
@@ -48,13 +58,13 @@ public class CarSteps {
         response = RestAssured.given()
             .contentType(ContentType.JSON)
             .body(requestBody)
-            .put(E2eConstant.CARS_URL + "/" + carId);
+            .put(ControllerRouteConstant.UPDATE_CAR_URL.formatted(carId));
     }
 
     @When("I send a request to delete the car")
     public void deleteCar() {
         response = RestAssured.given()
-            .delete(E2eConstant.CARS_URL + "/" + carId);
+            .delete(ControllerRouteConstant.DELETE_CAR_URL.formatted(carId));
     }
 
     @Then("I should get the car details in the response")

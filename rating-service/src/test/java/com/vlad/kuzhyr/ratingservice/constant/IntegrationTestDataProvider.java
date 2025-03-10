@@ -5,7 +5,10 @@ import com.vlad.kuzhyr.ratingservice.persistence.entity.Rating;
 import com.vlad.kuzhyr.ratingservice.persistence.entity.RideInfo;
 import com.vlad.kuzhyr.ratingservice.web.dto.request.CreateRatingRequest;
 import com.vlad.kuzhyr.ratingservice.web.dto.request.UpdateRatingRequest;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class IntegrationTestDataProvider {
 
     public static final Long BASE_RIDE_ID = 1L;

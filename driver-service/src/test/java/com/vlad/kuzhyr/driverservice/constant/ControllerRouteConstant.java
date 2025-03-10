@@ -1,5 +1,9 @@
 package com.vlad.kuzhyr.driverservice.constant;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ControllerRouteConstant {
 
     public static final String CAR_API_BASE_URL = "/api/v1/cars";

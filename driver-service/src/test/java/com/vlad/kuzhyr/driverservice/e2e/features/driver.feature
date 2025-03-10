@@ -1,6 +1,7 @@
 Feature: Driver API
 
   Scenario: Create a new driver
+    Given a configured driver service
     Given a driver request body:
     """
     {
@@ -16,6 +17,7 @@ Feature: Driver API
     Then I should get a driver response with status 201
 
   Scenario: Create a new driver, driver already exists by email
+    Given a configured driver service
     Given a driver request body:
     """
     {
@@ -31,6 +33,7 @@ Feature: Driver API
     Then I should get a driver response with status 409
 
   Scenario: Create a new driver, driver already exists by phone
+    Given a configured driver service
     Given a driver request body:
     """
     {
@@ -46,6 +49,7 @@ Feature: Driver API
     Then I should get a driver response with status 409
 
   Scenario: Create a new driver, driver request not a valid
+    Given a configured driver service
     Given a driver request body:
     """
     {
@@ -61,17 +65,20 @@ Feature: Driver API
     Then I should get a driver response with status 400
 
   Scenario: Get driver by ID
+    Given a configured driver service
     Given a driver by id: 1
     When I send a request to get the driver by ID
     Then I should get the driver details in the response
     And I should get a driver response with status 200
 
   Scenario: Get driver by ID, driver not found
+    Given a configured driver service
     Given a driver by id: 0
     When I send a request to get the driver by ID
     Then  I should get a driver response with status 404
 
   Scenario: Update driver details
+    Given a configured driver service
     Given a driver by id: 1
     Given a driver request body:
     """
@@ -89,11 +96,13 @@ Feature: Driver API
     And I should get a driver response with status 200
 
   Scenario: Delete driver
+    Given a configured driver service
     Given a driver by id: 1
     When I send a request to delete the driver
     Then I should get a driver response with status 200
 
   Scenario: Delete driver, driver not found
+    Given a configured driver service
     Given a driver by id: 0
     When I send a request to delete the driver
     Then I should get a driver response with status 404

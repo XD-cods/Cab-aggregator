@@ -1,5 +1,9 @@
 package com.vlad.kuzhyr.ratingservice.constant;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ControllerRouteConstant {
 
     public static final String BASE_RATING_URL = "/api/v1/ratings";

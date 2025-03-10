@@ -9,7 +9,10 @@ import com.vlad.kuzhyr.driverservice.web.dto.request.DriverUpdateCarsRequest;
 import com.vlad.kuzhyr.driverservice.web.dto.response.CarResponse;
 import com.vlad.kuzhyr.driverservice.web.dto.response.DriverResponse;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class UnitTestDataProvider {
 
     public static final Long TEST_ID = 1L;

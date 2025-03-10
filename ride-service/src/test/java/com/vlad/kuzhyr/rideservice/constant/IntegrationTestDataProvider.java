@@ -4,7 +4,10 @@ import com.vlad.kuzhyr.rideservice.persistence.entity.RideStatus;
 import com.vlad.kuzhyr.rideservice.web.dto.request.RideRequest;
 import com.vlad.kuzhyr.rideservice.web.dto.request.UpdateRideRequest;
 import com.vlad.kuzhyr.rideservice.web.dto.request.UpdateRideStatusRequest;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class IntegrationTestDataProvider {
 
     public static final Long BASE_DRIVER_ID = 1L;

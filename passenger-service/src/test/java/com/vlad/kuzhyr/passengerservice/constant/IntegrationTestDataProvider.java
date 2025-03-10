@@ -2,7 +2,10 @@ package com.vlad.kuzhyr.passengerservice.constant;
 
 import com.vlad.kuzhyr.passengerservice.persistence.entity.Passenger;
 import com.vlad.kuzhyr.passengerservice.web.dto.request.PassengerRequest;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class IntegrationTestDataProvider {
 
     public static final String BASE_FIRSTNAME = "Vlad";

@@ -1,7 +1,10 @@
 package com.vlad.kuzhyr.rideservice.constant;
 
 import com.vlad.kuzhyr.rideservice.web.dto.request.RideRequest;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class E2eConstant {
 
     public static final Long BASE_DRIVER_ID = 1L;
