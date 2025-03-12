@@ -26,6 +26,13 @@ spring:
     topic:
       passenger-busy-topic: passenger.status.updated
 
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_DEFAULT_ZONE:http://localhost:${EUREKA_PORT:8761}/eureka}
+    register-with-eureka: ${REGISTER_WITH_EUREKA:true}
+    fetch-registry: ${EUREKA_FETCH_REGISTRY:true}
+
 management:
   endpoints:
     web:

@@ -31,7 +31,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ImportTestcontainers(TestContainerConfig.class)
 @EmbeddedKafka
-@AutoConfigureWireMock(port = 9090)
+@AutoConfigureWireMock(port = 0)
 @ActiveProfiles("test")
 public class RideControllerImplIT {
 

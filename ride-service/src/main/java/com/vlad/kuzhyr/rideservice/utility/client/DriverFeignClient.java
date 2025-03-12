@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(
     name = "driver-service",
-    url = "${routes.driver-service}"
+    path = "/api/v1/drivers"
 )
 public interface DriverFeignClient {
 

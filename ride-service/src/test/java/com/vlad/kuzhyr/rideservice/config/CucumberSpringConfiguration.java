@@ -8,9 +8,9 @@ import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EmbeddedKafka
-@AutoConfigureWireMock(port = 9090)
+@AutoConfigureWireMock(port = 0)
 @CucumberContextConfiguration
 @ImportTestcontainers(TestContainerConfig.class)
 public class CucumberSpringConfiguration {

@@ -40,12 +40,20 @@ spring:
     message:
       scheduler:
         fixed-rate: 3000
+
   cache:
     type: redis
     redis:
       time-to-live: 10000
       key-prefix: "ride-service:"
       use-key-prefix: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_DEFAULT_ZONE:http://localhost:${EUREKA_PORT:8761}/eureka}
+    register-with-eureka: ${REGISTER_WITH_EUREKA:true}
+    fetch-registry: ${EUREKA_FETCH_REGISTRY:true}
 
 management:
   endpoints:
@@ -65,7 +73,3 @@ mapbox:
       geocode: https://api.mapbox.com/search/geocode/v6/forward
       distance: https://api.mapbox.com/directions/v5/mapbox/driving/{coordinates}
     secret-key: ${MAPBOX_API_KEY}
-
-routes:
-  passenger-service: http://localhost:5008/api/v1/passengers
-  driver-service: http://localhost:5003/api/v1/drivers

@@ -19,3 +19,8 @@ logging:
     root: INFO
     org.springframework: INFO
     com.vlad.kuzhyr.driverservice: DEBUG
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false

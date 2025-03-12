@@ -29,7 +29,7 @@ Feature: Ride Service End-to-End Tests
   Scenario: Get a ride by ID
     Given a configured service
     Given a ride exists
-    When I get the ride with ID 1
+    When I get the ride with ID 4
     Then the response status should be 200
     And the response should contain the ride details
 
