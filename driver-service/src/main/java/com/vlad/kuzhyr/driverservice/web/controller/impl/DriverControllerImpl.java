@@ -51,13 +51,14 @@ public class DriverControllerImpl implements DriverController {
 
     @Override
     @PostMapping
-    public ResponseEntity<DriverResponse> createDriver(@Valid DriverRequest driverRequest) {
+    public ResponseEntity<DriverResponse> createDriver(@Valid @RequestBody DriverRequest driverRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(driverService.createDriver(driverRequest));
     }
 
     @Override
     @PutMapping("/{id}")
-    public ResponseEntity<DriverResponse> updateDriver(@PathVariable Long id, @Valid DriverRequest driverRequest) {
+    public ResponseEntity<DriverResponse> updateDriver(
+        @PathVariable Long id, @Valid @RequestBody DriverRequest driverRequest) {
         DriverResponse updatedDriver = driverService.updateDriver(id, driverRequest);
         return ResponseEntity.ok(updatedDriver);
     }

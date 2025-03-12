@@ -9,8 +9,11 @@ import com.vlad.kuzhyr.driverservice.web.dto.request.DriverUpdateCarsRequest;
 import com.vlad.kuzhyr.driverservice.web.dto.response.CarResponse;
 import com.vlad.kuzhyr.driverservice.web.dto.response.DriverResponse;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-public class UnitTestDataProvider {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class UnitTestDataProvider {
 
     public static final Long TEST_ID = 1L;
     public static final String TEST_DRIVER_EMAIL = "test@vlad.com";
@@ -142,6 +145,12 @@ public class UnitTestDataProvider {
     public static DriverUpdateCarsRequest driverUpdateCarsRequest() {
         return DriverUpdateCarsRequest.builder()
             .carIds(List.of(TEST_ID))
+            .build();
+    }
+
+    public static DriverUpdateCarsRequest driverUpdateCarsRequestNotValid() {
+        return DriverUpdateCarsRequest.builder()
+            .carIds(List.of(999L))
             .build();
     }
 

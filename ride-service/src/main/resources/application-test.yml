@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/testDb}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:1111}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+
+  liquibase:
+    enabled: true
+    contexts: test
+
+logging:
+  level:
+    root: INFO
+    org.springframework: INFO
+    com.vlad.kuzhyr.passengerservice: DEBUG
+
+mapbox:
+  api:
+    routes:
+      geocode: http://localhost:9090/search/geocode/v6/forward
+      distance: http://localhost:9090/directions/v5/mapbox/driving/{coordinates}
+    secret-key: test-token
+
+routes:
+  passenger-service: http://localhost:9090/api/v1/passengers
+  driver-service: http://localhost:9090/api/v1/drivers
+

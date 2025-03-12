@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/testDb}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:1111}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+
+  liquibase:
+    enabled: true
+    contexts: test
+
+logging:
+  level:
+    root: INFO
+    org.springframework: INFO
+    com.vlad.kuzhyr.driverservice: DEBUG

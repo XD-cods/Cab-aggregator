@@ -8,7 +8,10 @@ import com.vlad.kuzhyr.ratingservice.web.dto.request.UpdateRatingRequest;
 import com.vlad.kuzhyr.ratingservice.web.dto.response.AverageRatingResponse;
 import com.vlad.kuzhyr.ratingservice.web.dto.response.RatingResponse;
 import com.vlad.kuzhyr.ratingservice.web.dto.response.RideInfoResponse;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UnitTestDataProvider {
 
     public static final Long TEST_ID = 1L;

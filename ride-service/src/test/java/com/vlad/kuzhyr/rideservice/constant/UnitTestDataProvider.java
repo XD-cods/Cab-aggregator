@@ -13,7 +13,10 @@ import com.vlad.kuzhyr.rideservice.web.dto.response.RideResponse;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UnitTestDataProvider {
 
     public static final Long TEST_ID = 1L;

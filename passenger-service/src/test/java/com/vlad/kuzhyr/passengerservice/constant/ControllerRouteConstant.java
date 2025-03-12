@@ -1,5 +1,9 @@
 package com.vlad.kuzhyr.passengerservice.constant;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ControllerRouteConstant {
 
     public static final String BASE_PASSENGER_URL = "/api/v1/passengers";

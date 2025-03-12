@@ -3,7 +3,10 @@ package com.vlad.kuzhyr.passengerservice.constant;
 import com.vlad.kuzhyr.passengerservice.persistence.entity.Passenger;
 import com.vlad.kuzhyr.passengerservice.web.dto.request.PassengerRequest;
 import com.vlad.kuzhyr.passengerservice.web.dto.response.PassengerResponse;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UnitTestDataProvider {
 
     public static final Long TEST_PASSENGER_ID = 1L;
