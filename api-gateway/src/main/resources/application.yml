@@ -60,8 +60,3 @@ springdoc:
         name: Rating Service
       - url: /ride-service/v3/api-docs
         name: Ride Service
-
-logging:
-  level:
-    org.springframework.cloud.gateway: DEBUG
-    org.springframework.web: DEBUG
