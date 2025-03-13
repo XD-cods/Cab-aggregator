@@ -42,8 +42,14 @@ management:
       exposure:
         include: "*"
 
+openapi:
+  service:
+    title: driver-service doc
+    version: 1.0.0
+    url: http://localhost:8080
 springdoc:
   api-docs:
-    path: /api/v1/api-docs
+    path: /driver-service/v3/api-docs
   swagger-ui:
-    path: /api/v1/api-docs/swagger-ui.html
+    path: /driver-service/swagger-ui.html
+

@@ -61,15 +61,20 @@ management:
       exposure:
         include: "*"
 
-springdoc:
-  api-docs:
-    path: /api/v1/api-docs
-  swagger-ui:
-    path: /api/v1/api-docs/swagger-ui.html
-
 mapbox:
   api:
     routes:
       geocode: https://api.mapbox.com/search/geocode/v6/forward
       distance: https://api.mapbox.com/directions/v5/mapbox/driving/{coordinates}
     secret-key: ${MAPBOX_API_KEY}
+
+openapi:
+  service:
+    title: ride-service doc
+    version: 1.0.0
+    url: http://localhost:8080
+springdoc:
+  api-docs:
+    path: /ride-service/v3/api-docs
+  swagger-ui:
+    path: /ride-service/swagger-ui.html

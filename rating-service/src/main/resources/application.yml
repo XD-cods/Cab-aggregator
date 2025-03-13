@@ -37,11 +37,16 @@ management:
       exposure:
         include: "*"
 
+openapi:
+  service:
+    title: rating-service doc
+    version: 1.0.0
+    url: http://localhost:8080
 springdoc:
   api-docs:
-    path: /api/v1/api-docs
+    path: /rating-service/v3/api-docs
   swagger-ui:
-    path: /api/v1/api-docs/swagger-ui.html
+    path: /rating-service/swagger-ui.html
 
 rating:
   last:

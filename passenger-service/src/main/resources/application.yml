@@ -39,8 +39,13 @@ management:
       exposure:
         include: "*"
 
+openapi:
+  service:
+    title: passenger-service doc
+    version: 1.0.0
+    url: http://localhost:8080
 springdoc:
   api-docs:
-    path: /api/v1/api-docs
+    path: /passenger-service/v3/api-docs
   swagger-ui:
-    path: /api/v1/api-docs/swagger-ui.html
+    path: /passenger-service/swagger-ui.html
