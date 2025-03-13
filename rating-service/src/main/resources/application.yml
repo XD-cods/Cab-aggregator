@@ -1,15 +1,16 @@
 server:
-  port: 5009
+  port: ${SERVER_PORT:5009}
 
 spring:
   profiles:
-    active: dev
+    active: ${SPRING_PROFILES_ACTIVE:prod}
   application:
     name: rating-service
 
   jpa:
     hibernate:
       ddl-auto: validate
+
   kafka:
     bootstrap-servers: ${KAFKA_URL:localhost:9092}
     consumer:
@@ -24,6 +25,11 @@ spring:
     topic:
       ride-completed-topic: ride.completed
 
+rating:
+  last:
+    rides:
+      count: ${RATING_LAST_RIDES_COUNT:20}
+
 eureka:
   client:
     service-url:
@@ -31,24 +37,14 @@ eureka:
     register-with-eureka: ${REGISTER_WITH_EUREKA:true}
     fetch-registry: ${EUREKA_FETCH_REGISTRY:true}
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-
-openapi:
-  service:
-    title: rating-service doc
-    version: 1.0.0
-    url: http://localhost:8080
 springdoc:
   api-docs:
     path: /rating-service/v3/api-docs
   swagger-ui:
     path: /rating-service/swagger-ui.html
 
-rating:
-  last:
-    rides:
-      count: 20
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
