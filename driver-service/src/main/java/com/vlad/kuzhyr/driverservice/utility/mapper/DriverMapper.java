@@ -24,12 +24,14 @@ public interface DriverMapper {
     @Mapping(source = "cars", target = "carIds", qualifiedByName = "mapCarIds")
     DriverResponse toResponse(Driver driver);
 
+    @Mapping(target = "isBusy", ignore = true)
     @Mapping(target = "cars", ignore = true)
     @Mapping(target = "isEnabled", ignore = true)
     @Mapping(target = "id", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateFromRequest(DriverRequest driverRequest, @MappingTarget Driver existingDriver);
 
+    @Mapping(target = "isBusy", ignore = true)
     @Mapping(target = "cars", ignore = true)
     @Mapping(target = "isEnabled", ignore = true)
     @Mapping(target = "id", ignore = true)

@@ -12,7 +12,7 @@ spring:
     show-sql: true
 
   kafka:
-    bootstrap-servers: ${KAFKA_URL:localhost:9092}
+    bootstrap-servers: ${KAFKA_URLS:localhost:9092}
     consumer:
       group-id: passenger-ride-group
       key-deserializer: org.apache.kafka.common.serialization.LongDeserializer

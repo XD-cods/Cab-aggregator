@@ -21,11 +21,11 @@ spring:
             loggerLevel: full
   data:
     redis:
-      port: 6379
-      host: localhost
+      port: ${REDIS_PORT:6379}
+      host: ${REDIS_HOST:localhost}
 
   kafka:
-    bootstrap-servers: ${KAFKA_URL:localhost:9092}
+    bootstrap-servers: ${KAFKA_URLS:localhost:9092}
     producer:
       key-serializer: org.apache.kafka.common.serialization.LongSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
