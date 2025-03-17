@@ -5,29 +5,41 @@ spring:
     password: ${DB_PASSWORD:1111}
     driver-class-name: org.postgresql.Driver
 
+  cloud:
+    discovery:
+      client:
+        simple:
+          instances:
+            driver-service:
+              - uri: http://localhost:${wiremock.server.port}
+            passenger-service:
+              - uri: http://localhost:${wiremock.server.port}
+
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
     show-sql: true
 
   liquibase:
     enabled: true
     contexts: test
 
-logging:
-  level:
-    root: INFO
-    org.springframework: INFO
-    com.vlad.kuzhyr.passengerservice: DEBUG
-
 mapbox:
   api:
     routes:
-      geocode: http://localhost:9090/search/geocode/v6/forward
-      distance: http://localhost:9090/directions/v5/mapbox/driving/{coordinates}
+      geocode: http://localhost:${wiremock.server.port}/search/geocode/v6/forward
+      distance: http://localhost:${wiremock.server.port}/directions/v5/mapbox/driving/{coordinates}
     secret-key: test-token
 
-routes:
-  passenger-service: http://localhost:9090/api/v1/passengers
-  driver-service: http://localhost:9090/api/v1/drivers
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false
 
+logging:
+  level:
+    root: INFO
+    com.vlad.kuzhyr.passengerservice: DEBUG
+    org.springframework.cloud.openfeign: DEBUG
+    com.github.tomakehurst.wiremock: DEBUG

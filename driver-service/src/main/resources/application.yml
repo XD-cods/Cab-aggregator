@@ -1,9 +1,9 @@
 server:
-  port: 5003
+  port: ${SERVER_PORT:5003}
 
 spring:
   profiles:
-    active: dev
+    active: ${SPRING_PROFILES_ACTIVE:prod}
   application:
     name: driver-service
 
@@ -26,18 +26,24 @@ spring:
             value:
               delegate:
                 class: org.apache.kafka.common.serialization.StringDeserializer
-
     topic:
       driver-busy-topic: driver.status.updated
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_DEFAULT_ZONE:http://localhost:${EUREKA_PORT:8761}/eureka}
+    register-with-eureka: ${REGISTER_WITH_EUREKA:true}
+    fetch-registry: ${EUREKA_FETCH_REGISTRY:true}
+
+springdoc:
+  api-docs:
+    path: /driver-service/v3/api-docs
+  swagger-ui:
+    path: /driver-service/swagger-ui.html
 
 management:
   endpoints:
     web:
       exposure:
         include: "*"
-
-springdoc:
-  api-docs:
-    path: /api/v1/api-docs
-  swagger-ui:
-    path: /api/v1/api-docs/swagger-ui.html

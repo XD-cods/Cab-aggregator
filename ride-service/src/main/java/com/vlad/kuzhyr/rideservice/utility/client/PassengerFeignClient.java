@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(
     name = "passenger-service",
-    url = "${routes.passenger-service}"
+    path = "/api/v1/passengers"
 )
 public interface PassengerFeignClient {
 

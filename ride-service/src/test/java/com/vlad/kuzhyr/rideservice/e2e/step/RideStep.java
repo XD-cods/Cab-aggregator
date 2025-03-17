@@ -49,7 +49,7 @@ public class RideStep {
 
         request = RestAssured.given().contentType("application/json");
 
-        WireMock.reset();
+        WireMock.resetAllRequests();
 
         WireMockStubs.mockMapboxGeocode();
         WireMockStubs.mockMapboxDistance();

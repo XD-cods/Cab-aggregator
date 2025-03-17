@@ -1,9 +1,9 @@
 server:
-  port: 5008
+  port: ${SERVER_PORT:5008}
 
 spring:
   profiles:
-    active: dev
+    active: ${SPRING_PROFILES_ACTIVE:prod}
   application:
     name: passenger-service
   jpa:
@@ -12,7 +12,7 @@ spring:
     show-sql: true
 
   kafka:
-    bootstrap-servers: ${KAFKA_URL:localhost:9092}
+    bootstrap-servers: ${KAFKA_URLS:localhost:9092}
     consumer:
       group-id: passenger-ride-group
       key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
@@ -26,14 +26,21 @@ spring:
     topic:
       passenger-busy-topic: passenger.status.updated
 
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_DEFAULT_ZONE:http://localhost:${EUREKA_PORT:8761}/eureka}
+    register-with-eureka: ${REGISTER_WITH_EUREKA:true}
+    fetch-registry: ${EUREKA_FETCH_REGISTRY:true}
+
+springdoc:
+  api-docs:
+    path: /passenger-service/v3/api-docs
+  swagger-ui:
+    path: /passenger-service/swagger-ui.html
+
 management:
   endpoints:
     web:
       exposure:
         include: "*"
-
-springdoc:
-  api-docs:
-    path: /api/v1/api-docs
-  swagger-ui:
-    path: /api/v1/api-docs/swagger-ui.html

@@ -1,6 +1,12 @@
 spring:
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/postgres}
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:1111}
-    driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
+    url: ${PASSENGER_DB_URL:jdbc:postgresql://localhost:5432/postgres}
+    username: ${PASSENGER_DB_USERNAME:postgres}
+    password: ${PASSENGER_DB_PASSWORD:1111}
+    driver-class-name: ${PASSENGER_DB_DRIVER:org.postgresql.Driver}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
