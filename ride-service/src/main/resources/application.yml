@@ -9,13 +9,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
-    show-sql: true
+    show-sql: false
   cloud:
     openfeign:
       client:
         config:
           default:
-            retryer: feign.Retryer$Default
             connectTimeout: 5000
             readTimeout: 5000
             loggerLevel: full
@@ -47,6 +46,24 @@ spring:
       time-to-live: ${REDIS_TTL:3000}
       key-prefix: "ride-service:"
       use-key-prefix: true
+
+resilience4j:
+  retry:
+    configs:
+      default:
+        registerHealthIndicator: true
+        max-attempts: 3
+        waitDuration: 500ms
+        retryExceptions:
+          - org.springframework.web.client.RestClientException
+
+  circuitbreaker:
+    configs:
+      default:
+        failureRateThreshold: 50
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        waitDurationInOpenState: 5000ms
 
 mapbox:
   api:

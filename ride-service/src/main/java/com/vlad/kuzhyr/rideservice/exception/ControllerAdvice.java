@@ -8,14 +8,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.ConstraintViolationException;
-import java.time.LocalDateTime;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.time.LocalDateTime;
+import java.util.Map;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -32,8 +33,7 @@ public class ControllerAdvice {
         @ApiResponse(
             responseCode = "404",
             description = "Resource not found",
-            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-            )
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<ErrorResponse> notFoundException(Exception exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse.builder()
@@ -65,8 +65,7 @@ public class ControllerAdvice {
         @ApiResponse(
             responseCode = "500",
             description = "Internal server error occurred",
-            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-            )
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @ExceptionHandler(InternalServerErrorOccurred.class)
     public ResponseEntity<ErrorResponse> internalServerErrorOccurred(InternalServerErrorOccurred exception) {
@@ -81,8 +80,7 @@ public class ControllerAdvice {
         @ApiResponse(
             responseCode = "400",
             description = "Request arguments not valid exception",
-            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-            )
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @ExceptionHandler(value = {
         MethodArgumentNotValidException.class,
@@ -114,6 +112,24 @@ public class ControllerAdvice {
     public ResponseEntity<ErrorResponse> handleConstraintViolation(ConstraintViolationException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.builder()
             .error(String.valueOf(HttpStatus.BAD_REQUEST))
+            .errorDescription(exception.getMessage())
+            .timestamp(LocalDateTime.now())
+            .build());
+    }
+
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "503",
+            description = "External service is unavailable",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @ExceptionHandler(value = {
+        DriverServiceUnavailableException.class,
+        PassengerServiceUnavailableException.class
+    })
+    public ResponseEntity<ErrorResponse> handleDriverServiceUnavailable(DriverServiceUnavailableException exception) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ErrorResponse.builder()
+            .error(String.valueOf(HttpStatus.SERVICE_UNAVAILABLE))
             .errorDescription(exception.getMessage())
             .timestamp(LocalDateTime.now())
             .build());
