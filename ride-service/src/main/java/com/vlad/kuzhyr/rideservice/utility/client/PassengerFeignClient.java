@@ -1,6 +1,7 @@
 package com.vlad.kuzhyr.rideservice.utility.client;
 
-import com.vlad.kuzhyr.rideservice.utility.fallback.factory.PassengerFeignClientFallbackFactory;
+import com.vlad.kuzhyr.rideservice.exception.FeignClientException;
+import com.vlad.kuzhyr.rideservice.exception.PassengerServiceUnavailableException;
 import com.vlad.kuzhyr.rideservice.web.dto.external.PassengerResponse;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
@@ -11,16 +12,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(
     name = "passenger-service",
-    path = "/api/v1/passengers",
-    fallbackFactory = PassengerFeignClientFallbackFactory.class
+    path = "/api/v1/passengers"
 )
 public interface PassengerFeignClient {
 
     @GetMapping("/{id}")
-    @Retry(name = "passengerServiceRetry")
-    @CircuitBreaker(
-        name = "passengerServiceCircuitBreaker"
-    )
+    @CircuitBreaker(name = "passengerServiceCircuitBreaker", fallbackMethod = "getPassengerByIdFallbackMethod")
+    @Retry(name = "passengerServiceRetry", fallbackMethod = "getPassengerByIdFallbackMethod")
     ResponseEntity<PassengerResponse> getPassengerById(@PathVariable Long id);
 
+    default ResponseEntity<PassengerResponse> getPassengerByIdFallbackMethod(Throwable throwable) {
+        if (throwable instanceof FeignClientException feignClientException) {
+            throw feignClientException;
+        }
+
+        throw new PassengerServiceUnavailableException(throwable.getMessage());
+    }
 }

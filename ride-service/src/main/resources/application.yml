@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE:prod}
+    active: ${SPRING_PROFILES_ACTIVE:dev}
   application:
     name: ride-service
   jpa:
@@ -51,19 +51,29 @@ resilience4j:
   retry:
     configs:
       default:
-        registerHealthIndicator: true
         max-attempts: 3
-        waitDuration: 500ms
-        retryExceptions:
-          - org.springframework.web.client.RestClientException
-
+        wait-duration: 1s
+        ignore-exceptions:
+          - com.vlad.kuzhyr.rideservice.exception.FeignClientException
   circuitbreaker:
     configs:
       default:
-        failureRateThreshold: 50
-        slidingWindowSize: 10
-        minimumNumberOfCalls: 5
-        waitDurationInOpenState: 5000ms
+        register-health-indicator: true
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 10
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 3
+        sliding-window-size: 10
+        sliding-window-type: COUNT_BASED
+        ignore-exceptions:
+          - com.vlad.kuzhyr.rideservice.exception.FeignClientException
+  timelimiter:
+    configs:
+      default:
+        timeout-duration:
+          seconds: 5
+
 
 mapbox:
   api:

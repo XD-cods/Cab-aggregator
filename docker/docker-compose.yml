@@ -162,7 +162,7 @@ services:
       - .env
     environment:
       - SERVER_PORT=${PASSENGER_SERVICE_PORT}
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
       - PASSENGER_DB_URL=jdbc:postgresql://passenger_db:5432/passenger_db
       - PASSENGER_DB_USERNAME=${PASSENGER_DB_USERNAME}
       - PASSENGER_DB_PASSWORD=${PASSENGER_DB_PASSWORD}
@@ -194,7 +194,7 @@ services:
     env_file:
       - .env
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
       - SERVER_PORT=${DRIVER_SERVICE_PORT}
       - DRIVER_DB_URL=jdbc:postgresql://driver_db:5432/driver_db
       - DRIVER_DB_USERNAME=${DRIVER_DB_USERNAME}
@@ -227,7 +227,7 @@ services:
     env_file:
       - .env
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
       - SERVER_PORT=${RATING_SERVICE_PORT}
       - RATING_DB_URL=jdbc:postgresql://rating_db:5432/rating_db
       - RATING_DB_USERNAME=${RATING_DB_USERNAME}
@@ -260,7 +260,7 @@ services:
     env_file:
       - .env
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
       - SERVER_PORT=${RIDE_SERVICE_PORT}
       - RIDE_DB_URL=jdbc:postgresql://ride_db:5432/ride_db
       - RIDE_DB_USERNAME=${RIDE_DB_USERNAME}
@@ -299,7 +299,7 @@ services:
       - .env
     environment:
       - SERVER_PORT=${API_GATEWAY_PORT}
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
       - EUREKA_DEFAULT_ZONE=http://eureka-server:${EUREKA_PORT}/eureka
     ports:
       - 8080:${API_GATEWAY_PORT}

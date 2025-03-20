@@ -1,22 +1,18 @@
 package com.vlad.kuzhyr.rideservice.exception;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import feign.FeignException;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.ConstraintViolationException;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.time.LocalDateTime;
-import java.util.Map;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -41,24 +37,6 @@ public class ControllerAdvice {
             .errorDescription(exception.getMessage())
             .timestamp(LocalDateTime.now())
             .build());
-    }
-
-    @ExceptionHandler(value = {FeignException.class})
-    public ResponseEntity<Map<String, String>> handleFeignStatusException(FeignException e) {
-        try {
-            Map<String, String> errorBody = objectMapper.readValue(
-                e.contentUTF8(),
-                new TypeReference<>() {
-                }
-            );
-            return ResponseEntity
-                .status(e.status())
-                .body(errorBody);
-        } catch (Exception ex) {
-            return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("error", "Internal Server Error", "message", e.getMessage()));
-        }
     }
 
     @ApiResponses(value = {
@@ -127,12 +105,20 @@ public class ControllerAdvice {
         DriverServiceUnavailableException.class,
         PassengerServiceUnavailableException.class
     })
-    public ResponseEntity<ErrorResponse> handleDriverServiceUnavailable(DriverServiceUnavailableException exception) {
+    public ResponseEntity<ErrorResponse> handleServiceUnavailable(Exception exception) {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ErrorResponse.builder()
             .error(String.valueOf(HttpStatus.SERVICE_UNAVAILABLE))
             .errorDescription(exception.getMessage())
             .timestamp(LocalDateTime.now())
             .build());
+    }
+
+    @ExceptionHandler({
+        FeignClientException.class
+    })
+    public ResponseEntity<ErrorResponse> handleFeignClientException(FeignClientException e) {
+        return ResponseEntity.status(e.getHttpStatus())
+            .body(e.getErrorResponse());
     }
 
 }
