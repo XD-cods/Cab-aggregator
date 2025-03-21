@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class FeignClientException extends RuntimeException {
+public class CustomFeignException extends RuntimeException {
 
     private final ErrorResponse errorResponse;
 

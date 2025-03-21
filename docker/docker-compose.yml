@@ -168,6 +168,8 @@ services:
       - PASSENGER_DB_PASSWORD=${PASSENGER_DB_PASSWORD}
       - KAFKA_URLS=kafka:9092
       - EUREKA_DEFAULT_ZONE=http://eureka-server:${EUREKA_PORT}/eureka
+    ports:
+      - ${PASSENGER_SERVICE_PORT}:${PASSENGER_SERVICE_PORT}
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://passenger-service:${PASSENGER_SERVICE_PORT}/actuator/health || exit 1
       interval: 30s
@@ -201,6 +203,8 @@ services:
       - DRIVER_DB_PASSWORD=${DRIVER_DB_PASSWORD}
       - EUREKA_DEFAULT_ZONE=http://eureka-server:${EUREKA_PORT}/eureka
       - KAFKA_URL=kafka:9092
+    ports:
+      - ${DRIVER_SERVICE_PORT}:${DRIVER_SERVICE_PORT}
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://driver-service:${DRIVER_SERVICE_PORT}/actuator/health || exit 1
       interval: 30s
@@ -234,6 +238,8 @@ services:
       - RATING_DB_PASSWORD=${RATING_DB_PASSWORD}
       - EUREKA_DEFAULT_ZONE=http://eureka-server:${EUREKA_PORT}/eureka
       - KAFKA_URL=kafka:9092
+    ports:
+      - ${RATING_SERVICE_PORT}:${RATING_SERVICE_PORT}
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://rating-service:${RATING_SERVICE_PORT}/actuator/health || exit 1
       interval: 30s
@@ -270,6 +276,8 @@ services:
       - MAPBOX_API_KEY=${MAPBOX_API_KEY}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+    ports:
+      - ${RIDE_SERVICE_PORT}:${RIDE_SERVICE_PORT}
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://ride-service:${RIDE_SERVICE_PORT}/actuator/health || exit 1
       interval: 30s

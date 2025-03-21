@@ -1,7 +1,7 @@
 package com.vlad.kuzhyr.rideservice.utility.client;
 
+import com.vlad.kuzhyr.rideservice.exception.CustomFeignException;
 import com.vlad.kuzhyr.rideservice.exception.DriverServiceUnavailableException;
-import com.vlad.kuzhyr.rideservice.exception.FeignClientException;
 import com.vlad.kuzhyr.rideservice.web.dto.external.DriverResponse;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
@@ -22,8 +22,8 @@ public interface DriverFeignClient {
     ResponseEntity<DriverResponse> getDriverById(@PathVariable Long id);
 
     default ResponseEntity<DriverResponse> getDriverByIdFallbackMethod(Throwable throwable) {
-        if (throwable instanceof FeignClientException feignClientException) {
-            throw feignClientException;
+        if (throwable instanceof CustomFeignException customFeignException) {
+            throw customFeignException;
         }
 
         throw new DriverServiceUnavailableException(throwable.getMessage());

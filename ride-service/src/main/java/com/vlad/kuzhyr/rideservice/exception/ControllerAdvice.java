@@ -114,9 +114,9 @@ public class ControllerAdvice {
     }
 
     @ExceptionHandler({
-        FeignClientException.class
+        CustomFeignException.class
     })
-    public ResponseEntity<ErrorResponse> handleFeignClientException(FeignClientException e) {
+    public ResponseEntity<ErrorResponse> handleFeignClientException(CustomFeignException e) {
         return ResponseEntity.status(e.getHttpStatus())
             .body(e.getErrorResponse());
     }

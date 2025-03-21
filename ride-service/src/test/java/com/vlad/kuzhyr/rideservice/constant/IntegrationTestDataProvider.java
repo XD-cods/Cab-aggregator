@@ -47,4 +47,18 @@ public final class IntegrationTestDataProvider {
             .driverId(BASE_DRIVER_ID)
             .build();
     }
+
+    public static UpdateRideStatusRequest createInvalidUpdateRideStatusRequest() {
+        return UpdateRideStatusRequest.builder()
+            .rideStatus(RideStatus.ACCEPTED)
+            .build();
+    }
+
+    public static RideRequest createInvalidRideRequest() {
+        return RideRequest.builder()
+            .departureAddress("")
+            .destinationAddress("")
+            .driverId(0L)
+            .build();
+    }
 }

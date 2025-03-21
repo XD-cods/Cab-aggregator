@@ -1,6 +1,6 @@
 package com.vlad.kuzhyr.rideservice.utility.client;
 
-import com.vlad.kuzhyr.rideservice.exception.FeignClientException;
+import com.vlad.kuzhyr.rideservice.exception.CustomFeignException;
 import com.vlad.kuzhyr.rideservice.exception.PassengerServiceUnavailableException;
 import com.vlad.kuzhyr.rideservice.web.dto.external.PassengerResponse;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -22,8 +22,8 @@ public interface PassengerFeignClient {
     ResponseEntity<PassengerResponse> getPassengerById(@PathVariable Long id);
 
     default ResponseEntity<PassengerResponse> getPassengerByIdFallbackMethod(Throwable throwable) {
-        if (throwable instanceof FeignClientException feignClientException) {
-            throw feignClientException;
+        if (throwable instanceof CustomFeignException customFeignException) {
+            throw customFeignException;
         }
 
         throw new PassengerServiceUnavailableException(throwable.getMessage());

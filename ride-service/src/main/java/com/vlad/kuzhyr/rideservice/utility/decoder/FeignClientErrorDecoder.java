@@ -2,8 +2,8 @@ package com.vlad.kuzhyr.rideservice.utility.decoder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.vlad.kuzhyr.rideservice.exception.CustomFeignException;
 import com.vlad.kuzhyr.rideservice.exception.ErrorResponse;
-import com.vlad.kuzhyr.rideservice.exception.FeignClientException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import java.io.BufferedReader;
@@ -31,7 +31,7 @@ public class FeignClientErrorDecoder implements ErrorDecoder {
             .registerModule(new JavaTimeModule())
             .readValue(readResponseBody(response), ErrorResponse.class);
 
-        return new FeignClientException(
+        return new CustomFeignException(
             errorResponse,
             response.status()
         );
