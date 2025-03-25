@@ -1,5 +1,8 @@
 package com.vlad.kuzhyr.rideservice.integration.web.controller;
 
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
+
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.vlad.kuzhyr.rideservice.config.TestContainerConfig;
 import com.vlad.kuzhyr.rideservice.constant.ControllerRouteConstant;
@@ -12,10 +15,8 @@ import com.vlad.kuzhyr.rideservice.utility.client.DriverFeignClient;
 import com.vlad.kuzhyr.rideservice.utility.client.MapboxClient;
 import com.vlad.kuzhyr.rideservice.utility.client.PassengerFeignClient;
 import io.restassured.RestAssured;
-import static io.restassured.RestAssured.given;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
-import static org.hamcrest.Matchers.equalTo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,12 +101,31 @@ public class RideControllerImplIT {
     }
 
     @Test
+    public void testCreateRide_shouldBadRequest() {
+        request
+            .body(IntegrationTestDataProvider.createInvalidRideRequest())
+            .when()
+            .post(ControllerRouteConstant.CREATE_RIDE_URL)
+            .then()
+            .statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
     public void testGetRideById() {
         request
             .when()
             .get(ControllerRouteConstant.GET_RIDE_BY_ID_URL.formatted(rideId))
             .then()
             .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    public void testGetRideById_shouldNotFound() {
+        request
+            .when()
+            .get(ControllerRouteConstant.GET_RIDE_BY_ID_URL.formatted(0L))
+            .then()
+            .statusCode(HttpStatus.NOT_FOUND.value());
     }
 
     @Test
@@ -129,6 +149,16 @@ public class RideControllerImplIT {
             .then()
             .statusCode(HttpStatus.OK.value())
             .body("ride_status", equalTo(RideStatus.WAITING_FOR_DRIVER.toString()));
+    }
+
+    @Test
+    public void testUpdateRideStatus_InvalidTransition() {
+        request
+            .body(IntegrationTestDataProvider.createInvalidUpdateRideStatusRequest())
+            .when()
+            .patch(ControllerRouteConstant.UPDATE_RIDE_STATUS_URL.formatted(rideId))
+            .then()
+            .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
     @Test

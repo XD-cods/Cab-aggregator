@@ -4,13 +4,13 @@ COPY . .
 RUN --mount=type=cache,target=/root/.m2 \
     mvn clean package -DskipTests
 
-FROM eclipse-temurin:21-jre-jammy AS extract
+FROM eclipse-temurin:21-jre AS extract
 ARG SERVICE_NAME
 WORKDIR /app
 COPY --from=build /app/target/${SERVICE_NAME}-*.jar ./${SERVICE_NAME}.jar
 RUN java -Djarmode=layertools -jar ${SERVICE_NAME}.jar extract
 
-FROM eclipse-temurin:21-jre-jammy
+FROM eclipse-temurin:21-jre
 RUN apt-get update && apt-get install -y curl
 WORKDIR /app
 VOLUME /tmp

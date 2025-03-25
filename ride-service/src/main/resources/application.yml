@@ -3,19 +3,18 @@ server:
 
 spring:
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE:prod}
+    active: ${SPRING_PROFILES_ACTIVE:dev}
   application:
     name: ride-service
   jpa:
     hibernate:
       ddl-auto: validate
-    show-sql: true
+    show-sql: false
   cloud:
     openfeign:
       client:
         config:
           default:
-            retryer: feign.Retryer$Default
             connectTimeout: 5000
             readTimeout: 5000
             loggerLevel: full
@@ -47,6 +46,34 @@ spring:
       time-to-live: ${REDIS_TTL:3000}
       key-prefix: "ride-service:"
       use-key-prefix: true
+
+resilience4j:
+  retry:
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 1s
+        ignore-exceptions:
+          - com.vlad.kuzhyr.rideservice.exception.CustomFeignException
+  circuitbreaker:
+    configs:
+      default:
+        register-health-indicator: true
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 10
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 3
+        sliding-window-size: 10
+        sliding-window-type: COUNT_BASED
+        ignore-exceptions:
+          - com.vlad.kuzhyr.rideservice.exception.CustomFeignException
+  timelimiter:
+    configs:
+      default:
+        timeout-duration:
+          seconds: 5
+
 
 mapbox:
   api:
