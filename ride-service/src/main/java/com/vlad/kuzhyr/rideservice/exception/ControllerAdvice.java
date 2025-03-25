@@ -1,6 +1,5 @@
 package com.vlad.kuzhyr.rideservice.exception;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,8 +16,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class ControllerAdvice {
-
-    private final ObjectMapper objectMapper;
 
     @ExceptionHandler(value = {
         RideNotFoundException.class,
@@ -106,7 +103,8 @@ public class ControllerAdvice {
         PassengerServiceUnavailableException.class
     })
     public ResponseEntity<ErrorResponse> handleServiceUnavailable(Exception exception) {
-        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ErrorResponse.builder()
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+            .body(ErrorResponse.builder()
             .error(String.valueOf(HttpStatus.SERVICE_UNAVAILABLE))
             .errorDescription(exception.getMessage())
             .timestamp(LocalDateTime.now())
