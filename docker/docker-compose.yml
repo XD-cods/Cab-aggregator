@@ -139,6 +139,8 @@ services:
     env_file:
       - .env
     environment:
+      - ES_HOST=${ES_HOST:-http://elasticsearch:9200}
+      - LOGSTASH_DESTINATION=${LOGSTASH_DESTINATION:-logstash:5044}
       - EUREKA_PORT=${EUREKA_PORT}
     ports:
       - 8761:${EUREKA_PORT}
@@ -161,6 +163,8 @@ services:
     env_file:
       - .env
     environment:
+      - ES_HOST=${ES_HOST:-http://elasticsearch:9200}
+      - LOGSTASH_DESTINATION=${LOGSTASH_DESTINATION:-logstash:5044}
       - SERVER_PORT=${PASSENGER_SERVICE_PORT}
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
       - PASSENGER_DB_URL=jdbc:postgresql://passenger_db:5432/passenger_db
@@ -174,7 +178,7 @@ services:
       test: wget --no-verbose --tries=1 --spider http://passenger-service:${PASSENGER_SERVICE_PORT}/actuator/health || exit 1
       interval: 30s
       timeout: 5s
-      start_period: 30s
+      start_period: 45s
       retries: 5
     depends_on:
       passenger_db:
@@ -196,6 +200,8 @@ services:
     env_file:
       - .env
     environment:
+      - ES_HOST=${ES_HOST:-http://elasticsearch:9200}
+      - LOGSTASH_DESTINATION=${LOGSTASH_DESTINATION:-logstash:5044}
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
       - SERVER_PORT=${DRIVER_SERVICE_PORT}
       - DRIVER_DB_URL=jdbc:postgresql://driver_db:5432/driver_db
@@ -209,7 +215,7 @@ services:
       test: wget --no-verbose --tries=1 --spider http://driver-service:${DRIVER_SERVICE_PORT}/actuator/health || exit 1
       interval: 30s
       timeout: 5s
-      start_period: 30s
+      start_period: 45s
       retries: 5
     depends_on:
       driver_db:
@@ -231,6 +237,8 @@ services:
     env_file:
       - .env
     environment:
+      - ES_HOST=${ES_HOST:-http://elasticsearch:9200}
+      - LOGSTASH_DESTINATION=${LOGSTASH_DESTINATION:-logstash:5044}
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
       - SERVER_PORT=${RATING_SERVICE_PORT}
       - RATING_DB_URL=jdbc:postgresql://rating_db:5432/rating_db
@@ -244,7 +252,7 @@ services:
       test: wget --no-verbose --tries=1 --spider http://rating-service:${RATING_SERVICE_PORT}/actuator/health || exit 1
       interval: 30s
       timeout: 5s
-      start_period: 30s
+      start_period: 45s
       retries: 5
     depends_on:
       kafka:
@@ -266,6 +274,8 @@ services:
     env_file:
       - .env
     environment:
+      - ES_HOST=${ES_HOST:-http://elasticsearch:9200}
+      - LOGSTASH_DESTINATION=${LOGSTASH_DESTINATION:-logstash:5044}
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
       - SERVER_PORT=${RIDE_SERVICE_PORT}
       - RIDE_DB_URL=jdbc:postgresql://ride_db:5432/ride_db
@@ -282,7 +292,7 @@ services:
       test: wget --no-verbose --tries=1 --spider http://ride-service:${RIDE_SERVICE_PORT}/actuator/health || exit 1
       interval: 30s
       timeout: 5s
-      start_period: 30s
+      start_period: 45s
       retries: 5
     depends_on:
       ride_db:
@@ -306,7 +316,9 @@ services:
     env_file:
       - .env
     environment:
-      - SERVER_PORT=${API_GATEWAY_PORT}
+      - ES_HOST=${ES_HOST:-http://elasticsearch:9200}
+      - LOGSTASH_DESTINATION=${LOGSTASH_DESTINATION:-logstash:5044}
+      - SERVER_PORT=${API_GATEWAY_PORT:-8080}
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
       - EUREKA_DEFAULT_ZONE=http://eureka-server:${EUREKA_PORT}/eureka
     ports:
@@ -315,7 +327,7 @@ services:
       test: wget --no-verbose --tries=1 --spider http://api-gateway:${API_GATEWAY_PORT}/actuator/health || exit 1
       interval: 30s
       timeout: 5s
-      start_period: 30s
+      start_period: 45s
       retries: 5
     depends_on:
       eureka-server:
@@ -331,6 +343,55 @@ services:
     networks:
       - cab-aggregator-application
 
+  elasticsearch:
+    image: elasticsearch:7.9.1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data/
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.security.enabled=false
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - cab-aggregator-application
+
+  kibana:
+    image: kibana:7.9.1
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+    volumes:
+      - kb_data:/usr/share/kibana/data
+    depends_on:
+      - elasticsearch
+    networks:
+      - cab-aggregator-application
+
+  logstash:
+    image: logstash:7.9.1
+    ports:
+      - "5044:5044"
+      - "9600:9600"
+    volumes:
+      - ./elk-config/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./elk-config/logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+      - ls_data:/usr/share/logstash/data
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    depends_on:
+      - elasticsearch
+    networks:
+      - cab-aggregator-application
+
 volumes:
   passenger-data:
   driver-data:
@@ -338,6 +399,9 @@ volumes:
   ride-data:
   redis-date:
   kafka-data:
+  elasticsearch_data:
+  ls_data:
+  kb_data:
 
 networks:
   cab-aggregator-application:

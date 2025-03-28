@@ -47,3 +47,17 @@ management:
     web:
       exposure:
         include: "*"
+  elastic:
+    metrics:
+      export:
+        enabled: ${ES_ENABLED:true}
+        host: ${ES_HOST:http://localhost:9200}
+        index: metrics-${spring.application.name}
+        step: ${ES_METRICS_STEP:30s}
+        index-date-format: "yyyy.MM.dd"
+        connect-timeout: ${ES_CONNECT_TIMEOUT:10s}
+
+logging:
+  logstash:
+    enabled: ${LOGSTASH_ENABLED:true}
+    destination: ${LOGSTASH_DESTINATION:localhost:5044}
