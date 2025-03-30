@@ -52,6 +52,12 @@ services:
       memlock:
         soft: -1
         hard: -1
+    healthcheck:
+      test: curl -f http://localhost:9200/_cluster/health || exit 1
+      interval: 10s
+      start_period: 45s
+      timeout: 5s
+      retries: 10
 
   kibana:
     image: kibana:7.9.1
