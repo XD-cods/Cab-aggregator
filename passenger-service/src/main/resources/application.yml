@@ -13,6 +13,8 @@ spring:
 
   kafka:
     bootstrap-servers: ${KAFKA_URLS:localhost:9092}
+    listener:
+      observation-enabled: true
     consumer:
       group-id: passenger-ride-group
       key-deserializer: org.apache.kafka.common.serialization.LongDeserializer

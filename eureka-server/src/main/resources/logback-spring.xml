@@ -18,8 +18,8 @@
                         <logger>logger</logger>
                         <thread>log.thread</thread>
                         <level>log.level</level>
-                        <traceId>trace.id</traceId>
-                        <spanId>span.id</spanId>
+                        <trace.id>trace.id</trace.id>
+                        <span.id>span.id</span.id>
                         <levelValue>[ignore]</levelValue>
                         <caller>caller</caller>
                         <stackTrace>error.stackTrace</stackTrace>
