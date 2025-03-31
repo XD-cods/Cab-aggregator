@@ -5,4 +5,4 @@ up-local:
 down:
 	docker-compose -f docker/docker-compose.yml down && docker volume rm cab-aggregator_kafka-data
 down-local:
-	docker-compose -f docker/docker-compose-local.yml down && docker volume rm local_kafka-data
+	docker-compose -f docker/docker-compose-local.yml down

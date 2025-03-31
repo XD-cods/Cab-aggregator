@@ -46,6 +46,9 @@ springdoc:
     path: /rating-service/swagger-ui.html
 
 management:
+  tracing:
+    sampling:
+      probability: 1.0
   endpoints:
     web:
       exposure:
@@ -59,6 +62,11 @@ management:
         step: ${ES_METRICS_STEP:30s}
         index-date-format: "yyyy.MM.dd"
         connect-timeout: ${ES_CONNECT_TIMEOUT:10s}
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_HOST:http://localhost:9411}/api/v2/spans
+      export:
+        enabled: true
 
 logging:
   logstash:

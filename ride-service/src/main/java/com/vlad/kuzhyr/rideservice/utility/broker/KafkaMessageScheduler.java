@@ -30,12 +30,14 @@ public class KafkaMessageScheduler {
         lockAtLeastFor = "PT1S"
     )
     public void processKafkaMessage() {
-        kafkaTemplate.setObservationEnabled(false);
         List<KafkaMessage> unsentMessages = kafkaMessageService.getUnsentMessages();
         Set<KafkaMessage> uniqueMessages = new HashSet<>(unsentMessages);
 
-        log.debug("processKafkaMessage: Found unsent messages. Messages amount: {}", uniqueMessages.size());
+        if (uniqueMessages.isEmpty()) {
+            return;
+        }
 
+        log.debug("processKafkaMessage: Found unsent messages. Messages amount: {}", uniqueMessages.size());
         for (KafkaMessage kafkaMessage : uniqueMessages) {
 
             Message<String> message = MessageBuilder

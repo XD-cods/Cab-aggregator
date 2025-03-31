@@ -22,7 +22,6 @@ spring:
     redis:
       port: ${REDIS_PORT:6379}
       host: ${REDIS_HOST:localhost}
-
   kafka:
     bootstrap-servers: ${KAFKA_URLS:localhost:9092}
     producer:
@@ -38,7 +37,7 @@ spring:
       passenger-busy-topic: passenger.status.updated
     message:
       scheduler:
-        fixed-rate: ${MESSAGE_SCHEDULER_FIXED-RATE:3000}
+        fixed-rate: ${MESSAGE_SCHEDULER_FIXED-RATE:5000}
 
   cache:
     type: redis
@@ -95,6 +94,10 @@ springdoc:
     path: /ride-service/swagger-ui.html
 
 management:
+  tracing:
+    sampling:
+      probability: 1.0
+
   endpoints:
     web:
       exposure:
@@ -108,8 +111,16 @@ management:
         step: ${ES_METRICS_STEP:30s}
         index-date-format: "yyyy.MM.dd"
         connect-timeout: ${ES_CONNECT_TIMEOUT:10s}
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_HOST:http://localhost:9411}/api/v2/spans
+      export:
+        enabled: true
 
 logging:
   logstash:
     enabled: ${LOGSTASH_ENABLED:true}
     destination: ${LOGSTASH_DESTINATION:localhost:5044}
+  level:
+    io.micrometer.tracing: DEBUG
+    brave: DEBUG
