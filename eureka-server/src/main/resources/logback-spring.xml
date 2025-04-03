@@ -1,0 +1,69 @@
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <springProperty name="APP_NAME" source="spring.application.name" defaultValue="passenger-server"/>
+    <springProperty name="LOGSTASH_DESTINATION" source="logging.logstash.destination" defaultValue=""/>
+    <springProperty name="LOGSTASH_ENABLED" source="logging.logstash.enabled" defaultValue="false"/>
+
+    <if condition='property("LOGSTASH_DESTINATION").length() > 0'>
+        <then>
+            <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+                <destination>${LOGSTASH_DESTINATION}</destination>
+                <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                    <customFields>{"app":"${APP_NAME}"}</customFields>
+                    <includeCallerData>true</includeCallerData>
+                    <fieldNames>
+                        <message>message</message>
+                        <logger>logger</logger>
+                        <thread>log.thread</thread>
+                        <level>log.level</level>
+                        <trace.id>trace.id</trace.id>
+                        <span.id>span.id</span.id>
+                        <levelValue>[ignore]</levelValue>
+                        <caller>caller</caller>
+                        <stackTrace>error.stackTrace</stackTrace>
+                    </fieldNames>
+                    <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                        <maxDepthPerThrowable>5</maxDepthPerThrowable>
+                        <rootCauseFirst>true</rootCauseFirst>
+                    </throwableConverter>
+                </encoder>
+            </appender>
+        </then>
+    </if>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <springProfile name="dev">
+        <root level="DEBUG">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+        <if condition='property("LOGSTASH_ENABLED").equals("true")'>
+            <then>
+                <root level="INFO">
+                    <appender-ref ref="LOGSTASH"/>
+                </root>
+            </then>
+        </if>
+    </springProfile>
+
+    <springProfile name="prod">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <if condition='property("LOGSTASH_ENABLED").equals("true")'>
+                <then>
+                    <appender-ref ref="LOGSTASH"/>
+                </then>
+            </if>
+        </root>
+    </springProfile>
+
+    <springProfile name="test">
+        <root level="WARN">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+</configuration>

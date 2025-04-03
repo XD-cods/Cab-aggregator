@@ -48,6 +48,9 @@ public class KafkaMessage {
     @Builder.Default
     private Boolean isSent = Boolean.FALSE;
 
+    @Column(name = "traceparent")
+    private String traceparent;
+
     @Override
     public String toString() {
         return "KafkaMessage{" +

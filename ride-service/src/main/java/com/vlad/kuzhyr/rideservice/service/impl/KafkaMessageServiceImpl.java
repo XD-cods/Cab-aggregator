@@ -3,6 +3,8 @@ package com.vlad.kuzhyr.rideservice.service.impl;
 import com.vlad.kuzhyr.rideservice.persistence.entity.KafkaMessage;
 import com.vlad.kuzhyr.rideservice.persistence.repository.KafkaMessageRepository;
 import com.vlad.kuzhyr.rideservice.service.KafkaMessageService;
+import io.micrometer.tracing.TraceContext;
+import io.micrometer.tracing.Tracer;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class KafkaMessageServiceImpl implements KafkaMessageService {
 
     private final KafkaMessageRepository kafkaMessageRepository;
+    private final Tracer tracer;
 
     @Transactional(readOnly = true)
     @Override
@@ -32,11 +35,13 @@ public class KafkaMessageServiceImpl implements KafkaMessageService {
     @Override
     public void saveMessage(String topic, Long key, String message) {
         log.debug("saveMessage: Entering method. Topic: {}, key: {}, message: {}", topic, key, message);
+        String traceparent = getCurrentTraceparent();
 
         KafkaMessage kafkaMessage = KafkaMessage.builder()
             .topic(topic)
             .key(key)
             .message(message)
+            .traceparent(traceparent)
             .build();
 
         KafkaMessage savedMessage = kafkaMessageRepository.save(kafkaMessage);
@@ -64,5 +69,10 @@ public class KafkaMessageServiceImpl implements KafkaMessageService {
         kafkaMessageRepository.deleteByIsSent(true);
 
         log.debug("deleteSentMessages: Sent messages deleted.");
+    }
+
+    private String getCurrentTraceparent() {
+        TraceContext context = tracer.currentTraceContext().context();
+        return String.format("00-%s-%s-00", context.traceId(), context.spanId());
     }
 }

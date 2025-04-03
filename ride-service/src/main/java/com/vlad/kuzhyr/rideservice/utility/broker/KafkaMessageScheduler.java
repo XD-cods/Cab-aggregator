@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -27,18 +30,25 @@ public class KafkaMessageScheduler {
         lockAtLeastFor = "PT1S"
     )
     public void processKafkaMessage() {
-
         List<KafkaMessage> unsentMessages = kafkaMessageService.getUnsentMessages();
         Set<KafkaMessage> uniqueMessages = new HashSet<>(unsentMessages);
 
-        log.debug("processKafkaMessage: Found unsent messages. Messages amount: {}", uniqueMessages.size());
+        if (uniqueMessages.isEmpty()) {
+            return;
+        }
 
+        log.debug("processKafkaMessage: Found unsent messages. Messages amount: {}", uniqueMessages.size());
         for (KafkaMessage kafkaMessage : uniqueMessages) {
-            if (kafkaMessage.getKey() == null) {
-                kafkaTemplate.send(kafkaMessage.getTopic(), kafkaMessage.getMessage());
-            } else {
-                kafkaTemplate.send(kafkaMessage.getTopic(), kafkaMessage.getKey(), kafkaMessage.getMessage());
-            }
+
+            Message<String> message = MessageBuilder
+                .withPayload(kafkaMessage.getMessage())
+                .setHeader(KafkaHeaders.TOPIC, kafkaMessage.getTopic())
+                .setHeader(KafkaHeaders.KEY, kafkaMessage.getKey())
+                .removeHeader("traceparent")
+                .setHeader("traceparent", kafkaMessage.getTraceparent())
+                .build();
+
+            kafkaTemplate.send(message);
             kafkaMessageService.markAsSent(kafkaMessage);
             log.debug("processKafkaMessage: Sent message. Topic: {}, Key: {}",
                 kafkaMessage.getTopic(), kafkaMessage.getKey());
