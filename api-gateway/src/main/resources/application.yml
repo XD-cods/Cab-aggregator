@@ -67,8 +67,8 @@ management:
       export:
         enabled: ${ES_ENABLED:true}
         host: ${ES_HOST:http://localhost:9200}
-        index: metrics-${spring.application.name}
-        step: ${ES_METRICS_STEP:30s}
+        index: metrics
+        step: ${ES_METRICS_STEP:10s}
         index-date-format: "yyyy.MM.dd"
         connect-timeout: ${ES_CONNECT_TIMEOUT:10s}
   zipkin:
@@ -76,6 +76,18 @@ management:
       endpoint: ${ZIPKIN_HOST:http://localhost:9411}/api/v2/spans
       export:
         enabled: true
+  metrics:
+    tags:
+      app: ${spring.application.name}
+    distribution:
+      percentiles:
+        http:
+          server:
+            requests: 0.5, 0.9, 0.95, 0.99
+      percentiles-histogram:
+        http:
+          server:
+            request: true
 
 logging:
   logstash:

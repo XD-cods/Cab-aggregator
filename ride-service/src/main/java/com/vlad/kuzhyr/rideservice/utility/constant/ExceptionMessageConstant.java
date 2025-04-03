@@ -35,5 +35,6 @@ public final class ExceptionMessageConstant {
 
     public static final String DRIVER_SERVICE_IS_CURRENTLY_UNAVAILABLE = "Driver service is currently unavailable";
 
-    public static final String PASSENGER_SERVICE_IS_CURRENTLY_UNAVAILABLE = "Passenger service is currently unavailable";
+    public static final String PASSENGER_SERVICE_IS_CURRENTLY_UNAVAILABLE = "Passenger service is currently" +
+                                                                            " unavailable";
 }
