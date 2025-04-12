@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ExceptionMessageConstant {
+public final class ExceptionMessageConstant {
 
     public static final String USER_CREATE_EXCEPTION_MESSAGE = "User creation failed %d";
 

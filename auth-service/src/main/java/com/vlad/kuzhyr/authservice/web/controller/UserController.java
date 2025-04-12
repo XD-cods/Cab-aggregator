@@ -14,4 +14,5 @@ public interface UserController {
     void signUp(@Valid @RequestBody SignUpRequest signUpRequest);
 
     ResponseEntity<TokenResponse> singIn(@Valid @RequestBody SignInRequest signInRequest);
+
 }

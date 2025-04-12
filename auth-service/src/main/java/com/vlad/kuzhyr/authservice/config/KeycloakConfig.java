@@ -10,9 +10,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class KeycloakConfig {
 
-//    final static String userName = "YOUR_REALM_ADMIN_USERNAME";
-//    final static String password = "Your_REALM_ADMIN_PASSWORD";
-
     @Value("${keycloak.auth-server-url}")
     private String serverUrl;
 
@@ -34,7 +31,6 @@ public class KeycloakConfig {
             .clientSecret(clientSecret)
             .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
             .build();
-//            .username("admin")
-//            .password("admin")
     }
+
 }
