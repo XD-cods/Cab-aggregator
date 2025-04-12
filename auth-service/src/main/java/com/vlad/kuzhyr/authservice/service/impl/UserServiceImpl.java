@@ -2,8 +2,9 @@ package com.vlad.kuzhyr.authservice.service.impl;
 
 
 import com.vlad.kuzhyr.authservice.service.UserService;
+import com.vlad.kuzhyr.authservice.web.dto.request.SignInRequest;
 import com.vlad.kuzhyr.authservice.web.dto.request.SignUpRequest;
-import jakarta.ws.rs.core.Response;
+import com.vlad.kuzhyr.authservice.web.dto.response.TokenResponse;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +23,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
+    private final KeycloakService keycloakService;
+
     private final Keycloak keycloakAdmin;
 
     @Value("${keycloak.realm}")
@@ -33,12 +36,16 @@ public class UserServiceImpl implements UserService {
         CredentialRepresentation credential = getCredentialRepresentation(signUpRequest);
         user.setCredentials(List.of(credential));
         UsersResource usersResource = getUsersResource();
-        Response response =  usersResource.create(user);
+        usersResource.create(user);
+    }
+
+    @Override
+    public TokenResponse signIn(SignInRequest signInRequest) {
+        return keycloakService.signIn(signInRequest);
     }
 
     private UserRepresentation getUserRepresentationByRequest(SignUpRequest signUpRequest) {
         UserRepresentation user = new UserRepresentation();
-
         user.setEnabled(true);
         user.setEmail(signUpRequest.email());
         user.setFirstName(signUpRequest.firstName());
