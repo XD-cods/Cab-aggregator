@@ -21,7 +21,7 @@ public class SecurityConfig {
                     "/api/v1/auth/signup",
                     "/api/v1/auth/signin").permitAll()
 
-                .requestMatchers("/api/v1/auth/admin").hasRole("ADMIN")
+                .requestMatchers("/api/v1/auth/assign-business-role").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2

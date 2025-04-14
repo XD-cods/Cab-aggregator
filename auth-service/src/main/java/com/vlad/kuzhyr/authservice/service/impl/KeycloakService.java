@@ -32,11 +32,12 @@ public class KeycloakService {
 
     public TokenResponse signIn(SignInRequest signInRequest) {
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-        requestBody.add("client_id", clientId);
-        requestBody.add("client_secret", clientSecret);
-        requestBody.add("username", signInRequest.email());
-        requestBody.add("password", signInRequest.password());
-        requestBody.add("grant_type", OAuth2Constants.PASSWORD);
+
+        requestBody.add(OAuth2Constants.CLIENT_ID, clientId);
+        requestBody.add(OAuth2Constants.CLIENT_SECRET, clientSecret);
+        requestBody.add(OAuth2Constants.USERNAME, signInRequest.email());
+        requestBody.add(OAuth2Constants.PASSWORD, signInRequest.password());
+        requestBody.add(OAuth2Constants.GRANT_TYPE, OAuth2Constants.PASSWORD);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);

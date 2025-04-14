@@ -2,6 +2,7 @@ package com.vlad.kuzhyr.authservice.web.controller.impl;
 
 import com.vlad.kuzhyr.authservice.service.UserService;
 import com.vlad.kuzhyr.authservice.web.controller.UserController;
+import com.vlad.kuzhyr.authservice.web.dto.request.AssignBusinessRoleRequest;
 import com.vlad.kuzhyr.authservice.web.dto.request.SignInRequest;
 import com.vlad.kuzhyr.authservice.web.dto.request.SignUpRequest;
 import com.vlad.kuzhyr.authservice.web.dto.response.TokenResponse;
@@ -36,6 +37,13 @@ public class UserControllerImpl implements UserController {
     public ResponseEntity<TokenResponse> singIn(@RequestBody @Valid SignInRequest signInRequest) {
         TokenResponse responseBody = userService.signIn(signInRequest);
         return ResponseEntity.ok(responseBody);
+    }
+
+    @PostMapping("/assign-business-role")
+    @ResponseStatus(HttpStatus.OK)
+    @Override
+    public void assignBusinessRoleByEmail(@RequestBody @Valid AssignBusinessRoleRequest request) {
+        userService.assignBusinessRoleByEmail(request.email(), request.businessRole());
     }
 
 }
