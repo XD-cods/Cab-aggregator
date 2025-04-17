@@ -84,6 +84,12 @@ management:
           server:
             request: true
 
+springdoc:
+  api-docs:
+    path: /auth-service/v3/api-docs
+  swagger-ui:
+    path: /auth-service/swagger-ui.html
+
 logging:
   logstash:
     enabled: ${LOGSTASH_ENABLED:true}
@@ -91,4 +97,7 @@ logging:
 
 eureka:
   client:
-    enabled: false
+    service-url:
+      defaultZone: ${EUREKA_DEFAULT_ZONE:http://localhost:${EUREKA_PORT:8761}/eureka}
+    register-with-eureka: ${REGISTER_WITH_EUREKA:true}
+    fetch-registry: ${EUREKA_FETCH_REGISTRY:true}

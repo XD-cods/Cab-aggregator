@@ -46,4 +46,7 @@ public class Passenger {
     @Column(name = "is_busy", nullable = false)
     private Boolean isBusy = Boolean.FALSE;
 
+    @Column(name = "keycloak_id")
+    private String keycloakId;
+
 }

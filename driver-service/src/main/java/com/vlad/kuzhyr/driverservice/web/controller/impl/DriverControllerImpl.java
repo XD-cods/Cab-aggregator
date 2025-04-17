@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,6 +49,24 @@ public class DriverControllerImpl implements DriverController {
         PageResponse<DriverResponse> driverPageResponse = driverService.getAllDriver(currentPage, limit);
         return ResponseEntity.ok(driverPageResponse);
     }
+
+    @GetMapping("/me")
+    @Override
+    public ResponseEntity<DriverResponse> getDriverByHeader(@RequestHeader("X-User-Id") String id) {
+        DriverResponse existingDriverResponse = driverService.getDriverByHeader(id);
+        return ResponseEntity.ok(existingDriverResponse);
+    }
+
+    @PutMapping("/me")
+    @Override
+    public ResponseEntity<DriverResponse> updateDriverByHeader(
+        @RequestHeader("X-User-Id") String id,
+        @Valid @RequestBody DriverRequest driverRequest
+    ) {
+        DriverResponse updatedDriver = driverService.updateDriverByHeader(id, driverRequest);
+        return ResponseEntity.ok(updatedDriver);
+    }
+
 
     @Override
     @PostMapping

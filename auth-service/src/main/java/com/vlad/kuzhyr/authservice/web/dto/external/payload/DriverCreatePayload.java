@@ -11,7 +11,9 @@ public record DriverCreatePayload(
 
     String email,
 
-    String phone
+    String phone,
+
+    String keycloakId
 
 ) {
 }

@@ -167,7 +167,8 @@ public class UserServiceImpl implements UserService {
             user.getFirstName(),
             user.getLastName(),
             user.getEmail(),
-            getPhone(user)
+            getPhone(user),
+            user.getId()
         );
 
         authEventProducer.sendDriverCreateTopic(payload);
@@ -181,7 +182,8 @@ public class UserServiceImpl implements UserService {
             user.getFirstName(),
             user.getLastName(),
             user.getEmail(),
-            getPhone(user)
+            getPhone(user),
+            user.getId()
         );
 
         authEventProducer.sendPassengerCreateTopic(payload);

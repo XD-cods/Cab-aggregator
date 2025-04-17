@@ -21,12 +21,14 @@ public interface PassengerMapper {
     @Mapping(source = "isEnabled", target = "isEnabled")
     PassengerResponse toResponse(Passenger passenger);
 
+    @Mapping(target = "keycloakId", ignore = true)
     @Mapping(target = "isBusy", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "isEnabled", ignore = true)
     @Mapping(target = "id", ignore = true)
     void updateFromRequest(PassengerRequest passengerRequest, @MappingTarget Passenger existingPassenger);
 
+    @Mapping(target = "keycloakId", ignore = true)
     @Mapping(target = "isBusy", ignore = true)
     @Mapping(target = "isEnabled", ignore = true)
     @Mapping(target = "id", ignore = true)
