@@ -21,7 +21,7 @@ services:
       retries: 3
 
   kafka:
-    image: bitnami/kafka:latest
+    image: bitnami/kafka:3.4.1
     container_name: kafka
     ports:
       - "9092:9092"
@@ -29,8 +29,16 @@ services:
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://0.0.0.0:9092
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
       - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+    healthcheck:
+      test: kafka-topics.sh --bootstrap-server kafka:9092 --list
+      start_period: 10s
+      interval: 10s
+      timeout: 15s
+      retries: 3
     depends_on:
       zookeeper:
         condition: service_healthy
@@ -60,7 +68,7 @@ services:
       retries: 10
 
   kibana:
-    image: kibana:7.9.1
+    image: docker.elastic.co/kibana/kibana:7.9.1
     container_name: kibana
     ports:
       - "5601:5601"
@@ -112,8 +120,20 @@ services:
     command:
       - start-dev
 
+#  kafka-ui:
+#    container_name: kafka-ui
+#    image: provectuslabs/kafka-ui:latest
+#    ports:
+#      - "9090:8080"
+#    environment:
+#      DYNAMIC_CONFIG_ENABLED: "true"
+#      KAFKA_CLUSTERS_0_NAME: "brokers"
+#      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "localhost:9092"
+#    depends_on:
+#      kafka:
+#        condition: service_healthy
+
 volumes:
   elasticsearch_data:
   ls_data:
   kb_data:
-  

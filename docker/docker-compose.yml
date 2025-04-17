@@ -116,6 +116,8 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://0.0.0.0:9092
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
       - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=1
     healthcheck:
       test: kafka-topics.sh --bootstrap-server kafka:9092 --list
@@ -125,6 +127,21 @@ services:
       retries: 3
     depends_on:
       zookeeper:
+        condition: service_healthy
+    networks:
+      - cab-aggregator-application
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - "9090:8080"
+    environment:
+      DYNAMIC_CONFIG_ENABLED: "true"
+      KAFKA_CLUSTERS_0_NAME: "local"
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka:9092"
+    depends_on:
+      kafka:
         condition: service_healthy
     networks:
       - cab-aggregator-application

@@ -27,6 +27,7 @@ spring:
                 class: org.apache.kafka.common.serialization.StringDeserializer
     topic:
       passenger-busy-topic: passenger.status.updated
+      passenger-create-topic: passenger.create
 
 eureka:
   client:

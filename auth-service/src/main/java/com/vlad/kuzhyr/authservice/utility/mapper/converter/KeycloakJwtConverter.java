@@ -1,4 +1,4 @@
-package com.vlad.kuzhyr.authservice.utility.converter;
+package com.vlad.kuzhyr.authservice.utility.mapper.converter;
 
 
 import com.vlad.kuzhyr.authservice.utility.constant.Role;

@@ -11,4 +11,6 @@ public final class ExceptionMessageConstant {
     public static final String USER_ALREADY_EXISTS_EXCEPTION_MESSAGE = "User already exists by email: %d";
 
     public static final String USER_NOT_FOUND_BY_EMAIL_EXCEPTION_MESSAGE = "User not found by email: %s";
+
+    public static final String USER_ALREADY_HAS_ROLE_MESSAGE = "User already has a role: %s";
 }

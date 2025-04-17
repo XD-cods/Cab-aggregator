@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.vlad.kuzhyr.authservice.utility.constant.BusinessRole;
 import com.vlad.kuzhyr.authservice.utility.constant.RegularExpressionConstant;
+import com.vlad.kuzhyr.authservice.utility.logger.LogUtils;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -43,4 +44,16 @@ public record SignUpRequest(
     BusinessRole businessRole
 
 ) {
+    @Override
+    public String toString() {
+        String maskEmail = LogUtils.maskEmail(email);
+        String maskPhone = LogUtils.maskPhone(phone);
+
+        return "SignUpRequest{" +
+               "firstName='" + firstName + '\'' +
+               ", lastName='" + lastName + '\'' +
+               ", email='" + maskEmail + '\'' +
+               ", phone='" + maskPhone + '\'' +
+               '}';
+    }
 }

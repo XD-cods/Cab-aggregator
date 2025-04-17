@@ -5,9 +5,9 @@ import com.vlad.kuzhyr.authservice.web.controller.UserController;
 import com.vlad.kuzhyr.authservice.web.dto.request.AssignBusinessRoleRequest;
 import com.vlad.kuzhyr.authservice.web.dto.request.SignInRequest;
 import com.vlad.kuzhyr.authservice.web.dto.request.SignUpRequest;
-import com.vlad.kuzhyr.authservice.web.dto.response.TokenResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -34,15 +34,15 @@ public class UserControllerImpl implements UserController {
 
     @Override
     @PostMapping("/signin")
-    public ResponseEntity<TokenResponse> singIn(@RequestBody @Valid SignInRequest signInRequest) {
-        TokenResponse responseBody = userService.signIn(signInRequest);
+    public ResponseEntity<AccessTokenResponse> singIn(@RequestBody @Valid SignInRequest signInRequest) {
+        AccessTokenResponse responseBody = userService.signIn(signInRequest);
         return ResponseEntity.ok(responseBody);
     }
 
+    @Override
     @PostMapping("/assign-business-role")
     @ResponseStatus(HttpStatus.OK)
-    @Override
-    public void assignBusinessRoleByEmail(@RequestBody @Valid AssignBusinessRoleRequest request) {
+    public void assignBusinessRoleToUser(@RequestBody @Valid AssignBusinessRoleRequest request) {
         userService.assignBusinessRoleByEmail(request.email(), request.businessRole());
     }
 

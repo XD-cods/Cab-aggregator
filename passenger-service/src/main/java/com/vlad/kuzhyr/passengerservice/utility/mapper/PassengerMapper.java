@@ -1,6 +1,7 @@
 package com.vlad.kuzhyr.passengerservice.utility.mapper;
 
 import com.vlad.kuzhyr.passengerservice.persistence.entity.Passenger;
+import com.vlad.kuzhyr.passengerservice.web.dto.external.PassengerCreatePayload;
 import com.vlad.kuzhyr.passengerservice.web.dto.request.PassengerRequest;
 import com.vlad.kuzhyr.passengerservice.web.dto.response.PassengerResponse;
 import org.mapstruct.BeanMapping;
@@ -30,5 +31,10 @@ public interface PassengerMapper {
     @Mapping(target = "isEnabled", ignore = true)
     @Mapping(target = "id", ignore = true)
     Passenger toEntity(PassengerRequest passengerRequest);
+
+    @Mapping(target = "isEnabled", ignore = true)
+    @Mapping(target = "isBusy", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    Passenger toEntity(PassengerCreatePayload payload);
 
 }
