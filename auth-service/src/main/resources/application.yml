@@ -23,6 +23,7 @@ spring:
       acks: 1
       batch-size: 16384
       buffer-memory: 67108864
+
     topic:
       driver-create-topic: driver.create
       passenger-create-topic: passenger.create

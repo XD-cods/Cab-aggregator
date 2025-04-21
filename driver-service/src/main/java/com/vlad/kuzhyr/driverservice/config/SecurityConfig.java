@@ -16,6 +16,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/actuator/*").permitAll()
                 .requestMatchers("/api/v1/drivers/me").authenticated()
                 .anyRequest().hasRole("ADMIN")
             )
