@@ -8,6 +8,7 @@ skinparam ranksep 40
 skinparam arrowThickness 1.5
 skinparam classFontSize 12
 skinparam classFontStyle bold
+skinparam linetype ortho
 skinparam monochrome false
 skinparam shadowing false
 

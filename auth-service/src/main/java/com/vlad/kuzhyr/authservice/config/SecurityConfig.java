@@ -1,5 +1,6 @@
 package com.vlad.kuzhyr.authservice.config;
 
+import com.vlad.kuzhyr.authservice.utility.constant.Role;
 import com.vlad.kuzhyr.authservice.utility.mapper.converter.KeycloakJwtConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,15 +17,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(auth -> auth
+            .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                 .requestMatchers("/actuator/*").permitAll()
                 .requestMatchers(HttpMethod.POST,
                     "/api/v1/auth/signup",
-                    "/api/v1/auth/signin").permitAll()
-
-                .requestMatchers("/api/v1/auth/assign-business-role").hasRole("ADMIN")
-                .anyRequest().authenticated()
-            )
+                    "/api/v1/auth/signin",
+                    "/api/v1/auth/refresh",
+                    "/api/v1/auth/logout"
+                ).permitAll()
+                .requestMatchers("/api/v1/auth/assign-business-role")
+                .hasRole(Role.ADMIN.getKeycloakName())
+                .anyRequest().authenticated())
             .oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt.jwtAuthenticationConverter(new KeycloakJwtConverter()))
             );

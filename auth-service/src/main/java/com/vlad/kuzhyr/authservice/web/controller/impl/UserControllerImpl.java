@@ -3,6 +3,7 @@ package com.vlad.kuzhyr.authservice.web.controller.impl;
 import com.vlad.kuzhyr.authservice.service.UserService;
 import com.vlad.kuzhyr.authservice.web.controller.UserController;
 import com.vlad.kuzhyr.authservice.web.dto.request.AssignBusinessRoleRequest;
+import com.vlad.kuzhyr.authservice.web.dto.request.RefreshRequest;
 import com.vlad.kuzhyr.authservice.web.dto.request.SignInRequest;
 import com.vlad.kuzhyr.authservice.web.dto.request.SignUpRequest;
 import jakarta.validation.Valid;
@@ -44,6 +45,20 @@ public class UserControllerImpl implements UserController {
     @ResponseStatus(HttpStatus.OK)
     public void assignBusinessRoleToUser(@RequestBody @Valid AssignBusinessRoleRequest request) {
         userService.assignBusinessRoleByEmail(request.email(), request.businessRole());
+    }
+
+    @Override
+    @PostMapping("/refresh")
+    public ResponseEntity<AccessTokenResponse> refresh(@RequestBody @Valid RefreshRequest refreshRequest) {
+        AccessTokenResponse response = userService.refreshToken(refreshRequest);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    @PostMapping("/logout")
+    @ResponseStatus(HttpStatus.OK)
+    public void logout(@RequestBody @Valid RefreshRequest request) {
+        userService.logout(request);
     }
 
 }

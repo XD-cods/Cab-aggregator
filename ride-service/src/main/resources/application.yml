@@ -46,7 +46,7 @@ spring:
       passenger-busy-topic: passenger.status.updated
     message:
       scheduler:
-        fixed-rate: ${MESSAGE_SCHEDULER_FIXED-RATE:5000}
+        fixed-rate: ${MESSAGE_SCHEDULER_FIXED-RATE:1000}
 
   cache:
     type: redis

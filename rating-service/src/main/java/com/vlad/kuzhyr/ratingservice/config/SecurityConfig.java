@@ -1,5 +1,6 @@
 package com.vlad.kuzhyr.ratingservice.config;
 
+import com.vlad.kuzhyr.ratingservice.utility.constant.Role;
 import com.vlad.kuzhyr.ratingservice.utility.mapper.converter.KeycloakJwtConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +18,7 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/actuator/*").permitAll()
-                .anyRequest().hasRole("ADMIN")
+                .anyRequest().hasRole(Role.ADMIN.getKeycloakName())
             )
             .oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt.jwtAuthenticationConverter(new KeycloakJwtConverter()))

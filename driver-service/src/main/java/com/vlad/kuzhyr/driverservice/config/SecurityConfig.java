@@ -1,5 +1,6 @@
 package com.vlad.kuzhyr.driverservice.config;
 
+import com.vlad.kuzhyr.driverservice.utility.constant.Role;
 import com.vlad.kuzhyr.driverservice.utility.mapper.converter.KeycloakJwtConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +19,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/actuator/*").permitAll()
                 .requestMatchers("/api/v1/drivers/me").authenticated()
-                .anyRequest().hasRole("ADMIN")
+                .anyRequest().hasRole(Role.ADMIN.getKeycloakName())
             )
             .oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt.jwtAuthenticationConverter(new KeycloakJwtConverter()))

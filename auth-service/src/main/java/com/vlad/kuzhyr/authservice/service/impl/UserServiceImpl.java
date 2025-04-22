@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vlad.kuzhyr.authservice.exception.KeycloakOperationException;
 import com.vlad.kuzhyr.authservice.exception.KeycloakUserNotFoundException;
 import com.vlad.kuzhyr.authservice.exception.UserAlreadyHasRole;
+import com.vlad.kuzhyr.authservice.service.KeycloakAuthService;
 import com.vlad.kuzhyr.authservice.service.UserService;
 import com.vlad.kuzhyr.authservice.utility.broker.AuthEventProducer;
 import com.vlad.kuzhyr.authservice.utility.constant.BusinessRole;
@@ -14,6 +15,7 @@ import com.vlad.kuzhyr.authservice.utility.keycloak.KeycloakUtil;
 import com.vlad.kuzhyr.authservice.utility.logger.LogUtils;
 import com.vlad.kuzhyr.authservice.web.dto.external.payload.DriverCreatePayload;
 import com.vlad.kuzhyr.authservice.web.dto.external.payload.PassengerCreatePayload;
+import com.vlad.kuzhyr.authservice.web.dto.request.RefreshRequest;
 import com.vlad.kuzhyr.authservice.web.dto.request.SignInRequest;
 import com.vlad.kuzhyr.authservice.web.dto.request.SignUpRequest;
 import jakarta.ws.rs.core.Response;
@@ -32,6 +34,7 @@ import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +44,7 @@ public class UserServiceImpl implements UserService {
     private final KeycloakUtil keycloakUtil;
     private final ObjectMapper objectMapper;
     private final AuthEventProducer authEventProducer;
+    private final KeycloakAuthService keycloakAuthService;
 
     @Override
     public void signUp(SignUpRequest signUpRequest) {
@@ -89,6 +93,25 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    public void logout(RefreshRequest refreshRequest) {
+        log.debug("logout. Entering method. Refresh token: {}", refreshRequest);
+
+        keycloakAuthService.logout(refreshRequest.refreshToken());
+
+        log.info("logout. User successfully logged out. {}", refreshRequest);
+    }
+
+    @Override
+    public AccessTokenResponse refreshToken(RefreshRequest refreshRequest) {
+        log.debug("refreshToken. Entering method. Refresh token: {}", refreshRequest);
+
+        AccessTokenResponse response = keycloakAuthService.refreshToken(refreshRequest.refreshToken());
+
+        log.info("refreshToken. Token refreshing successfully completed. {}", refreshRequest);
+        return response;
+    }
+
     private void assignRole(String userId, String keycloakRole) {
         if (hasRole(userId, keycloakRole)) {
             log.info("assignRole. User already has role. User id: {}, role: {}", userId, keycloakRole);
@@ -125,10 +148,10 @@ public class UserServiceImpl implements UserService {
     }
 
     private void handleUserCreationResponse(Response response) {
-        int status = response.getStatus();
+        HttpStatus status = HttpStatus.valueOf(response.getStatus());
         String errorMessage = getResponseBodyMessage(response);
 
-        if (status != HttpStatus.CREATED.value()) {
+        if (status != HttpStatus.CREATED) {
             log.error("handleUserCreationResponse. Threw new error. Error message: {}", errorMessage);
             throw new KeycloakOperationException(errorMessage, status);
         }
