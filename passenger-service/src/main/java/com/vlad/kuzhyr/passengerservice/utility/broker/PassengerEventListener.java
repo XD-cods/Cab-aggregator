@@ -40,9 +40,7 @@ public class PassengerEventListener {
         topics = "${spring.kafka.topic.passenger-create-topic}",
         groupId = "passenger-auth-group"
     )
-    public void consumePassengerCreateTopic(
-        String message
-    ) {
+    public void consumePassengerCreateTopic(String message) {
         log.info("consumePassengerCreateTopic: Consume passenger create event");
 
         PassengerCreatePayload payload = jsonMapper.fromJson(message, PassengerCreatePayload.class);

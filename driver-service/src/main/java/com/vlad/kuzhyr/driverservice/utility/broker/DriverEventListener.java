@@ -38,9 +38,7 @@ public class DriverEventListener {
         topics = "${spring.kafka.topic.driver-create-topic}",
         groupId = "driver-auth-group"
     )
-    public void consumeDriverCreateTopic(
-        String message
-    ) {
+    public void consumeDriverCreateTopic(String message) {
         log.info("consumeDriverBusyEvent: Consuming driver create topic.");
 
         DriverCreatePayload driverCreatePayload = jsonMapper.fromJson(message, DriverCreatePayload.class);
