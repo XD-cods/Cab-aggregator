@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,7 +34,20 @@ public class PassengerControllerImpl implements PassengerController {
     @GetMapping("/{id}")
     @Override
     public ResponseEntity<PassengerResponse> getPassengerById(@PathVariable Long id) {
-        return ResponseEntity.ok(passengerService.getPassengerById(id));
+        return ResponseEntity.ok(passengerService.getPassengerByKeycloakId(id));
+    }
+
+    @Override
+    @GetMapping("/me")
+    public ResponseEntity<PassengerResponse> getPassengerByHeaderId(@RequestHeader("X-User-Id") String id) {
+        return ResponseEntity.ok(passengerService.getPassengerByKeycloakId(id));
+    }
+
+    @PutMapping("/me")
+    @Override
+    public ResponseEntity<PassengerResponse> getPassengerByHeaderId(
+        @RequestHeader("X-User-Id") String id, @RequestBody PassengerRequest passengerRequest) {
+        return ResponseEntity.ok(passengerService.updatePassengerByKeycloakId(id, passengerRequest));
     }
 
     @Override

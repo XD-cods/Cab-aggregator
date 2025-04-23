@@ -1,4 +1,4 @@
-package com.vlad.kuzhyr.driverservice.utility.mapper;
+package com.vlad.kuzhyr.driverservice.utility.mapper.converter;
 
 import com.vlad.kuzhyr.driverservice.persistence.entity.Gender;
 import jakarta.persistence.AttributeConverter;

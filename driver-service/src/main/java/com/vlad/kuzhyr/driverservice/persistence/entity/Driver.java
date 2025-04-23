@@ -1,7 +1,7 @@
 package com.vlad.kuzhyr.driverservice.persistence.entity;
 
 import com.vlad.kuzhyr.driverservice.utility.constant.RegularExpressionConstant;
-import com.vlad.kuzhyr.driverservice.utility.mapper.GenderConverter;
+import com.vlad.kuzhyr.driverservice.utility.mapper.converter.GenderConverter;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -60,6 +60,9 @@ public class Driver {
     @Column(name = "is_busy", nullable = false)
     @Builder.Default
     private Boolean isBusy = Boolean.FALSE;
+
+    @Column(name = "keycloak_id", nullable = false)
+    private String keycloakId;
 
     @Builder.Default
     @OneToMany(mappedBy = "driver", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

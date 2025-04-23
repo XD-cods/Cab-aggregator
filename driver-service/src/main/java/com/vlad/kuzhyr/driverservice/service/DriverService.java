@@ -11,12 +11,15 @@ public interface DriverService {
 
     PageResponse<DriverResponse> getAllDriver(Integer currentPage, Integer limit);
 
+    DriverResponse getDriverByHeader(String id);
+
     DriverResponse createDriver(DriverRequest driverRequest);
 
     DriverResponse updateDriver(Long id, DriverRequest driverRequest);
 
+    DriverResponse updateDriverByHeader(String id, DriverRequest driverRequest);
+
     DriverResponse updateDriverCarsById(Long id, DriverUpdateCarsRequest driverUpdateCarsRequest);
 
     Boolean deleteDriverById(Long id);
-
 }

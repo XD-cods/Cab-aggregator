@@ -2,6 +2,7 @@ package com.vlad.kuzhyr.driverservice.utility.mapper;
 
 import com.vlad.kuzhyr.driverservice.persistence.entity.Car;
 import com.vlad.kuzhyr.driverservice.persistence.entity.Driver;
+import com.vlad.kuzhyr.driverservice.web.dto.external.payload.DriverCreatePayload;
 import com.vlad.kuzhyr.driverservice.web.dto.request.DriverRequest;
 import com.vlad.kuzhyr.driverservice.web.dto.response.DriverResponse;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public interface DriverMapper {
     @Mapping(source = "cars", target = "carIds", qualifiedByName = "mapCarIds")
     DriverResponse toResponse(Driver driver);
 
+    @Mapping(target = "keycloakId", ignore = true)
     @Mapping(target = "isBusy", ignore = true)
     @Mapping(target = "cars", ignore = true)
     @Mapping(target = "isEnabled", ignore = true)
@@ -31,11 +33,19 @@ public interface DriverMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateFromRequest(DriverRequest driverRequest, @MappingTarget Driver existingDriver);
 
+    @Mapping(target = "keycloakId", ignore = true)
     @Mapping(target = "isBusy", ignore = true)
     @Mapping(target = "cars", ignore = true)
     @Mapping(target = "isEnabled", ignore = true)
     @Mapping(target = "id", ignore = true)
     Driver toEntity(DriverRequest driverRequest);
+
+    @Mapping(target = "isEnabled", ignore = true)
+    @Mapping(target = "isBusy", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "gender", ignore = true)
+    @Mapping(target = "cars", ignore = true)
+    Driver toEntity(DriverCreatePayload driverCreatePayload);
 
     @Named("mapCarIds")
     default List<Long> mapCarIds(List<Car> cars) {

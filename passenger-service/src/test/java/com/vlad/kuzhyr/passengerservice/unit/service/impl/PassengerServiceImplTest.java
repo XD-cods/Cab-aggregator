@@ -1,5 +1,17 @@
 package com.vlad.kuzhyr.passengerservice.unit.service.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+
 import com.vlad.kuzhyr.passengerservice.constant.UnitTestDataProvider;
 import com.vlad.kuzhyr.passengerservice.exception.PassengerNotFoundException;
 import com.vlad.kuzhyr.passengerservice.persistence.entity.Passenger;
@@ -14,22 +26,11 @@ import com.vlad.kuzhyr.passengerservice.web.dto.response.PageResponse;
 import com.vlad.kuzhyr.passengerservice.web.dto.response.PassengerResponse;
 import java.util.List;
 import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -79,7 +80,7 @@ public class PassengerServiceImplTest {
             .thenReturn(Optional.of(passenger));
         when(passengerMapper.toResponse(passenger)).thenReturn(passengerResponse);
 
-        PassengerResponse result = passengerServiceImpl.getPassengerById(existingPassengerId);
+        PassengerResponse result = passengerServiceImpl.getPassengerByKeycloakId(existingPassengerId);
 
         assertNotNull(result);
         assertEquals(passengerResponse, result);
@@ -97,7 +98,7 @@ public class PassengerServiceImplTest {
 
         PassengerNotFoundException exception = assertThrows(
             PassengerNotFoundException.class,
-            () -> passengerServiceImpl.getPassengerById(nonExistingPassengerId)
+            () -> passengerServiceImpl.getPassengerByKeycloakId(nonExistingPassengerId)
         );
 
         assertEquals(
@@ -223,7 +224,7 @@ public class PassengerServiceImplTest {
 
         PassengerNotFoundException exception = assertThrows(
             PassengerNotFoundException.class,
-            () -> passengerServiceImpl.getPassengerById(disabledPassengerId)
+            () -> passengerServiceImpl.getPassengerByKeycloakId(disabledPassengerId)
         );
 
         assertEquals(
