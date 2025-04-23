@@ -1,5 +1,17 @@
 package com.vlad.kuzhyr.passengerservice.unit.web.controller.impl;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vlad.kuzhyr.passengerservice.constant.ControllerRouteConstant;
 import com.vlad.kuzhyr.passengerservice.constant.UnitTestDataProvider;
@@ -16,22 +28,11 @@ import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintVa
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
@@ -64,13 +65,13 @@ public class PassengerControllerImplTest {
         Long passengerId = UnitTestDataProvider.TEST_PASSENGER_ID;
         PassengerResponse passengerResponse = UnitTestDataProvider.passengerResponse();
 
-        when(passengerService.getPassengerById(passengerId)).thenReturn(passengerResponse);
+        when(passengerService.getPassengerByKeycloakId(passengerId)).thenReturn(passengerResponse);
 
         mockMvc.perform(get(ControllerRouteConstant.GET_PASSENGER_BY_ID_URL.formatted(passengerId)))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
-        verify(passengerService).getPassengerById(passengerId);
+        verify(passengerService).getPassengerByKeycloakId(passengerId);
     }
 
     @Test
@@ -79,14 +80,14 @@ public class PassengerControllerImplTest {
         String exceptionMessage =
             ExceptionMessageConstant.PASSENGER_NOT_FOUND_MESSAGE.formatted(nonExistingPassengerId);
 
-        when(passengerService.getPassengerById(nonExistingPassengerId))
+        when(passengerService.getPassengerByKeycloakId(nonExistingPassengerId))
             .thenThrow(new PassengerNotFoundException(exceptionMessage));
 
         mockMvc.perform(get(ControllerRouteConstant.GET_PASSENGER_BY_ID_URL.formatted(nonExistingPassengerId)))
             .andExpect(status().isNotFound())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
-        verify(passengerService).getPassengerById(nonExistingPassengerId);
+        verify(passengerService).getPassengerByKeycloakId(nonExistingPassengerId);
     }
 
     @Test

@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ExceptionMessageConstant {
 
-    public static final String DRIVER_NOT_FOUND_MESSAGE = "driver not found by id: %d";
+    public static final String DRIVER_NOT_FOUND_MESSAGE = "driver not found by id: %s";
 
     public static final String DRIVER_ALREADY_EXISTS_BY_PHONE_MESSAGE = "driver exist by phone: %s";
 

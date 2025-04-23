@@ -10,6 +10,8 @@ public interface DriverRepository extends JpaRepository<Driver, Long> {
 
     Optional<Driver> findDriverByIdAndIsEnabledTrue(Long id);
 
+    Optional<Driver> findDriverByKeycloakIdAndIsEnabledTrue(String id);
+
     Boolean existsDriverByEmailAndIsEnabledTrue(String driverRequestEmail);
 
     Boolean existsDriverByPhoneAndIsEnabledTrue(String driverRequestPhone);

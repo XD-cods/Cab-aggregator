@@ -25,6 +25,7 @@ public interface DriverMapper {
     @Mapping(source = "cars", target = "carIds", qualifiedByName = "mapCarIds")
     DriverResponse toResponse(Driver driver);
 
+    @Mapping(target = "keycloakId", ignore = true)
     @Mapping(target = "isBusy", ignore = true)
     @Mapping(target = "cars", ignore = true)
     @Mapping(target = "isEnabled", ignore = true)
@@ -32,6 +33,7 @@ public interface DriverMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateFromRequest(DriverRequest driverRequest, @MappingTarget Driver existingDriver);
 
+    @Mapping(target = "keycloakId", ignore = true)
     @Mapping(target = "isBusy", ignore = true)
     @Mapping(target = "cars", ignore = true)
     @Mapping(target = "isEnabled", ignore = true)
