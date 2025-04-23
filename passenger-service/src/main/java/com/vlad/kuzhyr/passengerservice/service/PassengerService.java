@@ -6,7 +6,9 @@ import com.vlad.kuzhyr.passengerservice.web.dto.response.PassengerResponse;
 
 public interface PassengerService {
 
-    PassengerResponse getPassengerById(Long id);
+    PassengerResponse getPassengerByKeycloakId(Long id);
+    
+    PassengerResponse getPassengerByKeycloakId(String id);
 
     PassengerResponse createPassenger(PassengerRequest passengerRequest);
 
@@ -16,4 +18,5 @@ public interface PassengerService {
 
     PageResponse<PassengerResponse> getPassengers(Integer currentPage, Integer limit);
 
+    PassengerResponse updatePassengerByKeycloakId(String id, PassengerRequest passengerRequest);
 }

@@ -12,7 +12,9 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "Passenger API", description = "API for managing passenger data")
@@ -25,6 +27,24 @@ public interface PassengerController {
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     ResponseEntity<PassengerResponse> getPassengerById(@PathVariable Long id);
+
+    @Operation(summary = "Get passenger by header")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Passenger found"),
+        @ApiResponse(responseCode = "404", description = "Passenger not found"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    ResponseEntity<PassengerResponse> getPassengerByHeaderId(@RequestHeader("X-User-Id") String id);
+
+    @Operation(summary = "Update passenger by header")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Passenger found"),
+        @ApiResponse(responseCode = "404", description = "Passenger not found"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @PutMapping("/me")
+    ResponseEntity<PassengerResponse> getPassengerByHeaderId(
+        @RequestHeader("X-User-Id") String id, @RequestBody PassengerRequest passengerRequest);
 
     @Operation(summary = "Get passengers")
     @ApiResponses(value = {

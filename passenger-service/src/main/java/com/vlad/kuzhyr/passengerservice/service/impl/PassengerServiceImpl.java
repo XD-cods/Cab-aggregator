@@ -29,12 +29,22 @@ public class PassengerServiceImpl implements PassengerService {
     private final PassengerValidator passengerValidator;
 
     @Override
-    public PassengerResponse getPassengerById(Long id) {
+    public PassengerResponse getPassengerByKeycloakId(Long id) {
         log.debug("getPassengerById: Entering method. Passenger id: {}", id);
 
         Passenger existingPassenger = getExistingPassengerById(id);
 
         log.info("getPassengerById: Passenger found. Passenger id: {}", id);
+        return passengerMapper.toResponse(existingPassenger);
+    }
+
+    @Override
+    public PassengerResponse getPassengerByKeycloakId(String id) {
+        log.debug("getPassengerByKeycloakId: Entering method. Passenger id: {}", id);
+
+        Passenger existingPassenger = getExistingPassengerByKeycloakId(id);
+
+        log.info("getPassengerByKeycloakId: Passenger found. Passenger id: {}", id);
         return passengerMapper.toResponse(existingPassenger);
     }
 
@@ -53,6 +63,19 @@ public class PassengerServiceImpl implements PassengerService {
 
         log.info("getPassengers: Page of passengers retrieved. {}", pageResponse);
         return pageResponse;
+    }
+
+    @Override
+    public PassengerResponse updatePassengerByKeycloakId(String id, PassengerRequest passengerRequest) {
+        log.debug("updatePassengerByKeycloakId: Entering method. Passenger id: {}, {}", id, passengerRequest);
+
+        Passenger existingPassenger = getExistingPassengerByKeycloakId(id);
+
+        passengerMapper.updateFromRequest(passengerRequest, existingPassenger);
+        Passenger savedPassenger = passengerRepository.save(existingPassenger);
+
+        log.info("updatePassengerByKeycloakId: Passenger updated successfully. Passenger id: {}", id);
+        return passengerMapper.toResponse(savedPassenger);
     }
 
     @Transactional
@@ -107,6 +130,18 @@ public class PassengerServiceImpl implements PassengerService {
         return passengerRepository.findPassengerByIdAndIsEnabledTrue(id)
             .orElseThrow(() -> {
                 log.error("getExistingPassengerById: Passenger not found. Passenger id: {}", id);
+                return new PassengerNotFoundException(
+                    ExceptionMessageConstant.PASSENGER_NOT_FOUND_MESSAGE.formatted(id)
+                );
+            });
+    }
+
+    private Passenger getExistingPassengerByKeycloakId(String id) {
+        log.debug("getExistingPassengerByKeycloakId: Attempting to find passenger. Passenger id: {}", id);
+
+        return passengerRepository.findPassengerByKeycloakIdAndIsEnabledTrue(id)
+            .orElseThrow(() -> {
+                log.error("getExistingPassengerByKeycloakId: Passenger not found. Passenger id: {}", id);
                 return new PassengerNotFoundException(
                     ExceptionMessageConstant.PASSENGER_NOT_FOUND_MESSAGE.formatted(id)
                 );

@@ -27,7 +27,7 @@ public record PassengerRequest(
     @NotBlank(message = "{validation.email.empty}")
     String email,
 
-    @Schema(description = "Passenger phone", example = "7849232")
+    @Schema(description = "Passenger phone", example = "+375336190975")
     @NotBlank(message = "{validation.phone.empty}")
     @Pattern(regexp = RegularExpressionConstant.PHONE_REG_XP, message = "{validation.phone.invalid}")
     String phone

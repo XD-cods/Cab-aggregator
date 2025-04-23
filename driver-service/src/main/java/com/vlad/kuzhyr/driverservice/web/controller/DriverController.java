@@ -12,8 +12,11 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "Driver API", description = "api for managing drivers")
@@ -36,6 +39,15 @@ public interface DriverController {
     ResponseEntity<PageResponse<DriverResponse>> getAllDriver(
         @RequestParam(name = "current_page", required = false, defaultValue = "0") @Min(0) Integer currentPage,
         @RequestParam(required = false, defaultValue = "10") @Min(1) @Max(100) Integer limit
+    );
+
+    @GetMapping("/me")
+    ResponseEntity<DriverResponse> getDriverByHeader(@RequestHeader("X-User-Id") String id);
+
+    @PutMapping("/me")
+    ResponseEntity<DriverResponse> updateDriverByHeader(
+        @RequestHeader("X-User-Id") String id,
+        @Valid @RequestBody DriverRequest driverRequest
     );
 
     @Operation(summary = "Create new driver")
