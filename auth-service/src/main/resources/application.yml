@@ -23,12 +23,13 @@ spring:
       acks: 1
       batch-size: 16384
       buffer-memory: 67108864
+
     topic:
       driver-create-topic: driver.create
       passenger-create-topic: passenger.create
     message:
       scheduler:
-        fixed-rate: ${MESSAGE_SCHEDULER_FIXED-RATE:5000}
+        fixed-rate: ${MESSAGE_SCHEDULER_FIXED-RATE:1000}
 
   security:
     oauth2:
@@ -36,7 +37,7 @@ spring:
         registration:
           keycloak:
             client-id: ${KEYCLOAK_CLIENT_ID:spring-auth-service}
-            client-secret: ${KEYCLOAK_CLIENT_SECRET:o4VYzextoVmIQUHbu09MI1XlOKwTBRX0}
+            client-secret: ${KEYCLOAK_CLIENT_SECRET:qu1Z8C6IxflAtxDGHFrRABtyfUbMD1qc}
             scope:
               - openid
               - profile
@@ -84,6 +85,12 @@ management:
           server:
             request: true
 
+springdoc:
+  api-docs:
+    path: /auth-service/v3/api-docs
+  swagger-ui:
+    path: /auth-service/swagger-ui.html
+
 logging:
   logstash:
     enabled: ${LOGSTASH_ENABLED:true}
@@ -91,4 +98,7 @@ logging:
 
 eureka:
   client:
-    enabled: false
+    service-url:
+      defaultZone: ${EUREKA_DEFAULT_ZONE:http://localhost:${EUREKA_PORT:8761}/eureka}
+    register-with-eureka: ${REGISTER_WITH_EUREKA:true}
+    fetch-registry: ${EUREKA_FETCH_REGISTRY:true}

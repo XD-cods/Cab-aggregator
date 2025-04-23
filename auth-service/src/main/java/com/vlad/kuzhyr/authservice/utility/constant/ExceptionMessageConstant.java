@@ -13,4 +13,6 @@ public final class ExceptionMessageConstant {
     public static final String USER_NOT_FOUND_BY_EMAIL_EXCEPTION_MESSAGE = "User not found by email: %s";
 
     public static final String USER_ALREADY_HAS_ROLE_MESSAGE = "User already has a role: %s";
+
+    public static final String FAILED_REFRESH_TOKEN_MESSAGE = "Failed to refresh token. Status: %d";
 }

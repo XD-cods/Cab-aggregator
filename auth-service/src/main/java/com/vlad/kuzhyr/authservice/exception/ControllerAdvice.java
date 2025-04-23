@@ -36,9 +36,9 @@ public class ControllerAdvice {
 
     @ExceptionHandler(KeycloakOperationException.class)
     public ResponseEntity<ErrorResponse> keycloakOperationException(KeycloakOperationException e) {
-        return ResponseEntity.status(HttpStatus.valueOf(e.getStatusCode())).body(
+        return ResponseEntity.status(e.getStatusCode()).body(
             ErrorResponse.builder()
-                .error(String.valueOf(HttpStatus.valueOf(e.getStatusCode())))
+                .error(String.valueOf(e.getStatusCode()))
                 .errorDescription(e.getMessage())
                 .timestamp(LocalDateTime.now())
                 .build()
@@ -55,7 +55,7 @@ public class ControllerAdvice {
     public ResponseEntity<ErrorResponse> userAlreadyHasRole(UserAlreadyHasRole e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(
             ErrorResponse.builder()
-                .error(String.valueOf(HttpStatus.valueOf(HttpStatus.CONFLICT.value())))
+                .error(String.valueOf(HttpStatus.CONFLICT))
                 .errorDescription(e.getMessage())
                 .timestamp(LocalDateTime.now())
                 .build()
