@@ -18,8 +18,7 @@ public record RefreshRequest(
             return "RefreshRequest{refreshToken=null}";
         }
 
-        int substringLength = Math.min(refreshToken.length(), 50);
-        return "RefreshRequest{refreshToken='" + refreshToken.substring(0, substringLength) + "...'}";
+        return "RefreshRequest{refreshToken='...'}";
     }
 
 }

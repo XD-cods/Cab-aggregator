@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Component
@@ -26,7 +25,6 @@ public class AuthEventProducer {
 
     private final JsonMapper jsonMapper;
 
-    @Transactional
     public void sendDriverCreateTopic(DriverCreatePayload driverCreatePayload) {
         String maskedEmail = LogUtils.maskEmail(driverCreatePayload.email());
         log.debug("sendDriverCreateTopic: Entering method. Driver maskedEmail: {}", maskedEmail);
@@ -38,7 +36,6 @@ public class AuthEventProducer {
             maskedEmail);
     }
 
-    @Transactional
     public void sendPassengerCreateTopic(PassengerCreatePayload passengerCreatePayload) {
         String maskedEmail = LogUtils.maskEmail(passengerCreatePayload.email());
         log.debug("sendPassengerCreateTopic: Entering method. Passenger email: {}", maskedEmail);

@@ -3,19 +3,10 @@ package com.vlad.kuzhyr.authservice.utility.logger;
 public class LogUtils {
 
     public static String maskEmail(String email) {
-        if (email == null || email.isEmpty()) {
-            return email;
-        }
-
+        if (email == null || !email.contains("@")) return email;
         int atIndex = email.indexOf('@');
-        if (atIndex == -1) {
-            return email;
-        }
-
         String localPart = email.substring(0, Math.min(atIndex, 3));
-        String domain = email.substring(atIndex);
-
-        return localPart + "***" + domain;
+        return localPart + "***" + email.substring(atIndex);
     }
 
     public static String maskPhone(String phone) {
