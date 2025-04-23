@@ -13,6 +13,7 @@
 
     </properties>
     <modules>
+        <module>auth-service</module>
         <module>driver-service</module>
         <module>passenger-service</module>
         <module>rating-service</module>

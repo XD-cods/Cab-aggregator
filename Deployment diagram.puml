@@ -1,0 +1,146 @@
+@startuml DockerDeployment
+left to right direction
+
+!theme vibrant
+skinparam BackgroundColor #FFFFFF
+skinparam nodesep 40
+skinparam ranksep 40
+skinparam arrowThickness 1.5
+skinparam classFontSize 12
+skinparam classFontStyle bold
+skinparam linetype ortho
+skinparam monochrome false
+skinparam shadowing false
+
+skinparam package {
+  BackgroundColor #F5F5F5
+  BorderColor #AAAAAA
+}
+
+node "Docker Host" {
+
+  package "Service Discovery" {
+    [<color:#2E86C1>Eureka Server\n<b><color:#FF5733>8761</color></b>] as eureka
+  }
+
+  package "API Gateway" {
+    [<color:#2E86C1>API Gateway\n<b><color:#FF5733>8080</color></b>] as gateway
+  }
+
+  package "Core Services" {
+    [Ride Service] as ride
+    [Driver Service] as driver
+    [Passenger Service] as passenger
+    [Rating Service] as rating
+    [Auth Service] as auth
+  }
+
+  package "Databases" {
+    database "Driver DB\nPostgreSQL" as driverDb
+    database "Passenger DB\nPostgreSQL" as passengerDb
+    database "Ride DB\nPostgreSQL" as rideDb
+    database "Rating DB\nPostgreSQL" as ratingDb
+    database "Auth DB\nPostgreSQL" as authDb
+  }
+
+  package "Kafka Cluster" {
+    [<color:#27AE60>Zookeeper\n<b><color:#FF5733>2181</color></b>] as zookeeper
+    queue "Kafka Broker 1" as kafka1
+    queue "Kafka Broker 2" as kafka2
+    queue "Kafka Broker 3" as kafka3
+    [<color:#27AE60>Kafka UI\n<b><color:#FF5733>9090</color></b>] as kafkaUi
+  }
+
+  package "Monitoring" {
+    [Elasticsearch\n<b><color:#FF5733>9200</color></b>] as elasticsearch
+    [Kibana\n<b><color:#FF5733>5601</color></b>] as kibana
+    [Logstash\n<b><color:#FF5733>5044</color></b>] as logstash
+    [Zipkin\n<b><color:#FF5733>9411</color></b>] as zipkin
+  }
+
+  package "Auth & Security" {
+    [<color:#C0392B>Keycloak\n<b><color:#FF5733>8081</color></b>] as keycloak
+  }
+
+  package "Cache" {
+    [<color:#8E44AD>Redis\n<b><color:#FF5733>6379</color></b>] as redis
+  }
+
+}
+
+cloud "Mapbox API\n(External)" as mapbox
+cloud "Kafka Bootstrap\n(kafka:9092)" as kafkaBootstrap
+
+gateway -[#1ABC9C]-> eureka : Register
+ride -[#1ABC9C]-> eureka
+driver -[#1ABC9C]-> eureka
+passenger -[#1ABC9C]-> eureka
+rating -[#1ABC9C]-> eureka
+auth -[#1ABC9C]-> eureka
+
+gateway -[#9B59B6]-> ride
+gateway -[#9B59B6]-> driver
+gateway -[#9B59B6]-> passenger
+gateway -[#9B59B6]-> rating
+gateway -[#9B59B6]-> auth
+
+ride -[#34495E]-> rideDb
+driver -[#34495E]-> driverDb
+passenger -[#34495E]-> passengerDb
+rating -[#34495E]-> ratingDb
+auth -[#34495E]-> authDb
+
+ride -[#E91E63]-> redis : Cache
+
+ride -[#3F51B5]-> mapbox : Geocoding \ Routing
+
+ride -[#FF9800]-> kafkaBootstrap : Publish Ride Events
+auth -[#FF9800]-> kafkaBootstrap : Publish User Events
+kafkaBootstrap -[#FF9800]-> rating : Consume Events
+kafkaBootstrap -[#FF9800]-> passenger : Consume Events
+kafkaBootstrap -[#FF9800]-> driver : Consume Events
+
+kafkaBootstrap -[#4CAF50]-> kafka1
+kafkaBootstrap -[#4CAF50]-> kafka2
+kafkaBootstrap -[#4CAF50]-> kafka3
+
+kafka1 -[#CDDC39]-> zookeeper
+kafka2 -[#CDDC39]-> zookeeper
+kafka3 -[#CDDC39]-> zookeeper
+
+kafkaUi -[#009688]-> kafka1
+kafkaUi -[#009688]-> kafka2
+kafkaUi -[#009688]-> kafka3
+
+logstash -[#FFC107]-> elasticsearch : Store Logs
+kibana -[#FFC107]-> elasticsearch : Visualize
+zipkin -[#FFC107]-> elasticsearch : Trace
+
+gateway .[#FFC107].> logstash
+ride .[#FFC107].> logstash
+driver .[#FFC107].> logstash
+passenger .[#FFC107].> logstash
+rating .[#FFC107].> logstash
+auth .[#FFC107].> logstash
+
+ride -[#FF5722]-> passenger : Check Availability
+ride -[#FF5722]-> driver : Assign Driver
+
+auth -[#F44336]-> keycloak : OpenID
+
+legend bottom
+<color:#1ABC9C>→</color> Service Discovery |
+<color:#9B59B6>→</color> API Gateway |
+<color:#34495E>→</color> Database |
+<color:#E91E63>→</color> Caching |
+<color:#3F51B5>→</color> External API |
+<color:#FF9800>→</color> Kafka Events |
+<color:#4CAF50>→</color> Kafka Brokers |
+<color:#CDDC39>→</color> ZooKeeper |
+<color:#009688>→</color> Kafka UI |
+<color:#FFC107>→</color> Monitoring |
+<color:#FF5722>→</color> Feign Calls |
+<color:#F44336>→</color> Auth
+end legend
+
+@enduml

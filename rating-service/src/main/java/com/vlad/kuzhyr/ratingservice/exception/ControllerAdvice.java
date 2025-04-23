@@ -6,8 +6,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -74,20 +76,28 @@ public class ControllerAdvice {
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "400",
-            description = "Request arguments not valid exception",
-            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-            )
+            description = "MethodArgument not valid exception",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    @ExceptionHandler(value = {
-        MethodArgumentNotValidException.class,
-        RatedByNullException.class,
-    })
-    public ResponseEntity<ErrorResponse> requestValidationException(MethodArgumentNotValidException exception) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.builder()
-            .error(String.valueOf(HttpStatus.BAD_REQUEST))
-            .errorDescription(exception.getMessage())
-            .timestamp(LocalDateTime.now())
-            .build());
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> methodArgumentException(MethodArgumentNotValidException ex) {
+        String errorMessage = ex.getBindingResult().getAllErrors().stream()
+            .map(error -> {
+                if (error instanceof FieldError) {
+                    FieldError fieldError = (FieldError) error;
+                    return String.format("%s: %s", fieldError.getField(), error.getDefaultMessage());
+                }
+                return error.getDefaultMessage();
+            })
+            .collect(Collectors.joining("; "));
+
+        return ResponseEntity.badRequest().body(
+            ErrorResponse.builder()
+                .error(String.valueOf(HttpStatus.BAD_REQUEST))
+                .errorDescription(errorMessage)
+                .timestamp(LocalDateTime.now())
+                .build()
+        );
     }
 
     @ApiResponses(value = {
@@ -97,12 +107,20 @@ public class ControllerAdvice {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> handleConstraintViolation(ConstraintViolationException exception) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.builder()
-            .error(String.valueOf(HttpStatus.BAD_REQUEST))
-            .errorDescription(exception.getMessage())
-            .timestamp(LocalDateTime.now())
-            .build());
+    public ResponseEntity<ErrorResponse> constraintViolationException(ConstraintViolationException ex) {
+        String errorMessage = ex.getConstraintViolations().stream()
+            .map(violation -> String.format("%s: %s",
+                violation.getPropertyPath().toString(),
+                violation.getMessage()))
+            .collect(Collectors.joining("; "));
+
+        return ResponseEntity.badRequest().body(
+            ErrorResponse.builder()
+                .error(String.valueOf(HttpStatus.BAD_REQUEST))
+                .errorDescription(errorMessage)
+                .timestamp(LocalDateTime.now())
+                .build()
+        );
     }
 
 }
