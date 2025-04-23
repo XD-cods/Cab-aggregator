@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/V1/V1-initial-outbox.sql
+  - include:
+      file: db/changelog/V1/V1-create-schedule-lock-table.sql
+  - include:
+      file: db/changelog/V1/V1-add-traceparent-column.sql

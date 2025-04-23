@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: ${AUTH_DB_URL:jdbc:postgresql://localhost:5432/postgres}
+    username: ${AUTH_DB_USERNAME:postgres}
+    password: ${AUTH_DB_PASSWORD:1111}
+    driver-class-name: ${AUTH_DB_DRIVER:org.postgresql.Driver}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics
