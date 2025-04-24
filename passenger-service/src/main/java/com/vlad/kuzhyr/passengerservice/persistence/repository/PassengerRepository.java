@@ -14,4 +14,6 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long> {
 
     Optional<Passenger> findPassengerByIdAndIsEnabledTrue(Long id);
 
+    Optional<Passenger> findPassengerByKeycloakIdAndIsEnabledTrue(String id);
+
 }

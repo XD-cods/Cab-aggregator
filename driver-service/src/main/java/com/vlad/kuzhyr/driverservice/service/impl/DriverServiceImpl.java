@@ -59,6 +59,16 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
+    public DriverResponse getDriverByHeader(String id) {
+        log.debug("getDriverByHeader: Entering method. Driver id: {}", id);
+
+        Driver existingDriver = getDriverByHeaderOrElseThrow(id);
+
+        log.info("getDriverByHeader: Driver found. Driver id: {}", id);
+        return driverMapper.toResponse(existingDriver);
+    }
+
+    @Override
     @Transactional
     public DriverResponse createDriver(DriverRequest driverRequest) {
         log.debug("createDriver: Entering method. {}", driverRequest);
@@ -88,6 +98,22 @@ public class DriverServiceImpl implements DriverService {
         Driver savedDriver = driverRepository.save(existingDriver);
 
         log.info("updateDriver: Driver updated successfully. Driver id: {}", id);
+        return driverMapper.toResponse(savedDriver);
+    }
+
+    @Override
+    public DriverResponse updateDriverByHeader(String id, DriverRequest driverRequest) {
+        log.debug("updateDriverByHeader: Entering method. Driver id: {}, {}", id, driverRequest);
+
+        driverValidator.validateDriver(driverRequest.email(), driverRequest.phone());
+
+        Driver existingDriver = getDriverByHeaderOrElseThrow(id);
+        List<Car> cars = carRepository.findAllById(driverRequest.carIds());
+        driverMapper.updateFromRequest(driverRequest, existingDriver);
+        setCarsDriver(existingDriver, cars);
+        Driver savedDriver = driverRepository.save(existingDriver);
+
+        log.info("updateDriverByHeader: Driver updated successfully. Driver id: {}", id);
         return driverMapper.toResponse(savedDriver);
     }
 
@@ -142,6 +168,15 @@ public class DriverServiceImpl implements DriverService {
 
         return driverRepository.findDriverByIdAndIsEnabledTrue(id).orElseThrow(() -> {
             log.error("getDriverOrElseThrow: Driver not found. Driver id: {}", id);
+            return new DriverNotFoundException(ExceptionMessageConstant.DRIVER_NOT_FOUND_MESSAGE.formatted(id));
+        });
+    }
+
+    private Driver getDriverByHeaderOrElseThrow(String id) {
+        log.debug("getDriverByHeaderOrElseThrow: Attempting to find driver. Driver id: {}", id);
+
+        return driverRepository.findDriverByKeycloakIdAndIsEnabledTrue(id).orElseThrow(() -> {
+            log.error("getDriverByHeaderOrElseThrow: Driver not found. Driver id: {}", id);
             return new DriverNotFoundException(ExceptionMessageConstant.DRIVER_NOT_FOUND_MESSAGE.formatted(id));
         });
     }
