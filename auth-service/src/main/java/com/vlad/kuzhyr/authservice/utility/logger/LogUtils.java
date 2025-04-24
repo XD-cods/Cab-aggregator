@@ -1,4 +1,4 @@
-package com.vlad.kuzhyr.driverservice.utility.logger;
+package com.vlad.kuzhyr.authservice.utility.logger;
 
 public class LogUtils {
 

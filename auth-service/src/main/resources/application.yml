@@ -1,0 +1,104 @@
+server:
+  port: ${SERVER_PORT:8090}
+
+keycloak:
+  realm: ${KEYCLOAK_REALM:auth-service}
+  auth-server-url: ${KEYCLOAK_URL:http://localhost:8088}
+
+spring:
+  application:
+    name: auth-service
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  kafka:
+    bootstrap-servers: ${KAFKA_URLS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.LongSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      retries: ${KAFKA_RETRIES:3}
+      acks: 1
+      batch-size: 16384
+      buffer-memory: 67108864
+
+    topic:
+      driver-create-topic: driver.create
+      passenger-create-topic: passenger.create
+    message:
+      scheduler:
+        fixed-rate: ${MESSAGE_SCHEDULER_FIXED-RATE:1000}
+
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: ${KEYCLOAK_CLIENT_ID:spring-auth-service}
+            client-secret: ${KEYCLOAK_CLIENT_SECRET:qu1Z8C6IxflAtxDGHFrRABtyfUbMD1qc}
+            scope:
+              - openid
+              - profile
+              - email
+
+      resourceserver:
+        jwt:
+          issuer-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  elastic:
+    metrics:
+      export:
+        enabled: ${ES_ENABLED:true}
+        host: ${ES_HOST:http://localhost:9200}
+        index: metrics
+        step: ${ES_METRICS_STEP:10s}
+        index-date-format: "yyyy.MM.dd"
+        connect-timeout: ${ES_CONNECT_TIMEOUT:10s}
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_HOST:http://localhost:9411}/api/v2/spans
+      export:
+        enabled: true
+  metrics:
+    tags:
+      app: ${spring.application.name}
+      host: ${java.rmi.server.hostname}
+      application: ${spring.application.name}
+    distribution:
+      percentiles:
+        http:
+          server:
+            requests: 0.5, 0.9, 0.95, 0.99
+      percentiles-histogram:
+        http:
+          server:
+            request: true
+
+springdoc:
+  api-docs:
+    path: /auth-service/v3/api-docs
+  swagger-ui:
+    path: /auth-service/swagger-ui.html
+
+logging:
+  logstash:
+    enabled: ${LOGSTASH_ENABLED:true}
+    destination: ${LOGSTASH_DESTINATION:localhost:5044}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_DEFAULT_ZONE:http://localhost:${EUREKA_PORT:8761}/eureka}
+    register-with-eureka: ${REGISTER_WITH_EUREKA:true}
+    fetch-registry: ${EUREKA_FETCH_REGISTRY:true}
