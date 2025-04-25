@@ -1,10 +1,10 @@
-package com.vlad.kuzhyr.driverservice.web.dto.request;
+package com.vlad.kuzhyr.authservice.web.dto.external;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.vlad.kuzhyr.driverservice.persistence.entity.Gender;
-import com.vlad.kuzhyr.driverservice.utility.constant.RegularExpressionConstant;
-import com.vlad.kuzhyr.driverservice.utility.logger.LogUtils;
+import com.vlad.kuzhyr.authservice.persistence.entity.Gender;
+import com.vlad.kuzhyr.authservice.utility.constant.RegularExpressionConstant;
+import com.vlad.kuzhyr.authservice.utility.logger.LogUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -35,7 +35,7 @@ public record DriverRequest(
     Gender gender,
 
     @NotBlank(message = "{validation.phone.empty}")
-    @Pattern(regexp = RegularExpressionConstant.DRIVER_PHONE_REGEX, message = "{validation.phone.invalid}")
+    @Pattern(regexp = RegularExpressionConstant.PHONE_REG_XP, message = "{validation.phone.invalid}")
     @Schema(description = "Driver phone number", example = "+375335184521")
     String phone,
 
@@ -50,12 +50,12 @@ public record DriverRequest(
     @Override
     public String toString() {
         return "DriverRequest{" +
-               "firstName='" + firstName + '\'' +
-               ", lastName='" + "########" + '\'' +
-               ", email='" + LogUtils.maskEmail(email) + '\'' +
-               ", gender=" + gender +
-               ", phone='" + LogUtils.maskPhone(phone) + '\'' +
-               ", carIds=" + carIds +
-               '}';
+            "firstName='" + firstName + '\'' +
+            ", lastName='" + "########" + '\'' +
+            ", email='" + LogUtils.maskEmail(email) + '\'' +
+            ", gender=" + gender +
+            ", phone='" + LogUtils.maskPhone(phone) + '\'' +
+            ", carIds=" + carIds +
+            '}';
     }
 }

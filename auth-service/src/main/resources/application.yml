@@ -14,22 +14,6 @@ spring:
     hibernate:
       ddl-auto: validate
     show-sql: false
-  kafka:
-    bootstrap-servers: ${KAFKA_URLS:localhost:9092}
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.LongSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-      retries: ${KAFKA_RETRIES:3}
-      acks: 1
-      batch-size: 16384
-      buffer-memory: 67108864
-
-    topic:
-      driver-create-topic: driver.create
-      passenger-create-topic: passenger.create
-    message:
-      scheduler:
-        fixed-rate: ${MESSAGE_SCHEDULER_FIXED-RATE:1000}
 
   security:
     oauth2:
@@ -38,19 +22,56 @@ spring:
           keycloak:
             client-id: ${KEYCLOAK_CLIENT_ID:spring-auth-service}
             client-secret: ${KEYCLOAK_CLIENT_SECRET:qu1Z8C6IxflAtxDGHFrRABtyfUbMD1qc}
+            authorization-grant-type: client_credentials
             scope:
               - openid
               - profile
               - email
+            provider: keycloak
+        provider:
+          keycloak:
+            authorization-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/auth
+            token-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/token
+            user-info-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/userinfo
+            user-name-attribute: preferred_username
 
       resourceserver:
         jwt:
           issuer-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}
 
+resilience4j:
+  retry:
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 1s
+        ignore-exceptions:
+          - com.vlad.kuzhyr.authservice.exception.CustomFeignException
+  circuitbreaker:
+    configs:
+      default:
+        register-health-indicator: true
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 10
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 3
+        sliding-window-size: 10
+        sliding-window-type: COUNT_BASED
+        ignore-exceptions:
+          - com.vlad.kuzhyr.authservice.exception.CustomFeignException
+  timelimiter:
+    configs:
+      default:
+        timeout-duration:
+          seconds: 5
+
 management:
   tracing:
     sampling:
       probability: 1.0
+    propagation:
+      produce: b3
 
   endpoints:
     web:

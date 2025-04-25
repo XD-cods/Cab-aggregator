@@ -4,9 +4,7 @@ import com.vlad.kuzhyr.driverservice.exception.DriverNotFoundException;
 import com.vlad.kuzhyr.driverservice.persistence.entity.Driver;
 import com.vlad.kuzhyr.driverservice.persistence.repository.DriverRepository;
 import com.vlad.kuzhyr.driverservice.utility.constant.ExceptionMessageConstant;
-import com.vlad.kuzhyr.driverservice.utility.logger.LogUtils;
 import com.vlad.kuzhyr.driverservice.utility.mapper.DriverMapper;
-import com.vlad.kuzhyr.driverservice.web.dto.external.payload.DriverCreatePayload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -33,14 +31,6 @@ public class DriverProcessor {
             savedDriver.getId(),
             savedDriver.getIsBusy()
         );
-    }
-
-    public void createNewDriver(DriverCreatePayload driverPayload) {
-        String maskedEmail = LogUtils.maskEmail(driverPayload.email());
-        log.debug("createNewDriver: Entering method. Driver email: {}", maskedEmail);
-        Driver driver = driverMapper.toEntity(driverPayload);
-        driverRepository.save(driver);
-        log.info("createNewDriver: Driver created successfully. Driver email: {}", maskedEmail);
     }
 
     private Driver getDriverById(Long driverId) {

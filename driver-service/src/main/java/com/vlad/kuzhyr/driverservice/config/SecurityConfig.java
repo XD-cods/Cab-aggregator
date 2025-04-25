@@ -19,7 +19,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/actuator/*").permitAll()
                 .requestMatchers("/api/v1/drivers/me").authenticated()
-                .anyRequest().hasRole(Role.ADMIN.getKeycloakName())
+                .anyRequest().hasAnyRole(Role.ADMIN.getKeycloakName(), Role.SERVICE.getKeycloakName())
             )
             .oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt.jwtAuthenticationConverter(new KeycloakJwtConverter()))

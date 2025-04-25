@@ -6,15 +6,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vlad.kuzhyr.authservice.exception.KeycloakOperationException;
 import com.vlad.kuzhyr.authservice.exception.KeycloakUserNotFoundException;
 import com.vlad.kuzhyr.authservice.exception.UserAlreadyHasRole;
+import com.vlad.kuzhyr.authservice.persistence.entity.Gender;
 import com.vlad.kuzhyr.authservice.service.KeycloakAuthService;
 import com.vlad.kuzhyr.authservice.service.UserService;
-import com.vlad.kuzhyr.authservice.utility.broker.AuthEventProducer;
+import com.vlad.kuzhyr.authservice.utility.client.DriverFeignClient;
+import com.vlad.kuzhyr.authservice.utility.client.PassengerFeignClient;
 import com.vlad.kuzhyr.authservice.utility.constant.BusinessRole;
 import com.vlad.kuzhyr.authservice.utility.constant.ExceptionMessageConstant;
 import com.vlad.kuzhyr.authservice.utility.keycloak.KeycloakUtil;
 import com.vlad.kuzhyr.authservice.utility.logger.LogUtils;
-import com.vlad.kuzhyr.authservice.web.dto.external.payload.DriverCreatePayload;
-import com.vlad.kuzhyr.authservice.web.dto.external.payload.PassengerCreatePayload;
+import com.vlad.kuzhyr.authservice.web.dto.external.DriverRequest;
+import com.vlad.kuzhyr.authservice.web.dto.external.PassengerRequest;
 import com.vlad.kuzhyr.authservice.web.dto.request.RefreshRequest;
 import com.vlad.kuzhyr.authservice.web.dto.request.SignInRequest;
 import com.vlad.kuzhyr.authservice.web.dto.request.SignUpRequest;
@@ -34,7 +36,6 @@ import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +44,8 @@ public class UserServiceImpl implements UserService {
 
     private final KeycloakUtil keycloakUtil;
     private final ObjectMapper objectMapper;
-    private final AuthEventProducer authEventProducer;
+    private final DriverFeignClient driverFeignClient;
+    private final PassengerFeignClient passengerFeignClient;
     private final KeycloakAuthService keycloakAuthService;
 
     @Override
@@ -130,9 +132,9 @@ public class UserServiceImpl implements UserService {
             .add(Collections.singletonList(roleRepresentation));
 
         if (BusinessRole.DRIVER.getKeycloakName().equals(keycloakRole)) {
-            sendDriverCreateEvent(userId);
+            sendDriverCreateRequest(userId);
         } else if (BusinessRole.PASSENGER.getKeycloakName().equals(keycloakRole)) {
-            sendPassengerCreateEvent(userId);
+            sendPassengerCreateRequest(userId);
         }
     }
 
@@ -183,34 +185,36 @@ public class UserServiceImpl implements UserService {
             .anyMatch(role -> role.getName().equals(roleName));
     }
 
-    private void sendDriverCreateEvent(String userId) {
-        log.debug("sendDriverCreateEvent. Entering method. User id: {}", userId);
+    private void sendDriverCreateRequest(String userId) {
+        log.debug("sendDriverCreateRequest. Entering method. User id: {}", userId);
         UserRepresentation user = keycloakUtil.getUsersResource().get(userId).toRepresentation();
-        DriverCreatePayload payload = new DriverCreatePayload(
-            user.getFirstName(),
-            user.getLastName(),
-            user.getEmail(),
-            getPhone(user),
-            user.getId()
-        );
+        DriverRequest driverRequest = DriverRequest.builder()
+            .keycloakId(userId)
+            .gender(Gender.UNKNOWN)
+            .firstName(user.getFirstName())
+            .lastName(user.getLastName())
+            .email(user.getEmail())
+            .carIds(List.of())
+            .phone(getPhone(user))
+            .build();
 
-        authEventProducer.sendDriverCreateTopic(payload);
-        log.debug("sendDriverCreateEvent. Driver create event successfully sent. User id: {}", userId);
+        driverFeignClient.createDriver(driverRequest);
+        log.debug("sendDriverCreateRequest. Driver create request successfully sent. User id: {}", userId);
     }
 
-    private void sendPassengerCreateEvent(String userId) {
-        log.debug("sendPassengerCreateEvent. Entering method. User id: {}", userId);
+    private void sendPassengerCreateRequest(String userId) {
+        log.debug("sendPassengerCreateRequest. Entering method. User id: {}", userId);
         UserRepresentation user = keycloakUtil.getUsersResource().get(userId).toRepresentation();
-        PassengerCreatePayload payload = new PassengerCreatePayload(
-            user.getFirstName(),
-            user.getLastName(),
-            user.getEmail(),
-            getPhone(user),
-            user.getId()
-        );
+        PassengerRequest driverRequest = PassengerRequest.builder()
+            .keycloakId(userId)
+            .firstName(user.getFirstName())
+            .lastName(user.getLastName())
+            .email(user.getEmail())
+            .phone(getPhone(user))
+            .build();
 
-        authEventProducer.sendPassengerCreateTopic(payload);
-        log.debug("sendPassengerCreateEvent. Passenger create event successfully sent. User id: {}", userId);
+        passengerFeignClient.createPassenger(driverRequest);
+        log.debug("sendPassengerCreateRequest. Passenger create request successfully sent. User id: {}", userId);
     }
 
     private String getPhone(UserRepresentation user) {

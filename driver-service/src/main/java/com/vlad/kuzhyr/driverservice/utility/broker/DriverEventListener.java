@@ -1,7 +1,6 @@
 package com.vlad.kuzhyr.driverservice.utility.broker;
 
 import com.vlad.kuzhyr.driverservice.utility.mapper.JsonMapper;
-import com.vlad.kuzhyr.driverservice.web.dto.external.payload.DriverCreatePayload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -34,16 +33,4 @@ public class DriverEventListener {
         driverProcessor.updateDriverByIdAndIsBusy(driverId, isBusy);
     }
 
-    @KafkaListener(
-        topics = "${spring.kafka.topic.driver-create-topic}",
-        groupId = "driver-auth-group"
-    )
-    public void consumeDriverCreateTopic(String message) {
-        log.info("consumeDriverBusyEvent: Consuming driver create topic.");
-
-        DriverCreatePayload driverCreatePayload = jsonMapper.fromJson(message, DriverCreatePayload.class);
-
-        driverProcessor.createNewDriver(driverCreatePayload);
-
-    }
 }
