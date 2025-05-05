@@ -1,133 +1,14 @@
 server:
   port: ${SERVER_PORT:8090}
 
-keycloak:
-  realm: ${KEYCLOAK_REALM:auth-service}
-  auth-server-url: ${KEYCLOAK_URL:http://localhost:8088}
-
-feign:
-  driver-service:
-    name: ${DRIVER_SERVICE_NAME:driver-service}
-    path: ${DRIVER_SERVICE_PATH:/api/v1/drivers}
-  passenger-service:
-    name: ${PASSENGER_SERVICE_NAME:passenger-service}
-    path: ${PASSENGER_SERVICE_PATH:/api/v1/passengers}
-
 spring:
-  application:
-    name: auth-service
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    show-sql: false
-
-  security:
-    oauth2:
-      client:
-        registration:
-          keycloak:
-            client-id: ${KEYCLOAK_CLIENT_ID:spring-auth-service}
-            client-secret: ${KEYCLOAK_CLIENT_SECRET:qu1Z8C6IxflAtxDGHFrRABtyfUbMD1qc}
-            authorization-grant-type: client_credentials
-            scope:
-              - openid
-              - profile
-              - email
-            provider: keycloak
-        provider:
-          keycloak:
-            authorization-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/auth
-            token-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/token
-            user-info-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/userinfo
-            user-name-attribute: preferred_username
-
-      resourceserver:
-        jwt:
-          issuer-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}
-
-resilience4j:
-  retry:
-    configs:
-      default:
-        max-attempts: 3
-        wait-duration: 1s
-        ignore-exceptions:
-          - com.vlad.kuzhyr.authservice.exception.CustomFeignException
-  circuitbreaker:
-    configs:
-      default:
-        register-health-indicator: true
-        failure-rate-threshold: 50
-        minimum-number-of-calls: 10
-        automatic-transition-from-open-to-half-open-enabled: true
-        wait-duration-in-open-state: 5s
-        permitted-number-of-calls-in-half-open-state: 3
-        sliding-window-size: 10
-        sliding-window-type: COUNT_BASED
-        ignore-exceptions:
-          - com.vlad.kuzhyr.authservice.exception.CustomFeignException
-  timelimiter:
-    configs:
-      default:
-        timeout-duration:
-          seconds: 5
-
-management:
-  tracing:
-    sampling:
-      probability: 1.0
-    propagation:
-      produce: b3
-
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  elastic:
-    metrics:
-      export:
-        enabled: ${ES_ENABLED:true}
-        host: ${ES_HOST:http://localhost:9200}
-        index: metrics
-        step: ${ES_METRICS_STEP:10s}
-        index-date-format: "yyyy.MM.dd"
-        connect-timeout: ${ES_CONNECT_TIMEOUT:10s}
-  zipkin:
-    tracing:
-      endpoint: ${ZIPKIN_HOST:http://localhost:9411}/api/v2/spans
-      export:
-        enabled: true
-  metrics:
-    tags:
-      app: ${spring.application.name}
-      host: ${java.rmi.server.hostname}
-      application: ${spring.application.name}
-    distribution:
-      percentiles:
-        http:
-          server:
-            requests: 0.5, 0.9, 0.95, 0.99
-      percentiles-histogram:
-        http:
-          server:
-            request: true
-
-springdoc:
-  api-docs:
-    path: /auth-service/v3/api-docs
-  swagger-ui:
-    path: /auth-service/swagger-ui.html
-
-logging:
-  logstash:
-    enabled: ${LOGSTASH_ENABLED:true}
-    destination: ${LOGSTASH_DESTINATION:localhost:5044}
-
-eureka:
-  client:
-    service-url:
-      defaultZone: ${EUREKA_DEFAULT_ZONE:http://localhost:${EUREKA_PORT:8761}/eureka}
-    register-with-eureka: ${REGISTER_WITH_EUREKA:true}
-    fetch-registry: ${EUREKA_FETCH_REGISTRY:true}
+  application:
+    name: auth-service
+  config:
+    import: "configserver:"
+  cloud:
+    config:
+      uri: ${CONFIG_SERVER_URL:http://localhost:8888}
+      fail-fast: true
