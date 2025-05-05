@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(
-    name = "passenger-service",
-    path = "/api/v1/passengers"
+    name = "${feign.passenger-service.name}",
+    path = "${feign.passenger-service.path}"
 )
 public interface PassengerFeignClient {
 

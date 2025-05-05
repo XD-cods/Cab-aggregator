@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(
-    name = "driver-service",
-    path = "/api/v1/drivers"
+    name = "${feign.driver-service.name}",
+    path = "${feign.driver-service.name}"
 )
 public interface DriverFeignClient {
 
