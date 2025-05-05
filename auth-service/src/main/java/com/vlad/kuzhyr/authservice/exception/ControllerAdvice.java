@@ -72,8 +72,7 @@ public class ControllerAdvice {
     public ResponseEntity<ErrorResponse> methodArgumentException(MethodArgumentNotValidException ex) {
         String errorMessage = ex.getBindingResult().getAllErrors().stream()
             .map(error -> {
-                if (error instanceof FieldError) {
-                    FieldError fieldError = (FieldError) error;
+                if (error instanceof FieldError fieldError) {
                     return String.format("%s: %s", fieldError.getField(), error.getDefaultMessage());
                 }
                 return error.getDefaultMessage();
@@ -112,6 +111,23 @@ public class ControllerAdvice {
         );
     }
 
-
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "503",
+            description = "External service is unavailable",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @ExceptionHandler(value = {
+        DriverServiceUnavailableException.class,
+        PassengerServiceUnavailableException.class
+    })
+    public ResponseEntity<ErrorResponse> handleServiceUnavailable(Exception exception) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+            .body(ErrorResponse.builder()
+                .error(String.valueOf(HttpStatus.SERVICE_UNAVAILABLE))
+                .errorDescription(exception.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build());
+    }
 
 }

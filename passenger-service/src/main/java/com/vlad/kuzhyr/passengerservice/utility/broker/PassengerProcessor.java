@@ -4,9 +4,7 @@ import com.vlad.kuzhyr.passengerservice.exception.PassengerNotFoundException;
 import com.vlad.kuzhyr.passengerservice.persistence.entity.Passenger;
 import com.vlad.kuzhyr.passengerservice.persistence.repository.PassengerRepository;
 import com.vlad.kuzhyr.passengerservice.utility.constant.ExceptionMessageConstant;
-import com.vlad.kuzhyr.passengerservice.utility.logger.LogUtils;
 import com.vlad.kuzhyr.passengerservice.utility.mapper.PassengerMapper;
-import com.vlad.kuzhyr.passengerservice.web.dto.external.PassengerCreatePayload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -30,14 +28,6 @@ public class PassengerProcessor {
 
         log.debug("updatePassengerByIdAndIsBusy: Passenger updated successfully. Passenger id: {}, new isBusy: {}",
             savedPassenger.getId(), savedPassenger.getIsBusy());
-    }
-
-    public void createNewPassenger(PassengerCreatePayload payload) {
-        String maskedEmail = LogUtils.maskEmail(payload.email());
-        log.debug("createNewPassenger: Entering method. Passenger email: {}", maskedEmail);
-        Passenger passenger = passengerMapper.toEntity(payload);
-        passengerRepository.save(passenger);
-        log.info("createNewPassenger: Passenger created successfully. Passenger email: {}", maskedEmail);
     }
 
     public Passenger getPassengerById(Long passengerId) {

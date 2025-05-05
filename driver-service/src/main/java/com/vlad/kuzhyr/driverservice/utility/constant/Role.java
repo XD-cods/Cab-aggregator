@@ -10,7 +10,8 @@ import lombok.Getter;
 @Getter
 public enum Role {
     USER("USER"),
-    ADMIN("ADMIN");
+    ADMIN("ADMIN"),
+    SERVICE("SERVICE");
 
     private final String keycloakName;
 
