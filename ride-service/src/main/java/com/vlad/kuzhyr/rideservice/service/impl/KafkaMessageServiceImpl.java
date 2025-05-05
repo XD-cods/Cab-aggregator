@@ -35,13 +35,14 @@ public class KafkaMessageServiceImpl implements KafkaMessageService {
     @Override
     public void saveMessage(String topic, Long key, String message) {
         log.debug("saveMessage: Entering method. Topic: {}, key: {}, message: {}", topic, key, message);
-        String traceparent = getCurrentTraceparent();
+        TraceContext context = tracer.currentTraceContext().context();
 
         KafkaMessage kafkaMessage = KafkaMessage.builder()
             .topic(topic)
             .key(key)
             .message(message)
-            .traceparent(traceparent)
+            .traceId(context.traceId())
+            .spanId(context.spanId())
             .build();
 
         KafkaMessage savedMessage = kafkaMessageRepository.save(kafkaMessage);
@@ -71,8 +72,4 @@ public class KafkaMessageServiceImpl implements KafkaMessageService {
         log.debug("deleteSentMessages: Sent messages deleted.");
     }
 
-    private String getCurrentTraceparent() {
-        TraceContext context = tracer.currentTraceContext().context();
-        return String.format("00-%s-%s-00", context.traceId(), context.spanId());
-    }
 }
