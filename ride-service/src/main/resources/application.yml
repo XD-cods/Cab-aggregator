@@ -106,6 +106,7 @@ management:
   tracing:
     sampling:
       probability: 1.0
+    enabled: true
 
   endpoints:
     web:
@@ -125,6 +126,9 @@ management:
       endpoint: ${ZIPKIN_HOST:http://localhost:9411}/api/v2/spans
       export:
         enabled: true
+      connect-timeout: 5s
+      read-timeout: 5s
+
   metrics:
     tags:
       app: ${spring.application.name}

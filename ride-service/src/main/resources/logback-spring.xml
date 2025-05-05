@@ -13,6 +13,7 @@
                 <encoder class="net.logstash.logback.encoder.LogstashEncoder">
                     <customFields>{"app":"${APP_NAME}"}</customFields>
                     <includeCallerData>true</includeCallerData>
+                    <includeMdcKeyName>true</includeMdcKeyName>
                     <fieldNames>
                         <message>message</message>
                         <logger>logger</logger>

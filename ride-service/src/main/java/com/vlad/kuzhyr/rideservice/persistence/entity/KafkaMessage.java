@@ -48,8 +48,11 @@ public class KafkaMessage {
     @Builder.Default
     private Boolean isSent = Boolean.FALSE;
 
-    @Column(name = "traceparent")
-    private String traceparent;
+    @Column(name = "trace_id")
+    private String traceId;
+
+    @Column(name = "span_id")
+    private String spanId;
 
     @Override
     public String toString() {

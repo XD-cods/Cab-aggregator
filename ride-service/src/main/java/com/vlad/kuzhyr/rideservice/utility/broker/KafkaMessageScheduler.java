@@ -1,5 +1,6 @@
 package com.vlad.kuzhyr.rideservice.utility.broker;
 
+import brave.Tracer;
 import com.vlad.kuzhyr.rideservice.persistence.entity.KafkaMessage;
 import com.vlad.kuzhyr.rideservice.service.KafkaMessageService;
 import java.util.HashSet;
@@ -22,6 +23,7 @@ public class KafkaMessageScheduler {
 
     private final KafkaMessageService kafkaMessageService;
     private final KafkaTemplate<Long, Object> kafkaTemplate;
+    private final Tracer tracer;
 
     @Scheduled(fixedRateString = "${spring.kafka.message.scheduler.fixed-rate}")
     @SchedulerLock(
@@ -39,16 +41,19 @@ public class KafkaMessageScheduler {
 
         log.debug("processKafkaMessage: Found unsent messages. Messages amount: {}", uniqueMessages.size());
         for (KafkaMessage kafkaMessage : uniqueMessages) {
+            String traceparent = String.format("00-%s-%s-00", kafkaMessage.getTraceId(), kafkaMessage.getSpanId());
 
             Message<String> message = MessageBuilder
                 .withPayload(kafkaMessage.getMessage())
                 .setHeader(KafkaHeaders.TOPIC, kafkaMessage.getTopic())
                 .setHeader(KafkaHeaders.KEY, kafkaMessage.getKey())
                 .removeHeader("traceparent")
-                .setHeader("traceparent", kafkaMessage.getTraceparent())
+                .setHeader("traceparent", traceparent)
                 .build();
 
             kafkaTemplate.send(message);
+
+            log.info("processKafkaMessage: Sent message: {}", message);
             kafkaMessageService.markAsSent(kafkaMessage);
             log.debug("processKafkaMessage: Sent message. Topic: {}, Key: {}",
                 kafkaMessage.getTopic(), kafkaMessage.getKey());
