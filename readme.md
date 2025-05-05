@@ -1,4 +1,20 @@
-## How to run application
+# Umi — Taxi Service Application 🚕
+
+Umi is a microservices-based taxi service platform that connects drivers and passengers efficiently.
+Built with Spring Boot, Kafka, Keycloak, and ELK stack.
+
+## Application stack
+
+- Spring Boot 3.4
+- Kafka
+- PostgreSQL / Redis
+- Docker & Docker Compose
+- ELK Stack + Zipkin for observability and monitoring
+- Keycloak for authentication (OIDC)
+- FeignClient for synchronous communication
+- Resilience4J for fault-tolerance and circuit breaking
+
+## Getting Started 🚀
 
 1. In folder `docker`, create an .env file.
    with the following content:
