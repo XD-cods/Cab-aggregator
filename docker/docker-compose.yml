@@ -12,7 +12,7 @@ services:
     environment:
       POSTGRES_USER: ${PASSENGER_DB_USERNAME}
       POSTGRES_PASSWORD: ${PASSENGER_DB_PASSWORD}
-      POSTGRES_DB: passenger_db
+      POSTGRES_DB: ${PASSENGER_DB_NAME}
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${PASSENGER_DB_USERNAME} -d passenger_db" ]
       interval: 10s
@@ -31,7 +31,7 @@ services:
     environment:
       POSTGRES_USER: ${DRIVER_DB_USERNAME}
       POSTGRES_PASSWORD: ${DRIVER_DB_PASSWORD}
-      POSTGRES_DB: driver_db
+      POSTGRES_DB: ${DRIVER_DB_NAME}
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${DRIVER_DB_USERNAME} -d driver_db" ]
       interval: 10s
@@ -50,7 +50,7 @@ services:
     environment:
       POSTGRES_USER: ${RATING_DB_USERNAME}
       POSTGRES_PASSWORD: ${RATING_DB_PASSWORD}
-      POSTGRES_DB: rating_db
+      POSTGRES_DB: ${RATING_DB_NAME}
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${RATING_DB_USERNAME} -d rating_db" ]
       interval: 10s
@@ -69,7 +69,7 @@ services:
     environment:
       POSTGRES_USER: ${RIDE_DB_USERNAME}
       POSTGRES_PASSWORD: ${RIDE_DB_PASSWORD}
-      POSTGRES_DB: ride_db
+      POSTGRES_DB: ${RIDE_DB_NAME}
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${RIDE_DB_USERNAME} -d ride_db" ]
       interval: 10s
@@ -88,7 +88,7 @@ services:
     environment:
       POSTGRES_USER: ${AUTH_DB_USERNAME}
       POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD}
-      POSTGRES_DB: auth_db
+      POSTGRES_DB: ${AUTH_DB_NAME}
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${AUTH_DB_USERNAME} -d auth_db" ]
       interval: 10s
@@ -222,6 +222,26 @@ services:
     networks:
       - cab-aggregator-application
 
+  config-server:
+    image: config-server:latest
+    build:
+      context: ../config-server
+      dockerfile: ../docker/Dockerfile
+      args:
+        - SERVICE_NAME=config-server
+    env_file:
+      - .env
+    ports:
+      - 8888:${CONFIG_SERVER_PORT}
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://config-server:${EUREKA_PORT}/actuator/health || exit 1
+      interval: 10s
+      timeout: 5s
+      start_period: 30s
+      retries: 5
+    networks:
+      - cab-aggregator-application
+
   eureka-server:
     image: eureka-server:latest
     build:
@@ -231,10 +251,6 @@ services:
         - SERVICE_NAME=eureka-server
     env_file:
       - .env
-    environment:
-      - ES_HOST=${ES_HOST:-http://elasticsearch:9200}
-      - LOGSTASH_DESTINATION=${LOGSTASH_DESTINATION:-logstash:5044}
-      - EUREKA_PORT=${EUREKA_PORT}
     ports:
       - 8761:${EUREKA_PORT}
     healthcheck:
@@ -244,6 +260,8 @@ services:
       start_period: 15s
       retries: 5
     depends_on:
+      config-server:
+        condition: service_healthy
       logstash:
         condition: service_healthy
       elasticsearch:
@@ -260,16 +278,6 @@ services:
         - SERVICE_NAME=passenger-service
     env_file:
       - .env
-    environment:
-      - ES_HOST=${ES_HOST:-http://elasticsearch:9200}
-      - LOGSTASH_DESTINATION=${LOGSTASH_DESTINATION:-logstash:5044}
-      - SERVER_PORT=${PASSENGER_SERVICE_PORT}
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
-      - PASSENGER_DB_URL=jdbc:postgresql://passenger_db:5432/passenger_db
-      - PASSENGER_DB_USERNAME=${PASSENGER_DB_USERNAME}
-      - PASSENGER_DB_PASSWORD=${PASSENGER_DB_PASSWORD}
-      - KAFKA_URLS=kafka1:9092,kafka2:9092,kafka3:9092
-      - EUREKA_DEFAULT_ZONE=http://eureka-server:${EUREKA_PORT}/eureka
     ports:
       - ${PASSENGER_SERVICE_PORT}:${PASSENGER_SERVICE_PORT}
     healthcheck:
@@ -301,20 +309,6 @@ services:
         - SERVICE_NAME=auth-service
     env_file:
       - .env
-    environment:
-      - ES_HOST=${ES_HOST:-http://elasticsearch:9200}
-      - LOGSTASH_DESTINATION=${LOGSTASH_DESTINATION:-logstash:5044}
-      - SERVER_PORT=${AUTH_SERVICE_PORT}
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
-      - AUTH_DB_URL=jdbc:postgresql://auth-db:5432/auth_db
-      - AUTH_DB_USERNAME=${AUTH_DB_USERNAME}
-      - AUTH_DB_PASSWORD=${AUTH_DB_PASSWORD}
-      - KAFKA_URLS=kafka1:9092,kafka2:9092,kafka3:9092
-      - EUREKA_DEFAULT_ZONE=http://eureka-server:${EUREKA_PORT}/eureka
-      - KEYCLOAK_URL=${KEYClOAK_URL}
-      - KEYCLOAK_REALM=${KEYCLOAK_REALM}
-      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
-      - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
     ports:
       - ${AUTH_SERVICE_PORT}:${AUTH_SERVICE_PORT}
     healthcheck:
@@ -348,16 +342,6 @@ services:
         - SERVICE_NAME=driver-service
     env_file:
       - .env
-    environment:
-      - ES_HOST=${ES_HOST:-http://elasticsearch:9200}
-      - LOGSTASH_DESTINATION=${LOGSTASH_DESTINATION:-logstash:5044}
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
-      - SERVER_PORT=${DRIVER_SERVICE_PORT}
-      - DRIVER_DB_URL=jdbc:postgresql://driver_db:5432/driver_db
-      - DRIVER_DB_USERNAME=${DRIVER_DB_USERNAME}
-      - DRIVER_DB_PASSWORD=${DRIVER_DB_PASSWORD}
-      - EUREKA_DEFAULT_ZONE=http://eureka-server:${EUREKA_PORT}/eureka
-      - KAFKA_URL=kafka1:9092,kafka2:9092,kafka3:9092
     ports:
       - ${DRIVER_SERVICE_PORT}:${DRIVER_SERVICE_PORT}
     healthcheck:
@@ -389,16 +373,6 @@ services:
         - SERVICE_NAME=rating-service
     env_file:
       - .env
-    environment:
-      - ES_HOST=${ES_HOST:-http://elasticsearch:9200}
-      - LOGSTASH_DESTINATION=${LOGSTASH_DESTINATION:-logstash:5044}
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
-      - SERVER_PORT=${RATING_SERVICE_PORT}
-      - RATING_DB_URL=jdbc:postgresql://rating_db:5432/rating_db
-      - RATING_DB_USERNAME=${RATING_DB_USERNAME}
-      - RATING_DB_PASSWORD=${RATING_DB_PASSWORD}
-      - EUREKA_DEFAULT_ZONE=http://eureka-server:${EUREKA_PORT}/eureka
-      - KAFKA_URL=kafka1:9092,kafka2:9092,kafka3:9092
     ports:
       - ${RATING_SERVICE_PORT}:${RATING_SERVICE_PORT}
     healthcheck:
@@ -430,19 +404,6 @@ services:
         - SERVICE_NAME=ride-service
     env_file:
       - .env
-    environment:
-      - ES_HOST=${ES_HOST:-http://elasticsearch:9200}
-      - LOGSTASH_DESTINATION=${LOGSTASH_DESTINATION:-logstash:5044}
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
-      - SERVER_PORT=${RIDE_SERVICE_PORT}
-      - RIDE_DB_URL=jdbc:postgresql://ride_db:5432/ride_db
-      - RIDE_DB_USERNAME=${RIDE_DB_USERNAME}
-      - RIDE_DB_PASSWORD=${RIDE_DB_PASSWORD}
-      - EUREKA_DEFAULT_ZONE=http://eureka-server:${EUREKA_PORT}/eureka
-      - KAFKA_URLS=kafka1:9092,kafka2:9092,kafka3:9092
-      - MAPBOX_API_KEY=${MAPBOX_API_KEY}
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
     ports:
       - ${RIDE_SERVICE_PORT}:${RIDE_SERVICE_PORT}
     healthcheck:
@@ -476,12 +437,6 @@ services:
     restart: on-failure
     env_file:
       - .env
-    environment:
-      - ES_HOST=${ES_HOST:-http://elasticsearch:9200}
-      - LOGSTASH_DESTINATION=${LOGSTASH_DESTINATION:-logstash:5044}
-      - SERVER_PORT=${API_GATEWAY_PORT:-8080}
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
-      - EUREKA_DEFAULT_ZONE=http://eureka-server:${EUREKA_PORT}/eureka
     ports:
       - 8080:${API_GATEWAY_PORT}
     healthcheck:

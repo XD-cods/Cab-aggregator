@@ -1,10 +1,10 @@
 spring:
 
   datasource:
-    url: ${AUTH_DB_URL:jdbc:postgresql://localhost:5432/postgres}
-    username: ${AUTH_DB_USERNAME:postgres}
-    password: ${AUTH_DB_PASSWORD:1111}
-    driver-class-name: ${AUTH_DB_DRIVER:org.postgresql.Driver}
+    url: ${RIDE_DB_URL:jdbc:postgresql://localhost:5432/postgres}
+    username: ${RIDE_DB_USERNAME:postgres}
+    password: ${RIDE_DB_PASSWORD:1111}
+    driver-class-name: ${RIDE_DB_DRIVER:org.postgresql.Driver}
 
   security:
     oauth2:
@@ -26,13 +26,40 @@ spring:
             user-info-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/userinfo
             user-name-attribute: preferred_username
 
-feign:
-  driver-service:
-    name: ${DRIVER_SERVICE_NAME:driver-service}
-    path: ${DRIVER_SERVICE_PATH:/api/v1/drivers}
-  passenger-service:
-    name: ${PASSENGER_SERVICE_NAME:passenger-service}
-    path: ${PASSENGER_SERVICE_PATH:/api/v1/passengers}
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connectTimeout: 5000
+            readTimeout: 5000
+            loggerLevel: full
+
+  data:
+    redis:
+      port: ${REDIS_PORT:6379}
+      host: ${REDIS_HOST:localhost}
+
+  kafka:
+    bootstrap-servers: ${KAFKA_URLS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.LongSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      retries: ${KAFKA_RETRIES:3}
+      acks: 1
+      batch-size: 16384
+      buffer-memory: 67108864
+    topic:
+    message:
+      scheduler:
+        fixed-rate: ${MESSAGE_SCHEDULER_FIXED-RATE:1000}
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: ${REDIS_TTL:3000}
+      key-prefix: "ride-service:"
+      use-key-prefix: true
 
 resilience4j:
   retry:
@@ -41,7 +68,7 @@ resilience4j:
         max-attempts: 3
         wait-duration: 1s
         ignore-exceptions:
-          - com.vlad.kuzhyr.authservice.exception.CustomFeignException
+          - com.vlad.kuzhyr.rideservice.exception.CustomFeignException
   circuitbreaker:
     configs:
       default:
@@ -54,22 +81,22 @@ resilience4j:
         sliding-window-size: 10
         sliding-window-type: COUNT_BASED
         ignore-exceptions:
-          - com.vlad.kuzhyr.authservice.exception.CustomFeignException
+          - com.vlad.kuzhyr.rideservice.exception.CustomFeignException
   timelimiter:
     configs:
       default:
         timeout-duration:
           seconds: 5
 
-management:
-  tracing:
-    sampling:
-      probability: 1.0
-    propagation:
-      produce: b3
+mapbox:
+  api:
+    routes:
+      geocode: ${MAPBOX_GEOCODE_URL:https://api.mapbox.com/search/geocode/v6/forward}
+      distance: ${MAPBOX_DISTANCE_URL:https://api.mapbox.com/directions/v5/mapbox/driving/{coordinates}}
+    secret-key: ${MAPBOX_API_KEY}
 
 springdoc:
   api-docs:
-    path: /auth-service/v3/api-docs
+    path: /ride-service/v3/api-docs
   swagger-ui:
-    path: /auth-service/swagger-ui.html
+    path: /ride-service/swagger-ui.html

@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: ${CONFIG_SERVER_PROFILE_ACTIVE:native} # used if you want config from locals file (delete if you need configs from git)
+    active: ${CONFIG_SERVER_PROFILE_ACTIVE:native}
   application:
     name: config-server
   cloud:
@@ -18,3 +18,9 @@ spring:
           ignore-local-ssh-settings: true
           force-pull: true
           search-paths: config
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, prometheus

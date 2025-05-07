@@ -9,7 +9,7 @@
         <relativePath/>
     </parent>
     <groupId>com.vlad.kuzhyr</groupId>
-    <artifactId>config-service</artifactId>
+    <artifactId>config-server</artifactId>
     <version>0.0.1</version>
     <name>config-service</name>
     <description>config-service</description>
