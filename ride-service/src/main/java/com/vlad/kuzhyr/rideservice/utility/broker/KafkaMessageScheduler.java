@@ -1,8 +1,14 @@
 package com.vlad.kuzhyr.rideservice.utility.broker;
 
-import brave.Tracer;
 import com.vlad.kuzhyr.rideservice.persistence.entity.KafkaMessage;
 import com.vlad.kuzhyr.rideservice.service.KafkaMessageService;
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanContext;
+import io.opentelemetry.api.trace.TraceFlags;
+import io.opentelemetry.api.trace.TraceState;
+import io.opentelemetry.context.Context;
+import io.opentelemetry.context.Scope;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,7 +29,7 @@ public class KafkaMessageScheduler {
 
     private final KafkaMessageService kafkaMessageService;
     private final KafkaTemplate<Long, Object> kafkaTemplate;
-    private final Tracer tracer;
+    private final OpenTelemetry openTelemetry;
 
     @Scheduled(fixedRateString = "${spring.kafka.message.scheduler.fixed-rate}")
     @SchedulerLock(
@@ -41,25 +47,33 @@ public class KafkaMessageScheduler {
 
         log.debug("processKafkaMessage: Found unsent messages. Messages amount: {}", uniqueMessages.size());
         for (KafkaMessage kafkaMessage : uniqueMessages) {
-            String traceparent = String.format("00-%s-%s-00", kafkaMessage.getTraceId(), kafkaMessage.getSpanId());
+            log.info("KafkaMessage traceId: {}, spanId: {}", kafkaMessage.getTraceId(), kafkaMessage.getSpanId());
 
-            Message<String> message = MessageBuilder
-                .withPayload(kafkaMessage.getMessage())
-                .setHeader(KafkaHeaders.TOPIC, kafkaMessage.getTopic())
-                .setHeader(KafkaHeaders.KEY, kafkaMessage.getKey())
-                .removeHeader("traceparent")
-                .setHeader("traceparent", traceparent)
-                .build();
+            SpanContext spanContext = SpanContext.createFromRemoteParent(
+                kafkaMessage.getTraceId(),
+                kafkaMessage.getSpanId(),
+                TraceFlags.getSampled(),
+                TraceState.getDefault()
+            );
 
-            kafkaTemplate.send(message);
+            Context otelContext = Context.root().with(Span.wrap(spanContext));
 
-            log.info("processKafkaMessage: Sent message: {}", message);
-            kafkaMessageService.markAsSent(kafkaMessage);
-            log.debug("processKafkaMessage: Sent message. Topic: {}, Key: {}",
-                kafkaMessage.getTopic(), kafkaMessage.getKey());
+            try (Scope ignored = otelContext.makeCurrent()) {
+                Message<String> message = MessageBuilder
+                    .withPayload(kafkaMessage.getMessage())
+                    .setHeader(KafkaHeaders.TOPIC, kafkaMessage.getTopic())
+                    .setHeader(KafkaHeaders.KEY, kafkaMessage.getKey())
+                    .build();
+
+                kafkaTemplate.send(message);
+
+                log.info("Sent message with restored trace context: {}", message);
+                kafkaMessageService.markAsSent(kafkaMessage);
+            }
         }
 
         log.debug("processKafkaMessage: Processed Kafka messages. Messages amount: {}", uniqueMessages.size());
+
     }
 
     @Scheduled(cron = "0 0 0 * * ?")

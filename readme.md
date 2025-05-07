@@ -33,7 +33,7 @@ modern Spring Cloud ecosystem and event-driven architecture.
 - Docker & Docker Compose
 - Keycloak (OAuth2/OIDC)
 - ELK Stack (Logging + Monitoring)
-- Zipkin (Distributed tracing)
+- Jaeger (Distributed tracing)
 
 **Communication:**
 
@@ -43,8 +43,9 @@ modern Spring Cloud ecosystem and event-driven architecture.
 ## Prerequisites 📋
 
 1. **Mapbox API Key**:
-   - Get your [Mapbox access token](https://account.mapbox.com/access-tokens)
-     ![create access token](./how%20to%20create%20acess%20token.gif)
+   - Get your[Mapbox access token](https://account.mapbox.com/access-tokens)
+
+   ![create access token](./how%20to%20create%20acess%20token.gif)
    - Required for geolocation services
 
 2. **Development Environment**:
@@ -61,4 +62,47 @@ modern Spring Cloud ecosystem and event-driven architecture.
    ```
 2. Into `docker` folder rename `example.env` into `.env`
 3. In `.env` copy your mapbox api key at `MAPBOX_API_KEY` field
-4. Copy your keycloak secret in `KEYCLOAK_CLIENT_SECRET` field
+4. Copy your keycloak secret at `KEYCLOAK_CLIENT_SECRET` field
+
+## Summary of All Ports ⚙
+
+Core Services:
+
+- Config Server: 8888
+- Eureka Server: 8761
+- API Gateway: 8080
+
+Microservices:
+
+- Auth Service: 5006
+- Driver Service: 5003
+- Passenger Service: 5008
+- Ride Service: 5009
+- Rating Service: 5007
+
+Databases:
+
+- Passenger DB: 5436
+- Driver DB: 5433
+- Rating DB: 5434
+- Ride DB: 5435
+- Auth DB: 5437
+- Redis: 6379
+
+Kafka Cluster:
+
+- Zookeeper: 2181
+- Kafka Brokers: 9092 (x3)
+- Kafka UI: 9090
+
+Monitoring & Logging:
+
+- Elasticsearch: 9200, 9300
+- Kibana: 5601
+- Logstash: 5044, 9600
+- Jaeger: 16686, 4317, 4318
+
+Admin Tools:
+
+- PGAdmin: 8089
+- Keycloak: 8088

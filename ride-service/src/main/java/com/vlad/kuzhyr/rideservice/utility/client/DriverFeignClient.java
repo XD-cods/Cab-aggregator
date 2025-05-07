@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(
-    name = "${feign.driver-service.name}",
-    path = "${feign.driver-service.path}",
+    name = "${feign.driver-service.name:driver-servcie}",
+    path = "${feign.driver-service.path:/api/v1/drivers}",
     configuration = FeignClientInterceptor.class
 )
 public interface DriverFeignClient {

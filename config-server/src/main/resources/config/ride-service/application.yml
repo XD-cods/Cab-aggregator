@@ -12,7 +12,7 @@ spring:
         registration:
           keycloak:
             client-id: ${KEYCLOAK_CLIENT_ID:spring-auth-service}
-            client-secret: ${KEYCLOAK_CLIENT_SECRET:qu1Z8C6IxflAtxDGHFrRABtyfUbMD1qc}
+            client-secret: ${KEYCLOAK_CLIENT_SECRET:tPoQfrdmyKpPi6EiVUIsiSOhPcnoVbxR}
             authorization-grant-type: client_credentials
             scope:
               - openid
@@ -41,6 +41,8 @@ spring:
       host: ${REDIS_HOST:localhost}
 
   kafka:
+    template:
+      observation-enabled: true
     bootstrap-servers: ${KAFKA_URLS:localhost:9092}
     producer:
       key-serializer: org.apache.kafka.common.serialization.LongSerializer

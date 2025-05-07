@@ -11,7 +11,6 @@ spring:
       passenger-busy-topic: passenger.status.updated
       ride-completed-topic: ride.completed
 
-
   jpa:
     hibernate:
       ddl-auto: validate
@@ -33,6 +32,9 @@ management:
   tracing:
     sampling:
       probability: 1.0
+  otlp:
+    tracing:
+      endpoint: ${JAEGER_URL:http://localhost:4318/v1/traces}
 
   endpoints:
     web:
@@ -47,11 +49,7 @@ management:
         step: ${ES_METRICS_STEP:10s}
         index-date-format: "yyyy.MM.dd"
         connect-timeout: ${ES_CONNECT_TIMEOUT:10s}
-  zipkin:
-    tracing:
-      endpoint: ${ZIPKIN_HOST:http://localhost:9411}/api/v2/spans
-      export:
-        enabled: true
+
   metrics:
     tags:
       app: ${spring.application.name}

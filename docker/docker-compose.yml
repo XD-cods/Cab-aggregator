@@ -1,6 +1,22 @@
 name: Cab-aggregator
 services:
 
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: my_pgadmin
+    env_file:
+      - .env
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "8089:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - cab-aggregator-application
+    restart: always
+
   passenger_db:
     image: postgres:17-alpine
     ports:
@@ -523,20 +539,22 @@ services:
     networks:
       - cab-aggregator-application
 
-  zipkin:
-    image: openzipkin/zipkin
+  jaeger:
+    image: jaegertracing/all-in-one:latest
     ports:
-      - "9411:9411"
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
     environment:
-      - STORAGE_TYPE=elasticsearch
-      - ES_HOSTS=http://elasticsearch:9200
-      - ES_INDEX=zipkin
-      - ES_DATE_SEPARATOR=-
-      - ES_INDEX_SHARDS=1
-      - ES_INDEX_REPLICAS=0
+      - SPAN_STORAGE_TYPE=elasticsearch
+      - ES_SERVER_URLS=http://elasticsearch:9200
+      - LOG_LEVEL=info
+      - COLLECTOR_OTLP_ENABLED=true
+      - COLLECTOR_OTLP_HTTP_ENABLED=true
+      - METRICS_BACKEND=none
+      - JAEGER_DISABLED=true
     depends_on:
-      elasticsearch:
-        condition: service_healthy
+      - elasticsearch
     networks:
       - cab-aggregator-application
 
@@ -548,11 +566,20 @@ services:
     environment:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_DB: postgres
+      KC_DB_URL: ${AUTH_DB_URL}
+      KC_DB_USERNAME: ${AUTH_DB_USERNAME}
+      KC_DB_PASSWORD: ${AUTH_DB_PASSWORD}
     ports:
       - "8088:8080"
     command:
       - start-dev
       - --import-realm
+    depends_on:
+      auth-db:
+        condition: service_healthy
+    networks:
+      - cab-aggregator-application
 
 volumes:
   passenger-data:
@@ -569,6 +596,7 @@ volumes:
   kafka2-data:
   kafka1-data:
   keycloak_data:
+  pgadmin_data:
 
 networks:
   cab-aggregator-application:
