@@ -1,0 +1,61 @@
+spring:
+
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: ${KEYCLOAK_CLIENT_ID:spring-auth-service}
+            client-secret: ${KEYCLOAK_CLIENT_SECRET:tPoQfrdmyKpPi6EiVUIsiSOhPcnoVbxR}
+            authorization-grant-type: client_credentials
+            scope:
+              - openid
+              - profile
+              - email
+            provider: keycloak
+        provider:
+          keycloak:
+            authorization-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/auth
+            token-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/token
+            user-info-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/userinfo
+            user-name-attribute: preferred_username
+
+resilience4j:
+  retry:
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 1s
+        ignore-exceptions:
+          - com.vlad.kuzhyr.authservice.exception.CustomFeignException
+  circuitbreaker:
+    configs:
+      default:
+        register-health-indicator: true
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 10
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 3
+        sliding-window-size: 10
+        sliding-window-type: COUNT_BASED
+        ignore-exceptions:
+          - com.vlad.kuzhyr.authservice.exception.CustomFeignException
+  timelimiter:
+    configs:
+      default:
+        timeout-duration:
+          seconds: 5
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+    propagation:
+      produce: b3
+
+springdoc:
+  api-docs:
+    path: /auth-service/v3/api-docs
+  swagger-ui:
+    path: /auth-service/swagger-ui.html

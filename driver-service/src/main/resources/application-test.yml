@@ -4,7 +4,9 @@ spring:
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:1111}
     driver-class-name: org.postgresql.Driver
-
+  cloud:
+    config:
+      enabled: false
   jpa:
     hibernate:
       ddl-auto: none

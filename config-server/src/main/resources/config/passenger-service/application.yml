@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: ${PASSENGER_DB_URL:jdbc:postgresql://localhost:5432/postgres}
+    username: ${PASSENGER_DB_USERNAME:postgres}
+    password: ${PASSENGER_DB_PASSWORD:1111}
+    driver-class-name: ${PASSENGER_DB_DRIVER:org.postgresql.Driver}
+
+  kafka:
+    bootstrap-servers: ${KAFKA_URLS:localhost:9092}
+    listener:
+      observation-enabled: true
+    consumer:
+      group-id: passenger-ride-group
+      key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring:
+          deserializer:
+            value:
+              delegate:
+                class: org.apache.kafka.common.serialization.StringDeserializer
+
+springdoc:
+  api-docs:
+    path: /passenger-service/v3/api-docs
+  swagger-ui:
+    path: /passenger-service/swagger-ui.html

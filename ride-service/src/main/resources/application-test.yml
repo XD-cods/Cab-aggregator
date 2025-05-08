@@ -7,6 +7,8 @@ spring:
 
 
   cloud:
+    config:
+      enabled: false
     discovery:
       client:
         simple:
@@ -44,3 +46,11 @@ logging:
     com.vlad.kuzhyr.passengerservice: DEBUG
     org.springframework.cloud.openfeign: DEBUG
     com.github.tomakehurst.wiremock: DEBUG
+
+feign:
+  driver-service:
+    name: ${DRIVER_SERVICE_NAME:driver-service}
+    path: ${DRIVER_SERVICE_PATH:/api/v1/drivers}
+  passenger-service:
+    name: ${PASSENGER_SERVICE_NAME:passenger-service}
+    path: ${PASSENGER_SERVICE_PATH:/api/v1/passengers}

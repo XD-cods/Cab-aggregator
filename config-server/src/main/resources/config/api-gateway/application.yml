@@ -1,0 +1,61 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/v1/auth/**
+
+        - id: passenger-service
+          uri: lb://passenger-service
+          predicates:
+            - Path=/api/v1/passengers/**, /passenger-service/**
+          filters:
+            - TokenRelay=
+            - AddUserIdHeaderFilter
+
+        - id: driver-service
+          uri: lb://driver-service
+          predicates:
+            - Path=/api/v1/drivers/**, /api/v1/cars/**, /driver-service/**
+          filters:
+            - TokenRelay=
+            - AddUserIdHeaderFilter
+
+        - id: rating-service
+          uri: lb://rating-service
+          predicates:
+            - Path=/api/v1/ratings/**, /rating-service/**
+          filters:
+            - TokenRelay=
+
+        - id: ride-service
+          uri: lb://ride-service
+          predicates:
+            - Path=/api/v1/rides/**, /ride-service/**
+          filters:
+            - TokenRelay=
+
+springdoc:
+  api-docs:
+    enabled: true
+    groups:
+      enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - url: /v3/api-docs
+        name: API Gateway Service
+      - url: /auth-service/v3/api-docs
+        name: Auth-service
+      - url: /passenger-service/v3/api-docs
+        name: Passenger Service
+      - url: /driver-service/v3/api-docs
+        name: Driver Service
+      - url: /rating-service/v3/api-docs
+        name: Rating Service
+      - url: /ride-service/v3/api-docs
+        name: Ride Service

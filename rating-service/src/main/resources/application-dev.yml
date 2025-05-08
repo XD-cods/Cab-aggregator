@@ -1,6 +1,0 @@
-spring:
-  datasource:
-    url: ${RATING_DB_URL:jdbc:postgresql://localhost:5432/postgres}
-    username: ${RATING_DB_USERNAME:postgres}
-    password: ${RATING_DB_PASSWORD:1111}
-    driver-class-name: ${RATING_DB_DRIVER:org.postgresql.Driver}
