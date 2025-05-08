@@ -1,5 +1,5 @@
 server:
-  port: ${SERVER_PORT:5003}
+  port: ${DRIVER_SERVICE_PORT:5003}
 
 spring:
   profiles:

@@ -1,5 +1,5 @@
 server:
-  port: ${SERVER_PORT:8090}
+  port: ${AUTH_SERVICE_PORT:8090}
 
 spring:
   profiles:
@@ -12,8 +12,3 @@ spring:
     config:
       uri: ${CONFIG_SERVER_URL:http://localhost:8888}
       fail-fast: true
-
-
-logging:
-  level:
-    root: debug

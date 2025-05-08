@@ -93,7 +93,7 @@ services:
     networks:
       - cab-aggregator-application
 
-  auth-db:
+  auth_db:
     image: postgres:17-alpine
     ports:
       - "5437:5432"
@@ -250,7 +250,7 @@ services:
     ports:
       - 8888:${CONFIG_SERVER_PORT}
     healthcheck:
-      test: wget --no-verbose --tries=1 --spider http://config-server:${EUREKA_PORT}/actuator/health || exit 1
+      test: wget --no-verbose --tries=1 --spider http://config-server:${CONFIG_SERVER_PORT}/actuator/health || exit 1
       interval: 10s
       timeout: 5s
       start_period: 30s
@@ -334,7 +334,7 @@ services:
       start_period: 45s
       retries: 5
     depends_on:
-      auth-db:
+      auth_db:
         condition: service_healthy
       eureka-server:
         condition: service_healthy
@@ -394,8 +394,8 @@ services:
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://rating-service:${RATING_SERVICE_PORT}/actuator/health || exit 1
       interval: 30s
-      timeout: 5s
-      start_period: 45s
+      timeout: 15s
+      start_period: 120s
       retries: 5
     depends_on:
       kafka1:
@@ -425,8 +425,8 @@ services:
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://ride-service:${RIDE_SERVICE_PORT}/actuator/health || exit 1
       interval: 30s
-      timeout: 5s
-      start_period: 45s
+      timeout: 15s
+      start_period: 120s
       retries: 5
     depends_on:
       ride_db:
@@ -554,7 +554,8 @@ services:
       - METRICS_BACKEND=none
       - JAEGER_DISABLED=true
     depends_on:
-      - elasticsearch
+      elasticsearch:
+        condition: service_healthy
     networks:
       - cab-aggregator-application
 
@@ -576,7 +577,7 @@ services:
       - start-dev
       - --import-realm
     depends_on:
-      auth-db:
+      auth_db:
         condition: service_healthy
     networks:
       - cab-aggregator-application
