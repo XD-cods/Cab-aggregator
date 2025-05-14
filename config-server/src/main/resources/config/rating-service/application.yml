@@ -7,7 +7,7 @@ spring:
     driver-class-name: ${RATING_DB_DRIVER:org.postgresql.Driver}
 
   kafka:
-    bootstrap-servers: ${KAFKA_URL:localhost:9092}
+    bootstrap-servers: ${KAFKA_URLS:localhost:9092}
     listener:
       observation-enabled: true
     consumer:
