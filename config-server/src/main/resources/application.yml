@@ -20,6 +20,8 @@ spring:
           search-paths: config
 
 management:
+  tracing:
+    enabled: true
   endpoints:
     web:
       exposure:

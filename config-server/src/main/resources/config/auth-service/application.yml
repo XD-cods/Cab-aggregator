@@ -47,13 +47,6 @@ resilience4j:
         timeout-duration:
           seconds: 5
 
-management:
-  tracing:
-    sampling:
-      probability: 1.0
-    propagation:
-      produce: b3
-
 springdoc:
   api-docs:
     path: /auth-service/v3/api-docs

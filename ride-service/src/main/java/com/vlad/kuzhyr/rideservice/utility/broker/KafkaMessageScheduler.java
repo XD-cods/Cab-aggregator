@@ -2,7 +2,6 @@ package com.vlad.kuzhyr.rideservice.utility.broker;
 
 import com.vlad.kuzhyr.rideservice.persistence.entity.KafkaMessage;
 import com.vlad.kuzhyr.rideservice.service.KafkaMessageService;
-import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanContext;
 import io.opentelemetry.api.trace.TraceFlags;
@@ -29,7 +28,6 @@ public class KafkaMessageScheduler {
 
     private final KafkaMessageService kafkaMessageService;
     private final KafkaTemplate<Long, Object> kafkaTemplate;
-    private final OpenTelemetry openTelemetry;
 
     @Scheduled(fixedRateString = "${spring.kafka.message.scheduler.fixed-rate}")
     @SchedulerLock(
