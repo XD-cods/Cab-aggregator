@@ -12,3 +12,10 @@ spring:
     config:
       uri: ${CONFIG_SERVER_URL:http://localhost:8888}
       fail-fast: true
+logging:
+  level:
+    root: debug
+    org.apache: info
+    javax: info
+    sun: info
+

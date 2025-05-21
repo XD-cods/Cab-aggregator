@@ -17,8 +17,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/actuator/*").permitAll()
-                .requestMatchers("/api/v1/drivers/me").authenticated()
+                .requestMatchers("/actuator/", "/actuator/*").permitAll()
+                .requestMatchers("/api/v1/drivers/me").hasRole(Role.DRIVER.getKeycloakName())
                 .anyRequest().hasAnyRole(Role.ADMIN.getKeycloakName(), Role.SERVICE.getKeycloakName())
             )
             .oauth2ResourceServer(oauth2 -> oauth2

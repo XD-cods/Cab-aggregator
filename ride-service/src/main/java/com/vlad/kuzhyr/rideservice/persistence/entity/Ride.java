@@ -54,7 +54,7 @@ public class Ride {
     @Builder.Default
     @Convert(converter = RideStatusConverter.class)
     @Column(name = "ride_status", nullable = false)
-    private RideStatus rideStatus = RideStatus.CREATED;
+    private RideStatus rideStatus = RideStatus.WAITING_FOR_DRIVER;
 
     @Column(name = "ride_price", nullable = false)
     private BigDecimal ridePrice;

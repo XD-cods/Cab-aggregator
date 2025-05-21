@@ -17,7 +17,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/actuator/*").permitAll()
+                .requestMatchers("/actuator/", "/actuator/*").permitAll()
                 .requestMatchers("/api/v1/passengers/me").authenticated()
                 .anyRequest().hasAnyRole(Role.ADMIN.getKeycloakName(), Role.SERVICE.getKeycloakName())
             )

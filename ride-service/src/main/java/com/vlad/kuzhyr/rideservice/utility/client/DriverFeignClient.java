@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(
     name = "${feign.driver-service.name:driver-servcie}",
-    path = "${feign.driver-service.path:/api/v1/drivers}",
-    configuration = FeignClientInterceptor.class
+    path = "${feign.driver-service.path:/api/v1/drivers}"
 )
 public interface DriverFeignClient {
 
