@@ -29,17 +29,18 @@ public class RideValidation {
     private final DriverFeignClient driverFeignClient;
 
     public void validateRidesExistByDriverId(Long driverId) {
-        log.debug("validateRidesExistByDriverId: Validate rides exist by driver id. Driver id: {}", driverId);
+        log.info("validateRidesExistByDriverId: Validate rides exist by driver id. Driver id: {}", driverId);
         if (!rideRepository.existsRidesByDriverId(driverId)) {
             log.error("validateRidesExistByDriverId: Rides not found by driver id. Driver id: {}", driverId);
             throw new RidesNotFoundByDriverIdException(
                 ExceptionMessageConstant.RIDES_NOT_FOUND_BY_DRIVER_ID_MESSAGE.formatted(driverId)
             );
         }
+        log.debug("validateRidesExistByDriverId: Rides exist by driver id. Driver id: {}", driverId);
     }
 
     public void validateRidesExistByPassengerId(Long passengerId) {
-        log.debug("validateRidesExistByPassengerId: Validate rides exist by passenger id. Passenger id: {}",
+        log.info("validateRidesExistByPassengerId: Validate rides exist by passenger id. Passenger id: {}",
             passengerId);
         if (!rideRepository.existsRidesByPassengerId(passengerId)) {
             log.error("validateRidesExistByPassengerId: Rides not found by passenger id. Passenger id: {}",
@@ -48,6 +49,9 @@ public class RideValidation {
                 ExceptionMessageConstant.RIDES_NOT_FOUND_BY_PASSENGER_ID_MESSAGE.formatted(passengerId)
             );
         }
+
+        log.debug("validateRidesExistByPassengerId: Rides exists by passenger id. Passenger id: {}",
+            passengerId);
     }
 
     public void validateRideIsUpdatable(Ride ride) {
@@ -63,34 +67,51 @@ public class RideValidation {
     }
 
     public void checkDriverAndPassengerAvailability(Long driverId, Long passengerId) {
-        log.debug(
+        log.info(
             "checkDriverAndPassengerAvailability: Check driver and passenger availability. Driver id: {}, " +
-            "passenger id: {}",
+                "passenger id: {}",
             driverId,
             passengerId);
+
+        checkDriverAvailability(driverId);
+        checkPassengerAvailability(passengerId);
+    }
+
+    public void checkDriverAvailability(Long driverId) {
+        log.info(
+            "checkDriverAvailability: Check driver availability. Driver id: {}", driverId);
         DriverResponse driverResponse = getDriverByDriverId(driverId);
-        PassengerResponse passengerResponse = getPassengerByPassengerId(passengerId);
 
         if (driverResponse.isBusy()) {
-            log.error("checkDriverAndPassengerAvailability: Driver busy. Driver id: {}", driverId);
+            log.error("checkDriverAvailability: Driver busy. Driver id: {}", driverId);
             throw new DriverIsBusyException(
                 ExceptionMessageConstant.DRIVER_BUSY_MESSAGE.formatted(driverId)
             );
         }
 
+        if (driverResponse.carIds().isEmpty()) {
+            log.error("checkDriverAvailability: Driver has no cars. Driver id: {}", driverId);
+            throw new DriverHasNotCarException(
+                ExceptionMessageConstant.DRIVER_HAS_NO_CAR.formatted(driverId)
+            );
+        }
+
+        log.info("checkDriverAvailability: Driver valid by. Driver id: {}", driverId);
+    }
+
+    public void checkPassengerAvailability(Long passengerId) {
+        log.info("checkPassengerAvailability: Check passenger availability. Passenger id: {}", passengerId);
+
+        PassengerResponse passengerResponse = getPassengerByPassengerId(passengerId);
+
         if (passengerResponse.isBusy()) {
-            log.error("checkDriverAndPassengerAvailability: Passenger busy. Passenger id: {}", passengerId);
+            log.error("checkPassengerAvailability: Passenger busy. Passenger id: {}", passengerId);
             throw new PassengerIsBusyException(
                 ExceptionMessageConstant.PASSENGER_BUSY_MESSAGE.formatted(passengerId)
             );
         }
 
-        if (driverResponse.carIds().isEmpty()) {
-            log.error("checkDriverAndPassengerAvailability: Driver has no cars. Driver id: {}", driverId);
-            throw new DriverHasNotCarException(
-                ExceptionMessageConstant.DRIVER_HAS_NO_CAR.formatted(driverId)
-            );
-        }
+        log.info("checkPassengerAvailability: Passenger valid by passenger id. Passenger id: {}", passengerId);
     }
 
     public void validateStatusTransition(RideStatus currentStatus, RideStatus newStatus) {
@@ -108,7 +129,12 @@ public class RideValidation {
     }
 
     private PassengerResponse getPassengerByPassengerId(Long passengerId) {
-        PassengerResponse passengerResponse = passengerFeignClient.getPassengerById(passengerId).getBody();
+        PassengerResponse passengerResponse = null;
+        try {
+            passengerResponse = passengerFeignClient.getPassengerById(passengerId).getBody();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         log.debug("getPassengerByPassengerId: Retrieved passenger by id. Passenger id: {}", passengerId);
         return passengerResponse;
     }

@@ -11,7 +11,8 @@ import lombok.Getter;
 public enum Role {
     USER("USER"),
     ADMIN("ADMIN"),
-    SERVICE("SERVICE");
+    SERVICE("SERVICE"),
+    DRIVER("DRIVER");
 
     private final String keycloakName;
 

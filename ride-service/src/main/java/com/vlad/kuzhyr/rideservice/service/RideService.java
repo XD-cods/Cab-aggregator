@@ -1,10 +1,12 @@
 package com.vlad.kuzhyr.rideservice.service;
 
+import com.vlad.kuzhyr.rideservice.web.dto.request.DriverAssignRequest;
 import com.vlad.kuzhyr.rideservice.web.dto.request.RideRequest;
 import com.vlad.kuzhyr.rideservice.web.dto.request.UpdateRideRequest;
 import com.vlad.kuzhyr.rideservice.web.dto.request.UpdateRideStatusRequest;
 import com.vlad.kuzhyr.rideservice.web.dto.response.PageResponse;
 import com.vlad.kuzhyr.rideservice.web.dto.response.RideResponse;
+import jakarta.validation.Valid;
 
 public interface RideService {
 
@@ -22,4 +24,5 @@ public interface RideService {
 
     RideResponse createRide(RideRequest rideRequest);
 
+    RideResponse assignDriver(@Valid DriverAssignRequest driverAssignRequest, Long rideId);
 }

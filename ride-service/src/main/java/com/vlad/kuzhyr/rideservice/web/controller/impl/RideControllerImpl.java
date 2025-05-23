@@ -2,6 +2,7 @@ package com.vlad.kuzhyr.rideservice.web.controller.impl;
 
 import com.vlad.kuzhyr.rideservice.service.RideService;
 import com.vlad.kuzhyr.rideservice.web.controller.RideController;
+import com.vlad.kuzhyr.rideservice.web.dto.request.DriverAssignRequest;
 import com.vlad.kuzhyr.rideservice.web.dto.request.RideRequest;
 import com.vlad.kuzhyr.rideservice.web.dto.request.UpdateRideRequest;
 import com.vlad.kuzhyr.rideservice.web.dto.request.UpdateRideStatusRequest;
@@ -72,6 +73,15 @@ public class RideControllerImpl implements RideController {
     @PostMapping
     public ResponseEntity<RideResponse> createRide(@Valid @RequestBody RideRequest rideRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(rideService.createRide(rideRequest));
+    }
+
+    @PatchMapping("/{id}/assign-driver")
+    @Override
+    public ResponseEntity<RideResponse> assignDriver(
+        @Valid @RequestBody DriverAssignRequest driverAssignRequest,
+        @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(rideService.assignDriver(driverAssignRequest, id));
     }
 
     @Override

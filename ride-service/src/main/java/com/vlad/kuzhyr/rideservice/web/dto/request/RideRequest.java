@@ -19,10 +19,6 @@ public record RideRequest(
     @Schema(description = "Ride finish address", example = "Россия, г. Орехово-Зуево, Октябрьская ул., д. 35")
     String destinationAddress,
 
-    @NotNull(message = "{validation.driver.id.null}")
-    @Schema(description = "Ride driver id", example = "1")
-    Long driverId,
-
     @NotNull(message = "{validation.passenger.id.null}")
     @Schema(description = "Ride passenger id", example = "1")
     Long passengerId
@@ -31,8 +27,6 @@ public record RideRequest(
     @Override
     public String toString() {
         return "RideRequest{" +
-               "passengerId=" + passengerId +
-               ", driverId=" + driverId +
-               '}';
+            "passengerId=" + passengerId + '}';
     }
 }

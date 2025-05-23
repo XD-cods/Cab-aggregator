@@ -10,7 +10,10 @@ import lombok.Getter;
 @Getter
 public enum Role {
     USER("USER"),
-    ADMIN("ADMIN");
+    ADMIN("ADMIN"),
+    SERVICE("SERVICE"),
+    DRIVER("DRIVER"),
+    PASSENGER("PASSENGER");
 
     private final String keycloakName;
 
@@ -22,6 +25,14 @@ public enum Role {
 
     public String asSpringRole() {
         return "ROLE_" + this.name();
+    }
+
+    public static String[] rolesForDriverActivity() {
+        return new String[] {DRIVER.getKeycloakName(), ADMIN.getKeycloakName(), SERVICE.getKeycloakName()};
+    }
+
+    public static String[] rolesForPassengerActivity() {
+        return new String[] {DRIVER.getKeycloakName(), ADMIN.getKeycloakName(), SERVICE.getKeycloakName()};
     }
 
 }

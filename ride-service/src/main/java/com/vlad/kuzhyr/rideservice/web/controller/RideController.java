@@ -1,5 +1,6 @@
 package com.vlad.kuzhyr.rideservice.web.controller;
 
+import com.vlad.kuzhyr.rideservice.web.dto.request.DriverAssignRequest;
 import com.vlad.kuzhyr.rideservice.web.dto.request.RideRequest;
 import com.vlad.kuzhyr.rideservice.web.dto.request.UpdateRideRequest;
 import com.vlad.kuzhyr.rideservice.web.dto.request.UpdateRideStatusRequest;
@@ -13,6 +14,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -70,6 +72,18 @@ public interface RideController {
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     ResponseEntity<RideResponse> createRide(@Valid @RequestBody RideRequest rideRequest);
+
+    @Operation(summary = "Assign driver on ride")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Driver assigned"),
+        @ApiResponse(responseCode = "404", description = "Driver not found"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @PatchMapping("/{id}/assign-driver")
+    ResponseEntity<RideResponse> assignDriver(
+        @Valid @RequestBody DriverAssignRequest driverAssignRequest,
+        @PathVariable Long id
+    );
 
     @Operation(summary = "Update ride by id and ride request")
     @ApiResponses(value = {

@@ -16,12 +16,6 @@ spring:
     enabled: true
     contexts: test
 
-logging:
-  level:
-    root: INFO
-    org.springframework: INFO
-    com.vlad.kuzhyr.passengerservice: DEBUG
-
 eureka:
   client:
     register-with-eureka: false

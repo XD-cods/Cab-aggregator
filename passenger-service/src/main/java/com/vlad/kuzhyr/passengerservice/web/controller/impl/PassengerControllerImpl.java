@@ -31,8 +31,8 @@ public class PassengerControllerImpl implements PassengerController {
 
     private final PassengerService passengerService;
 
-    @GetMapping("/{id}")
     @Override
+    @GetMapping("/{id}")
     public ResponseEntity<PassengerResponse> getPassengerById(@PathVariable Long id) {
         return ResponseEntity.ok(passengerService.getPassengerByKeycloakId(id));
     }
@@ -43,8 +43,8 @@ public class PassengerControllerImpl implements PassengerController {
         return ResponseEntity.ok(passengerService.getPassengerByKeycloakId(id));
     }
 
-    @PutMapping("/me")
     @Override
+    @PutMapping("/me")
     public ResponseEntity<PassengerResponse> getPassengerByHeaderId(
         @RequestHeader("X-User-Id") String id, @RequestBody PassengerRequest passengerRequest) {
         return ResponseEntity.ok(passengerService.updatePassengerByKeycloakId(id, passengerRequest));

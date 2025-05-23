@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(
     name = "${feign.passenger-service.name:passenger-service}",
-    path = "${feign.passenger-service.path:/api/v1/passengers}",
-    configuration = FeignClientInterceptor.class
+    path = "${feign.passenger-service.path:/api/v1/passengers}"
 )
 public interface PassengerFeignClient {
 

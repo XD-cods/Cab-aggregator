@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/V1/V1-create-schedule-lock-table.sql
   - include:
       file: db/changelog/V1/V1-add-traceparent-columns.sql
+  - include:
+      file: db/changelog/V1/V1-update-table-for-driver-id-null.sql

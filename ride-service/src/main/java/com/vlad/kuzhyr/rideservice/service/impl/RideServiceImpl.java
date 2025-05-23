@@ -11,6 +11,7 @@ import com.vlad.kuzhyr.rideservice.utility.mapper.PageResponseMapper;
 import com.vlad.kuzhyr.rideservice.utility.mapper.RideMapper;
 import com.vlad.kuzhyr.rideservice.utility.validation.RideValidation;
 import com.vlad.kuzhyr.rideservice.web.dto.external.RideInfoPayload;
+import com.vlad.kuzhyr.rideservice.web.dto.request.DriverAssignRequest;
 import com.vlad.kuzhyr.rideservice.web.dto.request.RideRequest;
 import com.vlad.kuzhyr.rideservice.web.dto.request.UpdateRideRequest;
 import com.vlad.kuzhyr.rideservice.web.dto.request.UpdateRideStatusRequest;
@@ -143,6 +144,30 @@ public class RideServiceImpl implements RideService {
         return rideMapper.toResponse(savedRide);
     }
 
+    @Override
+    public RideResponse assignDriver(DriverAssignRequest driverAssignRequest, Long rideId) {
+        log.debug("assignDriver: Entering method. {}", driverAssignRequest);
+
+        Long driverId = driverAssignRequest.driverId();
+        Ride ride = assignDriverByRide(rideId, driverId);
+
+        Ride savedRide = rideRepository.save(ride);
+
+        log.info("assignDriver: Driver assigned. Ride id: {}, driver id: {}", rideId, driverAssignRequest);
+
+        return rideMapper.toResponse(savedRide);
+
+    }
+
+    private Ride assignDriverByRide(Long rideId, Long driverId) {
+        Ride ride = findRideByIdOrThrow(rideId);
+
+        rideValidation.checkDriverAvailability(driverId);
+        ride.setDriverId(driverId);
+        ride.setRideStatus(RideStatus.DRIVER_ASSIGNED);
+        return ride;
+    }
+
     private Ride findRideByIdOrThrow(Long rideId) {
         log.debug("findRideByIdOrThrow: Attempting to find ride. Ride id: {}", rideId);
 
@@ -165,9 +190,8 @@ public class RideServiceImpl implements RideService {
 
     private Ride createRideFromRideRequest(RideRequest rideRequest) {
         Long passengerId = rideRequest.passengerId();
-        Long driverId = rideRequest.driverId();
 
-        rideValidation.checkDriverAndPassengerAvailability(driverId, passengerId);
+        rideValidation.checkPassengerAvailability(passengerId);
 
         String departureAddress = rideRequest.departureAddress();
         String destinationAddress = rideRequest.destinationAddress();
@@ -176,7 +200,7 @@ public class RideServiceImpl implements RideService {
 
         Ride ride = rideMapper.toEntity(rideRequest);
         addressService.updateRideAddress(ride, departureAddress, destinationAddress);
-        setDriverAndPassengerBusyStatus(passengerId, driverId, true);
+        setPassengerBusyStatus(passengerId, true);
 
         return ride;
     }
@@ -203,7 +227,13 @@ public class RideServiceImpl implements RideService {
                 log.debug("updateRideTimestamps: Ride rated. Ride id: {}", ride.getId());
             }
             case CANCELLED -> {
-                setDriverAndPassengerBusyStatus(ride.getPassengerId(), ride.getDriverId(), false);
+                if (ride.getPassengerId() != null) {
+                    setPassengerBusyStatus(ride.getPassengerId(), false);
+                }
+
+                if (ride.getDriverId() != null) {
+                    setDriverBusyStatus(ride.getPassengerId(), false);
+                }
                 log.debug("updateRideTimestamps: Ride cancelled. Ride id: {}", ride.getId());
             }
             default -> {
@@ -211,11 +241,22 @@ public class RideServiceImpl implements RideService {
         }
     }
 
-    private void setDriverAndPassengerBusyStatus(Long passengerId, Long driverId, Boolean isBusy) {
-        log.debug("setDriverAndPassengerBusyStatus: Setting busy status. Driver id: {}, passenger id: {}, isBusy: {}",
-            driverId, passengerId, isBusy);
+    private void setPassengerBusyStatus(Long passengerId, Boolean isBusy) {
+        log.debug("setPassengerBusyStatus: Setting passenger busy status. Passenger id: {}, isBusy: {}",
+            passengerId, isBusy);
+
+        rideEventProducer.sendPassengerBusyTopic(passengerId, isBusy);
+    }
+
+    private void setDriverBusyStatus(Long driverId, Boolean isBusy) {
+        log.debug("setDriverBusyStatus: Setting driver busy status. Driver id: {}, isBusy: {}",
+            driverId, isBusy);
 
         rideEventProducer.sendDriverBusyMessage(driverId, isBusy);
-        rideEventProducer.sendPassengerBusyTopic(passengerId, isBusy);
+    }
+
+    private void setDriverAndPassengerBusyStatus(Long passengerId, Long driverId, Boolean isBusy) {
+        setPassengerBusyStatus(passengerId, isBusy);
+        setDriverBusyStatus(driverId, isBusy);
     }
 }
