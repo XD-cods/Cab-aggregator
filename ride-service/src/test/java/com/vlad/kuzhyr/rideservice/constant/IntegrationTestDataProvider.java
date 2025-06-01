@@ -19,7 +19,6 @@ public final class IntegrationTestDataProvider {
 
     public static RideRequest createRideRequest() {
         return RideRequest.builder()
-            .driverId(BASE_DRIVER_ID)
             .passengerId(BASE_PASSENGER_ID)
             .destinationAddress(BASE_DEPARTURE_ADDRESS)
             .departureAddress(BASE_DESTINATION_ADDRESS)
@@ -44,7 +43,6 @@ public final class IntegrationTestDataProvider {
             .departureAddress(BASE_DEPARTURE_ADDRESS2)
             .destinationAddress(BASE_DESTINATION_ADDRESS2)
             .passengerId(BASE_PASSENGER_ID)
-            .driverId(BASE_DRIVER_ID)
             .build();
     }
 
@@ -58,7 +56,6 @@ public final class IntegrationTestDataProvider {
         return RideRequest.builder()
             .departureAddress("")
             .destinationAddress("")
-            .driverId(0L)
             .build();
     }
 }

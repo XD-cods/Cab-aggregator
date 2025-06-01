@@ -1,0 +1,17 @@
+{
+  "name": "Demo session",
+  "version": "1",
+  "items": [],
+  "environments": [],
+  "brunoConfig": {
+    "version": "1",
+    "name": "Demo session",
+    "type": "collection",
+    "ignore": [
+      "node_modules",
+      ".git"
+    ],
+    "size": 0.013315200805664062,
+    "filesCount": 35
+  }
+}

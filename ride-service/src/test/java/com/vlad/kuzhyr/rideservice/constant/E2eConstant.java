@@ -14,7 +14,6 @@ public class E2eConstant {
 
     public static RideRequest createRideRequest() {
         return RideRequest.builder()
-            .driverId(BASE_DRIVER_ID)
             .passengerId(BASE_PASSENGER_ID)
             .destinationAddress(BASE_DEPARTURE_ADDRESS)
             .departureAddress(BASE_DESTINATION_ADDRESS)

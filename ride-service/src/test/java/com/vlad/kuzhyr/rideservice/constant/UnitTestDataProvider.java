@@ -100,7 +100,6 @@ public class UnitTestDataProvider {
             .departureAddress(address1().getAddressName())
             .destinationAddress(address2().getAddressName())
             .passengerId(TEST_PASSENGER_ID)
-            .driverId(TEST_DRIVER_ID)
             .build();
     }
 

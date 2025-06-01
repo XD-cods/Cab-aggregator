@@ -1,0 +1,1445 @@
+{
+  "name": "Cab aggregator",
+  "version": "1",
+  "items": [
+    {
+      "type": "folder",
+      "name": "Auth service",
+      "filename": "Auth service",
+      "root": {
+        "meta": {
+          "name": "Auth service"
+        }
+      },
+      "items": [
+        {
+          "type": "http",
+          "name": "Log out",
+          "filename": "Log out.bru",
+          "seq": 5,
+          "request": {
+            "url": "{{baseAuthServiceUrl}}/api/v1/auth/logout",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\r\n    \"refresh_token\": \"{{jwt_refresh_token}}\"\r\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Refresh",
+          "filename": "Refresh.bru",
+          "seq": 3,
+          "request": {
+            "url": "{{baseAuthServiceUrl}}/api/v1/auth/refresh",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\r\n    \"refresh_token\": \"{{jwt_refresh_token}}\"\r\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {
+              "res": "    bru.setEnvVar(\"jwt_access_token\", res.body.access_token || \"\");\n    bru.setEnvVar(\"jwt_refresh_token\", res.body.refresh_token || \"\");"
+            },
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Set buisiness role",
+          "filename": "Set buisiness role.bru",
+          "seq": 4,
+          "request": {
+            "url": "{{baseAuthServiceUrl}}/api/v1/auth/assign-business-role",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\r\n    \"email\":\"vkuzirs7@gmail.com\",\r\n    \"business_role\": \"DRIVER\"\r\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{jwt_access_token}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Sign in DRIVER",
+          "filename": "Sign in DRIVER.bru",
+          "seq": 6,
+          "request": {
+            "url": "{{baseAuthServiceUrl}}/api/v1/auth/signin",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n    \"email\": \"{{driverEmail}}\",\n    \"password\": \"{{driverPassword}}\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {
+              "res": "    bru.setEnvVar(\"jwt_access_token\", res.body.access_token || \"\");\n    bru.setEnvVar(\"jwt_refresh_token\", res.body.refresh_token || \"\");"
+            },
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Sign in",
+          "filename": "Sign in.bru",
+          "seq": 2,
+          "request": {
+            "url": "{{baseAuthServiceUrl}}/api/v1/auth/signin",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\r\n    \"email\": \"admin@gmail.com\",\r\n    \"password\": \"admin\"\r\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {
+              "res": "    bru.setEnvVar(\"jwt_access_token\", res.body.access_token || \"\");\n    bru.setEnvVar(\"jwt_refresh_token\", res.body.refresh_token || \"\");"
+            },
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Sign Up",
+          "filename": "Sign Up.bru",
+          "seq": 1,
+          "request": {
+            "url": "{{baseAuthServiceUrl}}/api/v1/auth/signup",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n//     \"first_name\": \"Vlad\",\n//     \"last_name\": \"Kuzhyr\",\n//     \"password\": \"P@ssw0rd\",\n//     \"email\": \"vkuzir7@gmail.com\",\n//     \"phone\": \"+375298805187\",\n    \"business_role\":\"DRIVER\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {
+              "req": "// Списки возможных значений\nconst firstNames = [\"John\", \"Michael\", \"David\", \"James\", \"Robert\"];\nconst lastNames = [\"Doe\", \"Smith\", \"Johnson\", \"Williams\", \"Brown\"];\nconst domains = [\"gmail.com\", \"yahoo.com\", \"outlook.com\", \"proton.me\"];\n\n// Генерация случайного email\nfunction generateEmail(firstName, lastName) {\n    const randomNum = Math.floor(Math.random() * 100);\n    const domain = domains[Math.floor(Math.random() * domains.length)];\n    return `${firstName.toLowerCase()}${lastName.toLowerCase()}${randomNum}@${domain}`;\n}\n\n// Генерация случайного телефона (формат: +37529XXXXXXX)\nfunction generatePhone() {\n    return `+37529${Math.floor(1000000 + Math.random() * 9000000)}`;\n}\n\nvar randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)]\nvar randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)]\n\n// Создаем объект со случайными данными DRIVER\nconst driverData = {\n    first_name: randomFirstName,\n    last_name: randomLastName,\n    password: \"P@ssw0rd\",\n    email: generateEmail(randomFirstName, randomLastName),\n    phone: generatePhone(),\n    business_role: req.body.business_role\n};\n\nbru.setEnvVar(\"driverEmail\", driverData.email)\nbru.setEnvVar(\"driverPassword\", driverData.password)\n\nreq.setBody(driverData)\n"
+            },
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "Driver service",
+      "filename": "Driver service",
+      "root": {
+        "meta": {
+          "name": "Driver service"
+        }
+      },
+      "items": [
+        {
+          "type": "folder",
+          "name": "Driver",
+          "filename": "Driver",
+          "root": {
+            "meta": {
+              "name": "Driver"
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Create driver",
+              "filename": "Create driver.bru",
+              "seq": 1,
+              "request": {
+                "url": "{{baseDriverServiceUrl}}/api/v1/drivers",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\r\n  \"first_name\": \"Anne\",\r\n  \"last_name\": \"Matthews\",\r\n  \"email\": \"exae1sasa2s@mail.ru\",\r\n  \"gender\": \"FEMALE\",\r\n  \"phone\": \"+374325134421\",\r\n  \"car_ids\": []\r\n}\r\n",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {
+                  "res": "bru.setEnvVar(\"driverId\", res.body.id)"
+                },
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Delete driver by id",
+              "filename": "Delete driver by id.bru",
+              "seq": 8,
+              "request": {
+                "url": "{{baseDriverServiceUrl}}/api/v1/drivers/{{driverId}}",
+                "method": "DELETE",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "bearer",
+                  "bearer": {
+                    "token": "{{jwt_access_token}}"
+                  }
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Get driver by header",
+              "filename": "Get driver by header.bru",
+              "seq": 4,
+              "request": {
+                "url": "{{baseDriverServiceUrl}}/api/v1/drivers/me",
+                "method": "GET",
+                "headers": [
+                  {
+                    "name": "X-User-Id",
+                    "value": "",
+                    "enabled": false
+                  }
+                ],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "bearer",
+                  "bearer": {
+                    "token": "{{jwt_access_token}}"
+                  }
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Get driver by id",
+              "filename": "Get driver by id.bru",
+              "seq": 3,
+              "request": {
+                "url": "{{baseDriverServiceUrl}}/api/v1/drivers/{{driverId}}",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "bearer",
+                  "bearer": {
+                    "token": "{{jwt_access_token}}"
+                  }
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Get drivers",
+              "filename": "Get drivers.bru",
+              "seq": 2,
+              "request": {
+                "url": "{{baseDriverServiceUrl}}/api/v1/drivers",
+                "method": "GET",
+                "headers": [],
+                "params": [
+                  {
+                    "name": "current_page",
+                    "value": "3",
+                    "type": "query",
+                    "enabled": false
+                  },
+                  {
+                    "name": "limit",
+                    "value": "2",
+                    "type": "query",
+                    "enabled": false
+                  }
+                ],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "bearer",
+                  "bearer": {
+                    "token": "{{jwt_access_token}}"
+                  }
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Update driver by header",
+              "filename": "Update driver by header.bru",
+              "seq": 6,
+              "request": {
+                "url": "{{baseDriverServiceUrl}}/api/v1/drivers/me",
+                "method": "PUT",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\r\n  \"first_name\": \"John\",\r\n  \"last_name\": \"Watson\",\r\n  \"email\": \"example@mail.ru\",\r\n  \"gender\": \"MALE\",\r\n  \"phone\": \"+375335184521\",\r\n  \"car_ids\": []\r\n}\r\n",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "bearer",
+                  "bearer": {
+                    "token": "{{jwt_access_token}}"
+                  }
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Update driver by id",
+              "filename": "Update driver by id.bru",
+              "seq": 5,
+              "request": {
+                "url": "{{baseDriverServiceUrl}}/api/v1/drivers/{{driverId}}",
+                "method": "PUT",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\r\n  \"first_name\": \"John\",\r\n  \"last_name\": \"Watson\",\r\n  \"email\": \"example@mail.ru\",\r\n  \"gender\": \"MALE\",\r\n  \"phone\": \"+375335184521\",\r\n  \"car_ids\": []\r\n}\r\n",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "bearer",
+                  "bearer": {
+                    "token": "{{jwt_access_token}}"
+                  }
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Update driver cars",
+              "filename": "Update driver cars.bru",
+              "seq": 7,
+              "request": {
+                "url": "{{baseDriverServiceUrl}}/api/v1/drivers/1",
+                "method": "PATCH",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\n    \"car_ids\":[{{carId}}]\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "Car",
+          "filename": "Car",
+          "root": {
+            "meta": {
+              "name": "Car"
+            }
+          },
+          "items": [
+            {
+              "type": "http",
+              "name": "Create car",
+              "filename": "Create car.bru",
+              "seq": 1,
+              "request": {
+                "url": "{{baseDriverServiceUrl}}/api/v1/cars",
+                "method": "POST",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\r\n    \"color\":\"yellow\",\r\n    \"car_brand\":\"tesla\",\r\n    \"car_number\":\"8KDW728\"\r\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {
+                  "req": "// Списки возможных значений\nconst colors = [\"red\", \"blue\", \"yellow\", \"green\", \"black\", \"white\"];\nconst brands = [\"tesla\", \"bmw\", \"audi\", \"mercedes\", \"toyota\", \"ford\"];\nconst letters = \"ABCDEFGHIJKLMNOPQRSTUVWXYZ\"; // Для генерации номера\n\n// Генерация случайного номера (формат: 1ABC234)\nfunction generateCarNumber() {\n    const digits = Math.floor(100 + Math.random() * 900); // 3 случайные цифры\n    const randomLetters = \n        letters.charAt(Math.floor(Math.random() * letters.length)) +\n        letters.charAt(Math.floor(Math.random() * letters.length)) +\n        letters.charAt(Math.floor(Math.random() * letters.length));\n    return `${digits}${randomLetters}`;\n}\n\nconst carData = {\n    color: colors[Math.floor(Math.random() * colors.length)],\n    car_brand: brands[Math.floor(Math.random() * brands.length)],\n    car_number: generateCarNumber()\n};\n\nreq.setBody(carData)",
+                  "res": "bru.setEnvVar(\"carId\", res.body.id)"
+                },
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "bearer",
+                  "bearer": {
+                    "token": "{{jwt_access_token}}"
+                  }
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Delete car by id",
+              "filename": "Delete car by id.bru",
+              "seq": 5,
+              "request": {
+                "url": "{{baseDriverServiceUrl}}/api/v1/cars/{{carId}}",
+                "method": "DELETE",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Get car by id",
+              "filename": "Get car by id.bru",
+              "seq": 3,
+              "request": {
+                "url": "{{baseDriverServiceUrl}}/api/v1/cars/1",
+                "method": "GET",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "none"
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Get cars",
+              "filename": "Get cars.bru",
+              "seq": 2,
+              "request": {
+                "url": "{{baseDriverServiceUrl}}/api/v1/cars",
+                "method": "GET",
+                "headers": [],
+                "params": [
+                  {
+                    "name": "current_page",
+                    "value": "0",
+                    "type": "query",
+                    "enabled": false
+                  },
+                  {
+                    "name": "limit",
+                    "value": "1",
+                    "type": "query",
+                    "enabled": false
+                  }
+                ],
+                "body": {
+                  "mode": "none",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "bearer",
+                  "bearer": {
+                    "token": "{{jwt_access_token}}"
+                  }
+                }
+              }
+            },
+            {
+              "type": "http",
+              "name": "Update car by id",
+              "filename": "Update car by id.bru",
+              "seq": 4,
+              "request": {
+                "url": "{{baseDriverServiceUrl}}/api/v1/cars/{{carId}}",
+                "method": "PUT",
+                "headers": [],
+                "params": [],
+                "body": {
+                  "mode": "json",
+                  "json": "{\r\n    \"color\":\"red\",\r\n    \"car_brand\":\"mercedes\",\r\n    \"car_number\":\"К092НХ07\"\r\n}",
+                  "formUrlEncoded": [],
+                  "multipartForm": [],
+                  "file": []
+                },
+                "script": {},
+                "vars": {},
+                "assertions": [],
+                "tests": "",
+                "docs": "",
+                "auth": {
+                  "mode": "bearer",
+                  "bearer": {
+                    "token": "{{jwt_access_token}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "Passenger service",
+      "filename": "Passenger service",
+      "root": {
+        "meta": {
+          "name": "Passenger service"
+        }
+      },
+      "items": [
+        {
+          "type": "http",
+          "name": "Create passenger",
+          "filename": "Create passenger.bru",
+          "seq": 1,
+          "request": {
+            "url": "{{basePassengerServiceUrl}}/api/v1/passengers",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\r\n    \"first_name\":\"Vlad\",\r\n    \"last_name\":\"Kuzhyr\",\r\n    \"email\":\"vkuzi82r7@gmail.com\",\r\n    \"phone\":\"+375337885557\"\r\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {
+              "res": "bru.setEnvVar(\"passengerId\", res.body.id)"
+            },
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{jwt_access_token}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get passenger by header",
+          "filename": "Get passenger by header.bru",
+          "seq": 3,
+          "request": {
+            "url": "{{basePassengerServiceUrl}}/api/v1/passengers/me",
+            "method": "GET",
+            "headers": [
+              {
+                "name": "X-User-Id",
+                "value": "1478369a-f39b-4990-a2d0-8267095b8820",
+                "enabled": false
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{jwt_access_token}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get passenger by id",
+          "filename": "Get passenger by id.bru",
+          "seq": 2,
+          "request": {
+            "url": "{{basePassengerServiceUrl}}/api/v1/passengers/{{passengerId}}",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{jwt_access_token}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get passengers",
+          "filename": "Get passengers.bru",
+          "seq": 4,
+          "request": {
+            "url": "{{basePassengerServiceUrl}}/api/v1/passengers",
+            "method": "GET",
+            "headers": [],
+            "params": [
+              {
+                "name": "current_page",
+                "value": "0",
+                "type": "query",
+                "enabled": false
+              },
+              {
+                "name": "limit",
+                "value": "10",
+                "type": "query",
+                "enabled": false
+              }
+            ],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{jwt_access_token}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "New Request",
+          "filename": "New Request.bru",
+          "seq": 7,
+          "request": {
+            "url": "{{basePassengerServiceUrl}}/api/v1/passengers/{{passengerId}}",
+            "method": "DELETE",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{jwt_access_token}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Update passenger by header",
+          "filename": "Update passenger by header.bru",
+          "seq": 6,
+          "request": {
+            "url": "{{basePassengerServiceUrl}}/api/v1/passengers/me",
+            "method": "PUT",
+            "headers": [
+              {
+                "name": "X-User-Id",
+                "value": "",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\r\n    \"first_name\":\"Charles\",\r\n    \"last_name\":\"Kennedy\",\r\n    \"email\":\"vkuzir7@gmail.com\",\r\n    \"phone\":\"+375338885556\"\r\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{jwt_access_token}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Update passenger by id",
+          "filename": "Update passenger by id.bru",
+          "seq": 5,
+          "request": {
+            "url": "{{basePassengerServiceUrl}}/api/v1/passengers/{{passengerId}}",
+            "method": "PUT",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\r\n    \"first_name\":\"Charles\",\r\n    \"last_name\":\"Kennedy\",\r\n    \"email\":\"vkuzir7@gmail.com\",\r\n    \"phone\":\"+375338885556\"\r\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{jwt_access_token}}"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "Ride service",
+      "filename": "Ride service",
+      "root": {
+        "meta": {
+          "name": "Ride service"
+        }
+      },
+      "items": [
+        {
+          "type": "http",
+          "name": "Assign driver by ride",
+          "filename": "Assign driver by ride.bru",
+          "seq": 7,
+          "request": {
+            "url": "{{baseRideServiceUrl}}/api/v1/rides/{{rideId}}/assign-driver",
+            "method": "PATCH",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"driver_id\":\"{{driverId}}\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "inherit"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Create ride",
+          "filename": "Create ride.bru",
+          "seq": 1,
+          "request": {
+            "url": "{{baseRideServiceUrl}}/api/v1/rides",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n    \"departure_address\":\"Минск, автовокзал, бобруйская 6\",\n    \"destination_address\":\"проспект Независимости, 186, Минск, 220056\",\n    \"passenger_id\":\"{{passengerId}}\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {
+              "res": "bru.setEnvVar(\"rideId\", res.body.id)"
+            },
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{jwt_access_token}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get rides by driver id",
+          "filename": "Get rides by driver id.bru",
+          "seq": 3,
+          "request": {
+            "url": "{{baseRideServiceUrl}}/api/v1/rides/driver/{{driverId}}",
+            "method": "GET",
+            "headers": [],
+            "params": [
+              {
+                "name": "offest",
+                "value": "0",
+                "type": "query",
+                "enabled": false
+              },
+              {
+                "name": "limit",
+                "value": "10",
+                "type": "query",
+                "enabled": false
+              }
+            ],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{jwt_access_token}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get rides by passenger id",
+          "filename": "Get rides by passenger id.bru",
+          "seq": 4,
+          "request": {
+            "url": "{{baseRideServiceUrl}}/api/v1/rides/passenger/{{passengerId}}",
+            "method": "GET",
+            "headers": [],
+            "params": [
+              {
+                "name": "offest",
+                "value": "0",
+                "type": "query",
+                "enabled": false
+              },
+              {
+                "name": "limit",
+                "value": "10",
+                "type": "query",
+                "enabled": false
+              }
+            ],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{jwt_access_token}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get rides",
+          "filename": "Get rides.bru",
+          "seq": 2,
+          "request": {
+            "url": "{{baseRideServiceUrl}}/api/v1/rides",
+            "method": "GET",
+            "headers": [],
+            "params": [
+              {
+                "name": "current_page",
+                "value": "2",
+                "type": "query",
+                "enabled": false
+              },
+              {
+                "name": "limit",
+                "value": "10",
+                "type": "query",
+                "enabled": false
+              }
+            ],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{jwt_access_token}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Update ride status by ride id",
+          "filename": "Update ride status by ride id.bru",
+          "seq": 5,
+          "request": {
+            "url": "{{baseRideServiceUrl}}/api/v1/rides/{{rideId}}",
+            "method": "PATCH",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\r\n    \"ride_status\":\"WAITING_FOR_DRIVER\"\r\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{jwt_access_token}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Update ride",
+          "filename": "Update ride.bru",
+          "seq": 6,
+          "request": {
+            "url": "{{baseRideServiceUrl}}/api/v1/rides/{{rideId}}",
+            "method": "PUT",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\r\n    \"departure_address\":\"улица Горького, 33, Кобрин, Брестская область, 225306\",\r\n    \"destination_address\": \"Беларусь, Брест московская 176\"\r\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{jwt_access_token}}"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "Rating service",
+      "filename": "Rating service",
+      "root": {
+        "meta": {
+          "name": "Rating service"
+        }
+      },
+      "items": [
+        {
+          "type": "http",
+          "name": "create rating",
+          "filename": "create rating.bru",
+          "seq": 2,
+          "request": {
+            "url": "{{baseRatingServiceUrl}}/api/v1/ratings",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n    \"ride_id\":\"{{rideId}}\",\n    \"rating\":\"3.0\",\n    \"rated_by\":\"PASSENGER\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {
+              "res": "bru.setEnvVar(\"ratingId\", res.body.id)"
+            },
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{jwt_access_token}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "get average rating by driver id",
+          "filename": "get average rating by driver id.bru",
+          "seq": 6,
+          "request": {
+            "url": "{{baseRatingServiceUrl}}/api/v1/ratings/driver/{{driverId}}",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{jwt_access_token}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "get average rating by passenger id",
+          "filename": "get average rating by passenger id.bru",
+          "seq": 5,
+          "request": {
+            "url": "{{baseRatingServiceUrl}}/api/v1/ratings/passenger/{{passengerId}}",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{jwt_access_token}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get by id",
+          "filename": "Get by id.bru",
+          "seq": 1,
+          "request": {
+            "url": "{{baseRatingServiceUrl}}/api/v1/ratings/{{ratingId}}",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{jwt_access_token}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get ratings",
+          "filename": "Get ratings.bru",
+          "seq": 4,
+          "request": {
+            "url": "{{baseRatingServiceUrl}}/api/v1/ratings",
+            "method": "GET",
+            "headers": [],
+            "params": [
+              {
+                "name": "current_page",
+                "value": "0",
+                "type": "query",
+                "enabled": false
+              },
+              {
+                "name": "limit",
+                "value": "10",
+                "type": "query",
+                "enabled": false
+              }
+            ],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{jwt_access_token}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "update rating",
+          "filename": "update rating.bru",
+          "seq": 3,
+          "request": {
+            "url": "{{baseRatingServiceUrl}}/api/v1/ratings/{{ratingId}}",
+            "method": "PUT",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\r\n    \"rating\":\"5.0\",\r\n    \"comment\":\"great ride\"\r\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{jwt_access_token}}"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "activeEnvironmentUid": "RIrgICWBu7SmFowaDGJ8y",
+  "environments": [
+    {
+      "variables": [],
+      "name": "env"
+    }
+  ],
+  "root": {
+    "request": {
+      "auth": {
+        "mode": "bearer",
+        "bearer": {
+          "token": "{{jwt_access_token}}"
+        }
+      },
+      "vars": {
+        "req": [
+          {
+            "name": "basePassengerServiceUrl",
+            "value": "http://localhost:5008",
+            "enabled": true,
+            "local": false,
+            "uid": "6zHm8hv4i7RAjx6e7YcBq"
+          },
+          {
+            "name": "baseDriverServiceUrl",
+            "value": "http://localhost:5003",
+            "enabled": true,
+            "local": false,
+            "uid": "MOSkTD6U6S0T750eoQCx0"
+          },
+          {
+            "name": "baseRideServiceUrl",
+            "value": "http://localhost:5007",
+            "enabled": true,
+            "local": false,
+            "uid": "qyLXgXsJxSeSAjxnGHhn4"
+          },
+          {
+            "name": "baseRatingServiceUrl",
+            "value": "http://localhost:5009",
+            "enabled": true,
+            "local": false,
+            "uid": "yO93oLQnHE2UOE4LOEqsO"
+          },
+          {
+            "name": "baseAuthServiceUrl",
+            "value": "http://localhost:8090",
+            "enabled": true,
+            "local": false,
+            "uid": "kbQpbR8DLu2KKnc5R6ETQ"
+          },
+          {
+            "name": "basePassengerServiceUrl",
+            "value": "http://localhost:8080",
+            "enabled": false,
+            "local": false,
+            "uid": "hjzYD5JmNOuD6BT2Bvyi6"
+          },
+          {
+            "name": "baseDriverServiceUrl",
+            "value": "http://localhost:8080",
+            "enabled": false,
+            "local": false,
+            "uid": "hbJgm094TbirS9WW3s96R"
+          },
+          {
+            "name": "baseRideServiceUrl",
+            "value": "http://localhost:8080",
+            "enabled": false,
+            "local": false,
+            "uid": "ZIbvoQBIF5aKLeiNKWb0v"
+          },
+          {
+            "name": "baseRatingServiceUrl",
+            "value": "http://localhost:8080",
+            "enabled": false,
+            "local": false,
+            "uid": "8QNT0mm41olXwEib1YqOX"
+          },
+          {
+            "name": "baseAuthServiceUrl",
+            "value": "http://localhost:8080",
+            "enabled": false,
+            "local": false,
+            "uid": "J5tC5GnTwHqbyM0zNpmCX"
+          }
+        ]
+      }
+    },
+    "meta": {
+      "name": "Cab aggregator"
+    }
+  },
+  "brunoConfig": {
+    "version": "1",
+    "name": "Cab aggregator",
+    "type": "collection",
+    "ignore": [
+      "node_modules",
+      ".git"
+    ],
+    "size": 0.014278411865234375,
+    "filesCount": 48
+  }
+}

@@ -165,6 +165,8 @@ public class RideServiceImpl implements RideService {
         rideValidation.checkDriverAvailability(driverId);
         ride.setDriverId(driverId);
         ride.setRideStatus(RideStatus.DRIVER_ASSIGNED);
+        setDriverBusyStatus(driverId, true);
+
         return ride;
     }
 

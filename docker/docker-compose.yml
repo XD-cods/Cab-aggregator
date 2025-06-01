@@ -528,7 +528,7 @@ services:
     environment:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9600"]
+      test: ["CMD", "curl", "-f", "http://logstash:9600"]
       interval: 20s
       timeout: 15s
       retries: 5
