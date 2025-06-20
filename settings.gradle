@@ -1,0 +1,10 @@
+rootProject.name = 'Cab-aggregator'
+
+include 'config-server'
+include 'auth-service'
+include 'driver-service'
+include 'passenger-service'
+include 'rating-service'
+include 'ride-service'
+include 'eureka-server'
+include 'api-gateway'
