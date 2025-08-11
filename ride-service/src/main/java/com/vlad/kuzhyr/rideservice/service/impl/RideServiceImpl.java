@@ -234,7 +234,7 @@ public class RideServiceImpl implements RideService {
                 }
 
                 if (ride.getDriverId() != null) {
-                    setDriverBusyStatus(ride.getPassengerId(), false);
+                    setDriverBusyStatus(ride.getDriverId(), false);
                 }
                 log.debug("updateRideTimestamps: Ride cancelled. Ride id: {}", ride.getId());
             }

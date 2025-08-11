@@ -161,7 +161,6 @@ public class RideValidationTest {
 
         when(driverFeignClient.getDriverById(driverId)).thenReturn(
             ResponseEntity.ok(UnitTestDataProvider.busyDriverResponse()));
-        when(passengerFeignClient.getPassengerById(passengerId)).thenReturn(ResponseEntity.ok(passengerResponse));
 
         DriverIsBusyException exception = assertThrows(DriverIsBusyException.class,
             () -> rideValidation.checkDriverAndPassengerAvailability(driverId, passengerId));
@@ -169,7 +168,7 @@ public class RideValidationTest {
         assertEquals(ExceptionMessageConstant.DRIVER_BUSY_MESSAGE.formatted(driverId), exception.getMessage());
 
         verify(driverFeignClient).getDriverById(driverId);
-        verify(passengerFeignClient).getPassengerById(passengerId);
+        verifyNoInteractions(passengerFeignClient);
     }
 
     @Test
@@ -197,7 +196,6 @@ public class RideValidationTest {
 
         when(driverFeignClient.getDriverById(driverId)).thenReturn(
             ResponseEntity.ok(UnitTestDataProvider.driverWithoutCarResponse()));
-        when(passengerFeignClient.getPassengerById(passengerId)).thenReturn(ResponseEntity.ok(passengerResponse));
 
         DriverHasNotCarException exception = assertThrows(DriverHasNotCarException.class,
             () -> rideValidation.checkDriverAndPassengerAvailability(driverId, passengerId));
@@ -205,7 +203,7 @@ public class RideValidationTest {
         assertEquals(ExceptionMessageConstant.DRIVER_HAS_NO_CAR.formatted(driverId), exception.getMessage());
 
         verify(driverFeignClient).getDriverById(driverId);
-        verify(passengerFeignClient).getPassengerById(passengerId);
+        verifyNoInteractions(passengerFeignClient);
     }
 
     @Test

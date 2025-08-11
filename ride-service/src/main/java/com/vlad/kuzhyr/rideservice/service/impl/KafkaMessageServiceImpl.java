@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class KafkaMessageServiceImpl implements KafkaMessageService {
 
     private final KafkaMessageRepository kafkaMessageRepository;
-    private final Tracer tracer;
 
     @Transactional(readOnly = true)
     @Override
@@ -35,14 +34,10 @@ public class KafkaMessageServiceImpl implements KafkaMessageService {
     @Override
     public void saveMessage(String topic, Long key, String message) {
         log.debug("saveMessage: Entering method. Topic: {}, key: {}, message: {}", topic, key, message);
-        TraceContext context = tracer.currentTraceContext().context();
-
         KafkaMessage kafkaMessage = KafkaMessage.builder()
             .topic(topic)
             .key(key)
             .message(message)
-            .traceId(context.traceId())
-            .spanId(context.spanId())
             .build();
 
         KafkaMessage savedMessage = kafkaMessageRepository.save(kafkaMessage);
