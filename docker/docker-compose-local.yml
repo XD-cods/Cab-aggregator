@@ -1,6 +1,30 @@
 name: local
 
 services:
+  mongodb:
+    container_name: mongodb
+    image: "mongodb/mongodb-community-server:6.0-ubi8"
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+
+  mongo-express:
+    container_name: mongo-express
+    image: mongo-express:latest
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://admin:admin@mongodb:27017/
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: 'true'
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: admin
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin
+    depends_on:
+      - mongodb
+
   redis:
     container_name: redis
     image: "redis:alpine"
@@ -68,7 +92,7 @@ services:
       retries: 10
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.9.1
+    image: kibana:7.9.1
     container_name: kibana
     ports:
       - "5601:5601"
@@ -140,3 +164,7 @@ volumes:
   elasticsearch_data:
   ls_data:
   kb_data:
+
+networks:
+  mongo-network:
+    driver: bridge

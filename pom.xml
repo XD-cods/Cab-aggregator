@@ -15,6 +15,7 @@
     <modules>
         <module>config-server</module>
         <module>auth-service</module>
+        <module>chat-service</module>
         <module>driver-service</module>
         <module>passenger-service</module>
         <module>rating-service</module>

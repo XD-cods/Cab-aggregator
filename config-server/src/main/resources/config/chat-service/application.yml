@@ -1,0 +1,6 @@
+spring:
+  data:
+    mongodb:
+      username: ${MONGODB_USERNAME:admin}
+      password: ${MONGODB_PASSWORD:admin}
+      port: ${MONGODB_PORT:27017}
