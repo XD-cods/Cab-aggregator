@@ -7,27 +7,29 @@ services:
         limits:
           memory: 64M
 
-  redpanda:
-    image: docker.redpanda.com/redpandadata/redpanda:latest
-    container_name: redpanda
-    command:
-      - redpanda start
-      - --overprovisioned
-      - --smp 1
-      - --memory 512M
-      - --reserve-memory 0M
-      - --check=false
-      - --node-id 0                     # явно указать
-      - --kafka-addr PLAINTEXT://0.0.0.0:9092
-    ports:
-      - "9092:9092"
+  kafka:
+    image: apache/kafka:4.0.2
+    hostname: kafka
+    volumes:
+      - kafka-data:/tmp/kraft-combined-logs
+    environment:
+      - CLUSTER_ID=4L6g3nShT-eMCtK--X86sw
+      - KAFKA_NODE_ID=1
+      - KAFKA_PROCESS_ROLES=broker,controller
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1
     healthcheck:
-      test: ["CMD", "rpk", "cluster", "health", "check"]
+      test: [ "CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list >/dev/null 2>&1 || exit 1" ]
       interval: 10s
-    deploy:
-      resources:
-        limits:
-          memory: 768M
+      timeout: 15s
+      retries: 3
 
   logstash:
     image: logstash:7.9.1
@@ -42,36 +44,34 @@ services:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://logstash:9600"]
-      interval: 30s
+      interval: 10s
       timeout: 15s
       retries: 5
-      start_period: 30s
+      start_period: 20s
     depends_on:
       elasticsearch:
-        condition: service_healthy
+        condition: service_started
 
   elasticsearch:
     image: elasticsearch:7.17.10
     container_name: elasticsearch
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    volumes:
-      - elasticsearch_data:/usr/share/elasticsearch/data/
     environment:
       - discovery.type=single-node
-      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+      - "ES_JAVA_OPTS=-Xmx512m"
       - xpack.security.enabled=false
+      - ingest.geoip.downloader.enabled=false
+    ports:
+      - "9200:9200"
     healthcheck:
-      test: curl -f http://localhost:9200/_cluster/health || exit 1
-      interval: 10s
-      start_period: 45s
-      timeout: 5s
+      test: ["CMD", "bash", "-c", "</dev/tcp/localhost/9200"]
+      interval: 5s       # Проверяем чаще
+      start_period: 20s  # Начинаем проверять почти сразу
+      timeout: 2s
       retries: 10
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 1G
 
   kibana:
     image: kibana:7.17.10
@@ -79,11 +79,11 @@ services:
     ports:
       - "5601:5601"
     environment:
-      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+      ELASTICSEARCH_HOSTS: '["http://localhost:9200"]'
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 1G
 
   jaeger:
     image: jaegertracing/all-in-one:latest
@@ -123,18 +123,17 @@ services:
           memory: 768M
 
   dashboard:
-    image: lissy93/dashy:latest
-    container_name: dashy
+    image: b4bz/homer:latest
+    container_name: homer
+    volumes:
+      - ./homer-config.yml:/www/assets/config.yml:ro
     ports:
       - "8081:8080"
-    volumes:
-      - ./local-dashy-config.yml:/app/user-data/conf.yml # Тут описываются твои кнопки
-    deploy:
-      resources:
-        limits:
-          memory: 100M
+    user: "1000:1000"
+    restart: always
 
 volumes:
+  kafka-data:
   elasticsearch_data:
   keycloak_data:
   ls_data:

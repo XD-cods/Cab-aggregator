@@ -127,93 +127,29 @@ services:
     networks:
       - cab-aggregator-application
 
-  zookeeper:
-    image: bitnami/zookeeper:latest
-    environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
-    ports:
-      - "2181:2181"
-    healthcheck:
-      test: nc -z localhost 2181 || exit -1
-      start_period: 10s
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    networks:
-      - cab-aggregator-application
-
-  kafka1:
-    image: bitnami/kafka:3.4.1
-    hostname: kafka1
+  kafka:
+    image: apache/kafka:4.0.2
+    hostname: kafka
     volumes:
-      - kafka1-data:/bitnami/kafka
+      - kafka-data:/tmp/kraft-combined-logs
     environment:
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_BROKER_ID=1
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://0.0.0.0:9092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka1:9092
-      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
-      - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=3
-      - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
-      - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
+      - CLUSTER_ID=4L6g3nShT-eMCtK--X86sw
+      - KAFKA_NODE_ID=1
+      - KAFKA_PROCESS_ROLES=broker,controller
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1
     healthcheck:
-      test: kafka-topics.sh --bootstrap-server kafka1:9092 --list
+      test: [ "CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list >/dev/null 2>&1 || exit 1" ]
       interval: 10s
       timeout: 15s
       retries: 3
-    depends_on:
-      zookeeper:
-        condition: service_healthy
-    networks:
-      - cab-aggregator-application
-
-  kafka2:
-    image: bitnami/kafka:3.4.1
-    hostname: kafka2
-    volumes:
-      - kafka2-data:/bitnami/kafka
-    environment:
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_BROKER_ID=2
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://0.0.0.0:9092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka2:9092
-      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
-    healthcheck:
-      test: kafka-topics.sh --bootstrap-server kafka2:9092 --list
-      interval: 10s
-      timeout: 15s
-      retries: 3
-    depends_on:
-      zookeeper:
-        condition: service_healthy
-    networks:
-      - cab-aggregator-application
-
-  kafka3:
-    image: bitnami/kafka:3.4.1
-    hostname: kafka3
-    volumes:
-      - kafka3-data:/bitnami/kafka
-    environment:
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_BROKER_ID=3
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://0.0.0.0:9092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka3:9092
-      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
-    healthcheck:
-      test: kafka-topics.sh --bootstrap-server kafka3:9092 --list
-      interval: 10s
-      timeout: 15s
-      retries: 3
-    depends_on:
-      zookeeper:
-        condition: service_healthy
     networks:
       - cab-aggregator-application
 
@@ -225,15 +161,10 @@ services:
     environment:
       DYNAMIC_CONFIG_ENABLED: "true"
       KAFKA_CLUSTERS_0_NAME: "local-cluster"
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka1:9092,kafka2:9092,kafka3:9092"
-      KAFKA_CLUSTERS_0_ZOOKEEPER: "zookeeper:2181"
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka:9092"
       KAFKA_CLUSTERS_0_JMXPORT: 9999
     depends_on:
-      kafka1:
-        condition: service_healthy
-      kafka2:
-        condition: service_healthy
-      kafka3:
+      kafka:
         condition: service_healthy
     networks:
       - cab-aggregator-application
@@ -307,11 +238,7 @@ services:
         condition: service_healthy
       eureka-server:
         condition: service_healthy
-      kafka1:
-        condition: service_healthy
-      kafka2:
-        condition: service_healthy
-      kafka3:
+      kafka:
         condition: service_healthy
     networks:
       - cab-aggregator-application
@@ -338,11 +265,7 @@ services:
         condition: service_healthy
       eureka-server:
         condition: service_healthy
-      kafka1:
-        condition: service_healthy
-      kafka2:
-        condition: service_healthy
-      kafka3:
+      kafka:
         condition: service_healthy
       keycloak:
         condition: service_started
@@ -371,11 +294,7 @@ services:
         condition: service_healthy
       eureka-server:
         condition: service_healthy
-      kafka1:
-        condition: service_healthy
-      kafka2:
-        condition: service_healthy
-      kafka3:
+      kafka:
         condition: service_healthy
     networks:
       - cab-aggregator-application
@@ -398,11 +317,7 @@ services:
       start_period: 120s
       retries: 5
     depends_on:
-      kafka1:
-        condition: service_healthy
-      kafka2:
-        condition: service_healthy
-      kafka3:
+      kafka:
         condition: service_healthy
       eureka-server:
         condition: service_healthy
@@ -433,11 +348,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      kafka1:
-        condition: service_healthy
-      kafka2:
-        condition: service_healthy
-      kafka3:
+      kafka:
         condition: service_healthy
     networks:
       - cab-aggregator-application
@@ -593,9 +504,6 @@ volumes:
   ls_data:
   kb_data:
   auth-data:
-  kafka3-data:
-  kafka2-data:
-  kafka1-data:
   keycloak_data:
   pgadmin_data:
 
