@@ -1,0 +1,57 @@
+global:
+  scrape_interval: 15s
+  scrape_timeout: 10s
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets:
+          - 'localhost:9090'
+
+  - job_name: config-server
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets:
+          - 'localhost:8888'
+
+  - job_name: eureka-server
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets:
+          - 'localhost:8761'
+
+  - job_name: api-gateway
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets:
+          - 'localhost:8080'
+
+  - job_name: auth-service
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets:
+          - 'localhost:5006'
+
+  - job_name: passenger-service
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets:
+          - 'localhost:5008'
+
+  - job_name: driver-service
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets:
+          - 'localhost:5003'
+
+  - job_name: rating-service
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets:
+          - 'localhost:5007'
+
+  - job_name: ride-service
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets:
+          - 'localhost:5009'

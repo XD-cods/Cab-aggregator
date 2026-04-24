@@ -4,3 +4,22 @@ eureka:
       defaultZone: ${EUREKA_DEFAULT_ZONE:http://localhost:${server.port}/eureka}
     register-with-eureka: ${EUREKA_REGISTER_WITH_EUREKA:false}
     fetch-registry: ${EUREKA_FETCH_REGISTRY:false}
+
+management:
+  tracing:
+    enabled: ${TRACING_ENABLED:true}
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: ${TEMPO_URL:http://localhost:4318/v1/traces}
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    prometheus:
+      enabled: ${PROMETHEUS_ENABLED:true}
+  metrics:
+    tags:
+      app: ${spring.application.name}

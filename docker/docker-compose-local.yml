@@ -10,6 +10,7 @@ services:
   kafka:
     image: apache/kafka:4.0.2
     hostname: kafka
+    container_name: kafka
     volumes:
       - kafka-data:/tmp/kraft-combined-logs
     environment:
@@ -31,75 +32,65 @@ services:
       timeout: 15s
       retries: 3
 
-  logstash:
-    image: logstash:7.9.1
+  loki:
+    image: grafana/loki:latest
+    pull_policy: if_not_present
+    command: -config.file=/etc/loki/loki.yaml
     ports:
-      - "5044:5044"
-      - "9600:9600"
+      - "3100:3100"
     volumes:
-      - ./elk-config/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
-      - ./elk-config/logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
-      - ls_data:/usr/share/logstash/data
-    environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://logstash:9600"]
-      interval: 10s
-      timeout: 15s
-      retries: 5
-      start_period: 20s
-    depends_on:
-      elasticsearch:
-        condition: service_started
+      - ./loki/loki.yaml:/etc/loki/loki.yaml:ro
+      - loki-data:/loki
 
-  elasticsearch:
-    image: elasticsearch:7.17.10
-    container_name: elasticsearch
-    environment:
-      - discovery.type=single-node
-      - "ES_JAVA_OPTS=-Xmx512m"
-      - xpack.security.enabled=false
-      - ingest.geoip.downloader.enabled=false
-    ports:
-      - "9200:9200"
-    healthcheck:
-      test: ["CMD", "bash", "-c", "</dev/tcp/localhost/9200"]
-      interval: 5s       # Проверяем чаще
-      start_period: 20s  # Начинаем проверять почти сразу
-      timeout: 2s
-      retries: 10
-    deploy:
-      resources:
-        limits:
-          memory: 1G
+  prometheus:
+    image: prom/prometheus:latest
+    pull_policy: if_not_present
+    network_mode: "host"
+    container_name: prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
 
-  kibana:
-    image: kibana:7.17.10
-    container_name: kibana
+  tempo:
+    image: grafana/tempo:latest
+    pull_policy: if_not_present
+    command: -config.file=/etc/tempo/tempo.yaml
     ports:
-      - "5601:5601"
-    environment:
-      ELASTICSEARCH_HOSTS: '["http://localhost:9200"]'
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-
-  jaeger:
-    image: jaegertracing/all-in-one:latest
-    container_name: jaeger
-    environment:
-      - COLLECTOR_OTLP_ENABLED=true
-      - SPAN_STORAGE_TYPE=memory
-      - MEMORY_MAX_TRACES=10000
-    ports:
-      - "16686:16686"
+      - "3200:3200"
       - "4317:4317"
       - "4318:4318"
-    deploy:
-      resources:
-        limits:
-          memory: 256M
+    volumes:
+      - ./tempo/tempo.yaml:/etc/tempo/tempo.yaml:ro
+      - tempo-data:/var/tempo
+
+  grafana:
+    image: grafana/grafana:latest
+    pull_policy: if_not_present
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+
+  promtail:
+    image: grafana/promtail:latest
+    pull_policy: if_not_present
+    command: -config.file=/etc/promtail/config.yml
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./promtail/config.yml:/etc/promtail/config.yml:ro
+      - promtail-data:/tmp
+    depends_on:
+      - loki
 
   keycloak:
     image: quay.io/keycloak/keycloak:latest
@@ -123,17 +114,22 @@ services:
           memory: 768M
 
   dashboard:
-    image: b4bz/homer:latest
-    container_name: homer
-    volumes:
-      - ./homer-config.yml:/www/assets/config.yml:ro
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
     ports:
-      - "8081:8080"
-    user: "1000:1000"
-    restart: always
+      - "8081:3000"
+    environment:
+      - HOMEPAGE_ALLOWED_HOSTS=localhost,127.0.0.1,localhost:8081
+    volumes:
+      - ./homepage-config:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro # Для авто-опроса статусов
+
 
 volumes:
   kafka-data:
-  elasticsearch_data:
+  loki-data:
+  prometheus-data:
+  tempo-data:
+  grafana-data:
+  promtail-data:
   keycloak_data:
-  ls_data:

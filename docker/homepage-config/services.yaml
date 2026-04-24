@@ -1,0 +1,36 @@
+- Инфраструктура:
+    - Prometheus:
+        icon: prometheus
+        href: http://localhost:9090
+        container: prometheus
+        # Для сервера с network_mode: host используем проверку пингом или статус-кодом
+        widget:
+          type: prometheus
+          url: http://172.17.0.1:9090 # IP Docker-шлюза или локальный IP сервера
+    - Grafana:
+        icon: grafana
+        href: http://localhost:3000
+        server: local
+        container: grafana
+        widget:
+          type: grafana
+          url: http://grafana:3000 # Имя сервиса из compose
+          username: admin
+          password: admin
+
+- Очереди и БД:
+    - Redis:
+        icon: redis
+        server: local
+        container: redis
+    - Kafka:
+        icon: apache
+        server: local
+        container: kafka
+
+- Auth:
+    - Keycloak:
+        icon: keycloak
+        href: http://localhost:8088
+        server: local
+        container: keycloak

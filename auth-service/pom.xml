@@ -21,8 +21,6 @@
 		<springdoc-openapi-starter-webmvc-api.version>2.8.3</springdoc-openapi-starter-webmvc-api.version>
 		<maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
 		<checkstyle.version>10.14.1</checkstyle.version>
-		<logstash-logback-encoder.version>7.3</logstash-logback-encoder.version>
-		<janino.version>3.1.12</janino.version>
         <datasource-micrometer-spring-boot.version>1.1.0</datasource-micrometer-spring-boot.version>
 	</properties>
 	<dependencies>
@@ -86,19 +84,8 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>net.logstash.logback</groupId>
-			<artifactId>logstash-logback-encoder</artifactId>
-			<version>${logstash-logback-encoder.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.janino</groupId>
-			<artifactId>janino</artifactId>
-			<version>${janino.version}</version>
-		</dependency>
-
-		<dependency>
 			<groupId>io.micrometer</groupId>
-			<artifactId>micrometer-registry-elastic</artifactId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.micrometer</groupId>

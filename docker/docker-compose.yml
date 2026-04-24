@@ -178,6 +178,10 @@ services:
         - SERVICE_NAME=config-server
     env_file:
       - .env
+    environment:
+      PROMETHEUS_ENABLED: ${PROMETHEUS_ENABLED:-true}
+      TRACING_ENABLED: ${TRACING_ENABLED:-true}
+      TEMPO_URL: ${TEMPO_URL:-http://tempo:4318/v1/traces}
     ports:
       - 8888:${CONFIG_SERVER_PORT}
     healthcheck:
@@ -208,10 +212,6 @@ services:
       retries: 5
     depends_on:
       config-server:
-        condition: service_healthy
-      logstash:
-        condition: service_healthy
-      elasticsearch:
         condition: service_healthy
     networks:
       - cab-aggregator-application
@@ -388,85 +388,80 @@ services:
     networks:
       - cab-aggregator-application
 
-  elasticsearch:
-    image: elasticsearch:7.9.1
+  loki:
+    image: grafana/loki:latest
+    pull_policy: if_not_present
+    command: -config.file=/etc/loki/loki.yaml
     ports:
-      - "9200:9200"
-      - "9300:9300"
+      - "3100:3100"
     volumes:
-      - elasticsearch_data:/usr/share/elasticsearch/data/
-    environment:
-      - discovery.type=single-node
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
-      - xpack.security.enabled=false
-      - bootstrap.memory_lock=true
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    healthcheck:
-      test: curl -f http://elasticsearch:9200/_cluster/health || exit 1
-      interval: 10s
-      start_period: 45s
-      timeout: 5s
-      retries: 10
+      - ./loki/loki.yaml:/etc/loki/loki.yaml:ro
+      - loki_data:/loki
     networks:
       - cab-aggregator-application
 
-  kibana:
-    image: kibana:7.9.1
+  prometheus:
+    image: prom/prometheus:latest
+    pull_policy: if_not_present
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
     ports:
-      - "5601:5601"
-    environment:
-      ELASTICSEARCH_URL: http://elasticsearch:9200
-      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+      - "9091:9090"
     volumes:
-      - kb_data:/usr/share/kibana/data
-    depends_on:
-      - elasticsearch
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
     networks:
       - cab-aggregator-application
 
-  logstash:
-    image: logstash:7.9.1
+  tempo:
+    image: grafana/tempo:latest
+    pull_policy: if_not_present
+    command: -config.file=/etc/tempo/tempo.yaml
     ports:
-      - "5044:5044"
-      - "9600:9600"
-    volumes:
-      - ./elk-config/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
-      - ./elk-config/logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
-      - ls_data:/usr/share/logstash/data
-    environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://logstash:9600"]
-      interval: 20s
-      timeout: 15s
-      retries: 5
-      start_period: 30s
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
-    networks:
-      - cab-aggregator-application
-
-  jaeger:
-    image: jaegertracing/all-in-one:latest
-    ports:
-      - "16686:16686"
+      - "3200:3200"
       - "4317:4317"
       - "4318:4318"
+    volumes:
+      - ./tempo/tempo.yaml:/etc/tempo/tempo.yaml:ro
+      - tempo_data:/var/tempo
+    networks:
+      - cab-aggregator-application
+
+  grafana:
+    image: grafana/grafana:latest
+    pull_policy: if_not_present
+    ports:
+      - "3000:3000"
     environment:
-      - SPAN_STORAGE_TYPE=elasticsearch
-      - ES_SERVER_URLS=http://elasticsearch:9200
-      - LOG_LEVEL=info
-      - COLLECTOR_OTLP_ENABLED=true
-      - COLLECTOR_OTLP_HTTP_ENABLED=true
-      - METRICS_BACKEND=none
-      - JAEGER_DISABLED=true
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
     depends_on:
-      elasticsearch:
-        condition: service_healthy
+      loki:
+        condition: service_started
+      prometheus:
+        condition: service_started
+      tempo:
+        condition: service_started
+    networks:
+      - cab-aggregator-application
+
+  promtail:
+    image: grafana/promtail:latest
+    pull_policy: if_not_present
+    command: -config.file=/etc/promtail/config.yml
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./promtail/config.yml:/etc/promtail/config.yml:ro
+      - promtail_data:/tmp
+    depends_on:
+      loki:
+        condition: service_started
     networks:
       - cab-aggregator-application
 
@@ -500,9 +495,11 @@ volumes:
   ride-data:
   redis-date:
   kafka-data:
-  elasticsearch_data:
-  ls_data:
-  kb_data:
+  loki_data:
+  tempo_data:
+  grafana_data:
+  prometheus_data:
+  promtail_data:
   auth-data:
   keycloak_data:
   pgadmin_data:
