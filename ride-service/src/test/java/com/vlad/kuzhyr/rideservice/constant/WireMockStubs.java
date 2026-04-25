@@ -73,23 +73,4 @@ public class WireMockStubs {
         );
     }
 
-    public static void mockMapboxDistance() {
-        stubFor(
-            WireMock.get(WireMock.urlPathMatching("/directions/v5/mapbox/driving/.*"))
-                .withQueryParam("access_token", WireMock.matching(".*"))
-                .willReturn(WireMock.aResponse()
-                    .withStatus(200)
-                    .withHeader("Content-Type", "application/json")
-                    .withBody("""
-                        {
-                            "routes": [
-                                {
-                                    "distance": 10
-                                }
-                            ]
-                        }
-                        """))
-        );
-    }
-
 }

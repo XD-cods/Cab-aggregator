@@ -12,7 +12,6 @@ import com.vlad.kuzhyr.rideservice.persistence.entity.RideStatus;
 import com.vlad.kuzhyr.rideservice.persistence.repository.AddressRepository;
 import com.vlad.kuzhyr.rideservice.persistence.repository.RideRepository;
 import com.vlad.kuzhyr.rideservice.utility.client.DriverFeignClient;
-import com.vlad.kuzhyr.rideservice.utility.client.MapboxClient;
 import com.vlad.kuzhyr.rideservice.utility.client.PassengerFeignClient;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -38,9 +37,6 @@ public class RideControllerImplIT {
 
     @LocalServerPort
     private int port;
-
-    @Autowired
-    private MapboxClient mapboxClient;
 
     @Autowired
     private DriverFeignClient driverFeignClient;
@@ -69,7 +65,6 @@ public class RideControllerImplIT {
 
         WireMockStubs.mockDriverService();
         WireMockStubs.mockPassengerService();
-        WireMockStubs.mockMapboxDistance();
         WireMockStubs.mockMapboxGeocode();
 
         rideRepository.deleteAll();

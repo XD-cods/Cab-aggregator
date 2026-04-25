@@ -31,7 +31,6 @@ mapbox:
   api:
     routes:
       geocode: http://localhost:${wiremock.server.port}/search/geocode/v6/forward
-      distance: http://localhost:${wiremock.server.port}/directions/v5/mapbox/driving/{coordinates}
     secret-key: test-token
 
 eureka:

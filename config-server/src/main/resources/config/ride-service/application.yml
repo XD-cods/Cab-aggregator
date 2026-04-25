@@ -94,7 +94,6 @@ mapbox:
   api:
     routes:
       geocode: ${MAPBOX_GEOCODE_URL:https://api.mapbox.com/search/geocode/v6/forward}
-      distance: ${MAPBOX_DISTANCE_URL:https://api.mapbox.com/directions/v5/mapbox/driving/{coordinates}}
     secret-key: ${MAPBOX_API_KEY}
 
 springdoc:

@@ -6,7 +6,7 @@ import com.vlad.kuzhyr.rideservice.persistence.entity.Address;
 import com.vlad.kuzhyr.rideservice.persistence.entity.Ride;
 import com.vlad.kuzhyr.rideservice.service.impl.cache.AddressCacheService;
 import com.vlad.kuzhyr.rideservice.utility.calculator.PriceCalculator;
-import com.vlad.kuzhyr.rideservice.utility.client.MapboxClient;
+import com.vlad.kuzhyr.rideservice.utility.client.RedisGeoService;
 import com.vlad.kuzhyr.rideservice.utility.constant.ExceptionMessageConstant;
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 public class AddressService {
 
     private final AddressCacheService addressCacheService;
-    private final MapboxClient mapboxClient;
+    private final RedisGeoService redisGeoService;
     private final PriceCalculator priceCalculator;
 
     public void validateDepartureAndDestinationDifferentAddresses(String departureAddress, String destinationAddress) {
@@ -60,7 +60,7 @@ public class AddressService {
                 newDestinationAddress.trim());
         }
 
-        double distance = mapboxClient.calculateDistance(departureAddress, destinationAddress);
+        double distance = redisGeoService.calculateDistance(departureAddress, destinationAddress);
         BigDecimal price = priceCalculator.calculatePrice(distance);
 
         ride.setDepartureAddress(departureAddress);

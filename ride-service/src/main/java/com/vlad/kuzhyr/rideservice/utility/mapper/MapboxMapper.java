@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vlad.kuzhyr.rideservice.exception.AddressNotValidException;
-import com.vlad.kuzhyr.rideservice.exception.DistanceExtractionException;
 import com.vlad.kuzhyr.rideservice.utility.constant.ExceptionMessageConstant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,29 +48,4 @@ public class MapboxMapper {
         );
     }
 
-    public double extractDistanceFromDirectionsResponse(String responseBody) {
-        log.debug("extractDistanceFromDirectionsResponse: Entering method. Response body: {}", responseBody);
-
-        JsonNode jsonNode;
-        try {
-            jsonNode = objectMapper.readTree(responseBody);
-        } catch (JsonProcessingException e) {
-            log.error("extractDistanceFromDirectionsResponse: Failed to parse JSON response. Error: {}",
-                e.getMessage());
-            throw new RuntimeException(e);
-        }
-
-        JsonNode routes = jsonNode.path("routes");
-
-        if (!routes.isEmpty()) {
-            double distance = routes.get(0).path("distance").asDouble();
-            log.debug("extractDistanceFromDirectionsResponse: Extracted distance. Distance: {} meters", distance);
-            return distance;
-        }
-
-        log.error("extractDistanceFromDirectionsResponse: Distance could not be extracted from the response.");
-        throw new DistanceExtractionException(
-            ExceptionMessageConstant.DISTANCE_EXTRACTION_FAILED_MESSAGE
-        );
-    }
 }

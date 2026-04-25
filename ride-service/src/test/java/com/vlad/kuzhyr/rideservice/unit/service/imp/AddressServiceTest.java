@@ -8,7 +8,7 @@ import com.vlad.kuzhyr.rideservice.persistence.entity.Ride;
 import com.vlad.kuzhyr.rideservice.service.impl.AddressService;
 import com.vlad.kuzhyr.rideservice.service.impl.cache.AddressCacheService;
 import com.vlad.kuzhyr.rideservice.utility.calculator.PriceCalculator;
-import com.vlad.kuzhyr.rideservice.utility.client.MapboxClient;
+import com.vlad.kuzhyr.rideservice.utility.client.RedisGeoService;
 import com.vlad.kuzhyr.rideservice.utility.constant.ExceptionMessageConstant;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,7 +33,7 @@ public class AddressServiceTest {
     private AddressCacheService addressCacheService;
 
     @Mock
-    private MapboxClient mapboxClient;
+    private RedisGeoService redisGeoService;
 
     @Mock
     private PriceCalculator priceCalculator;
@@ -53,7 +53,7 @@ public class AddressServiceTest {
         assertEquals(ExceptionMessageConstant.DEPARTURE_AND_DESTINATION_ADDRESSES_SAME_MESSAGE, exception.getMessage());
 
         verifyNoInteractions(priceCalculator);
-        verifyNoInteractions(mapboxClient);
+        verifyNoInteractions(redisGeoService);
         verifyNoInteractions(addressCacheService);
     }
 
@@ -66,7 +66,7 @@ public class AddressServiceTest {
             destinationAddress));
 
         verifyNoInteractions(priceCalculator);
-        verifyNoInteractions(mapboxClient);
+        verifyNoInteractions(redisGeoService);
         verifyNoInteractions(addressCacheService);
     }
 
@@ -90,7 +90,7 @@ public class AddressServiceTest {
 
         verify(addressCacheService, times(2)).findOrCreateAddress(any());
         verify(priceCalculator, never()).calculatePrice(anyDouble());
-        verify(mapboxClient, never()).calculateDistance(any(Address.class), any(Address.class));
+        verify(redisGeoService, never()).calculateDistance(any(Address.class), any(Address.class));
     }
 
     @Test
@@ -101,7 +101,7 @@ public class AddressServiceTest {
         String departureAddress = departure.getAddressName();
         String destinationAddress = destination.getAddressName();
 
-        when(mapboxClient.calculateDistance(any(Address.class), any(Address.class))).thenReturn(ride.getRideDistance());
+        when(redisGeoService.calculateDistance(any(Address.class), any(Address.class))).thenReturn(ride.getRideDistance());
         when(priceCalculator.calculatePrice(ride.getRideDistance())).thenReturn(ride.getRidePrice());
         when(addressCacheService.findOrCreateAddress(departureAddress)).thenReturn(departure);
         when(addressCacheService.findOrCreateAddress(destinationAddress)).thenReturn(destination);
@@ -113,6 +113,6 @@ public class AddressServiceTest {
 
         verify(addressCacheService, times(2)).findOrCreateAddress(any());
         verify(priceCalculator).calculatePrice(anyDouble());
-        verify(mapboxClient).calculateDistance(any(Address.class), any(Address.class));
+        verify(redisGeoService).calculateDistance(any(Address.class), any(Address.class));
     }
 }

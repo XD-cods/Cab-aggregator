@@ -61,7 +61,6 @@ public class ControllerAdvice {
     })
     @ExceptionHandler(value = {
         AddressNotValidException.class,
-        DistanceExtractionException.class,
         NotValidStatusTransitionException.class,
         RideCanNotUpdatableException.class,
         DepartureAndDestinationAddressesSameException.class,

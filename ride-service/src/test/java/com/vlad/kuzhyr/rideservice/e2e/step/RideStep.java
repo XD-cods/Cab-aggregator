@@ -53,7 +53,6 @@ public class RideStep {
         WireMock.resetAllRequests();
 
         WireMockStubs.mockMapboxGeocode();
-        WireMockStubs.mockMapboxDistance();
         WireMockStubs.mockDriverService();
         WireMockStubs.mockPassengerService();
 
